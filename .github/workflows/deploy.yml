@@ -18,8 +18,8 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          key_path: ""
           script: |
-            cp /root/stonebridge-marketing/dist/index.html /root/stonebridge-marketing/dist/index.html.bak
             cd /root/stonebridge-marketing
             git pull origin main
             pm2 restart stonebridge-marketing
