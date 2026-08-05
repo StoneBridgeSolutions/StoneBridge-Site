@@ -12,22 +12,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup SSH
-        env:
-          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Trigger deploy
         run: |
-          mkdir -p ~/.ssh
-          printf '%s' "$SSH_KEY" | base64 -d > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
-          ssh-keygen -l -f ~/.ssh/deploy_key
-
-      - name: Deploy to VPS
-        run: |
-          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
-            cd /root/stonebridge-marketing &&
-            git pull origin main &&
-            pm2 restart stonebridge-marketing &&
-            pm2 save &&
-            echo 'Deploy complete'
-          "
+          PAYLOAD='{"ref":"main"}'
+          SIG=$(echo -n "$PAYLOAD" | openssl dgst -sha256 -hmac "${{ secrets.DEPLOY_SECRET }}" | sed 's/.*= //')
+          curl -f -X POST http://${{ secrets.SSH_HOST }}:4000/deploy/site \
+            -H "Content-Type: application/json" \
+            -H "x-hub-signature-256: sha256=$SIG" \
+            -d "$PAYLOAD"
