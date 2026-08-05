@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StoneBridge Solutions — Websites Built in 48 Hours</title>
+<meta name="description" content="StoneBridge Solutions builds fast, professional websites for Triad-area NC businesses. Flat pricing, live in 48 hours. Contact forms, maps, click-to-call included.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0d1526;--navy-2:#111b30;--navy-3:#16233d;--gold:#d9b23d;--gold-soft:#e5c766;--white:#f7f7f5;--grey:#c6cbd6;--line:rgba(217,178,61,.55);--radius:14px}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{background:var(--navy);color:var(--grey);font-family:'Poppins',sans-serif;font-weight:300;line-height:1.75;overflow-x:hidden}
+h1,h2,h3{font-family:'Playfair Display',serif;color:var(--white);line-height:1.15}
+img{max-width:100%;display:block}a{color:inherit;text-decoration:none}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+.diag{position:absolute;height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent);width:140%;left:-20%;pointer-events:none}
+header{position:sticky;top:0;z-index:50;background:rgba(13,21,38,.92);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.06)}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
+.logo{line-height:1;text-align:left}
+.logo .word{font-family:'Playfair Display',serif;font-weight:700;font-size:1.5rem;letter-spacing:.02em;color:var(--white)}
+.logo .word span{color:var(--gold)}
+.logo .sub{font-family:'Poppins',sans-serif;font-weight:300;font-size:.62rem;letter-spacing:.55em;color:var(--grey);margin-top:3px;text-transform:uppercase;padding-left:2px}
+.nav-links{display:flex;gap:34px;align-items:center;font-weight:400;font-size:.92rem}
+.nav-links a{color:var(--grey);transition:color .2s}.nav-links a:hover{color:var(--gold)}
+.nav-cta{background:var(--gold);color:var(--navy)!important;font-weight:600;padding:10px 22px;border-radius:10px;transition:background .2s}
+.nav-cta:hover{background:var(--gold-soft)}
+.burger{display:none;background:none;border:0;cursor:pointer;padding:6px}
+.burger span{display:block;width:30px;height:3px;background:var(--white);margin:6px 0;border-radius:2px;transition:.25s}
+.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(9px) rotate(45deg)}
+.burger[aria-expanded="true"] span:nth-child(2){opacity:0}
+.burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-9px) rotate(-45deg)}
+.hero{position:relative;padding:110px 0 120px;overflow:hidden}
+.hero .diag:nth-of-type(1){top:18%;transform:rotate(-7deg)}
+.hero .diag:nth-of-type(2){bottom:14%;transform:rotate(-7deg);opacity:.5}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:.78rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:26px}
+.eyebrow::before{content:"";width:34px;height:1px;background:var(--gold)}
+.hero h1{font-size:clamp(2.6rem,6.4vw,4.6rem);font-weight:600;max-width:15ch}
+.hero h1 em{font-style:normal;color:var(--gold)}
+.hero p.lead{max-width:560px;margin:30px 0 42px;font-size:1.08rem}
+.cta-row{display:flex;gap:16px;flex-wrap:wrap}
+.btn{display:inline-block;font-family:'Poppins',sans-serif;font-weight:600;font-size:1rem;padding:16px 34px;border-radius:12px;cursor:pointer;border:0;transition:.2s}
+.btn-gold{background:var(--gold);color:var(--navy)}.btn-gold:hover{background:var(--gold-soft);transform:translateY(-2px)}
+.btn-ghost{background:transparent;color:var(--white);border:1px solid rgba(255,255,255,.35)}.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+.hero-meta{display:flex;gap:36px;margin-top:56px;flex-wrap:wrap}
+.hero-meta div strong{display:block;font-family:'Playfair Display',serif;font-size:1.9rem;color:var(--white);font-weight:600}
+.hero-meta div span{font-size:.85rem;letter-spacing:.08em;text-transform:uppercase}
+section{position:relative;padding:96px 0}.sec-head{max-width:640px;margin-bottom:60px}
+.sec-head h2{font-size:clamp(1.9rem,4vw,2.8rem);font-weight:600;margin:14px 0 18px}.alt{background:var(--navy-2)}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.step{background:var(--navy-3);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:34px 30px;position:relative;overflow:hidden}
+.step::after{content:"";position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,var(--gold),transparent)}
+.step .when{font-size:.75rem;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);font-weight:500}
+.step h3{font-size:1.35rem;margin:12px 0 10px;font-weight:600}.step p{font-size:.95rem}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.inc-list{list-style:none;display:grid;gap:16px}
+.inc-list li{display:flex;gap:14px;align-items:flex-start;font-size:1rem}
+.inc-list li::before{content:"";flex:0 0 auto;width:9px;height:9px;margin-top:11px;background:var(--gold);transform:rotate(45deg)}
+.panel{background:var(--navy-3);border:1px solid rgba(255,255,255,.07);border-radius:var(--radius);padding:40px;position:relative}
+.panel h3{font-size:1.4rem;margin-bottom:14px;font-weight:600}.panel p{font-size:.95rem}
+.panel .big{font-family:'Playfair Display',serif;font-size:3.4rem;color:var(--gold);font-weight:600;line-height:1;margin:10px 0 4px}
+.tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.tier{background:var(--navy-3);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:42px 38px;display:flex;flex-direction:column}
+.tier.feature{border-color:var(--line);box-shadow:0 0 0 1px var(--line)}
+.tier .tag{font-size:.75rem;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);font-weight:500}
+.tier h3{font-size:1.5rem;margin:10px 0 4px;font-weight:600}
+.tier .price{font-family:'Playfair Display',serif;font-size:3rem;color:var(--white);font-weight:600}
+.tier .price small{font-family:'Poppins',sans-serif;font-size:.9rem;color:var(--grey);font-weight:300}
+.tier ul{list-style:none;margin:24px 0 34px;display:grid;gap:12px;font-size:.95rem}
+.tier ul li{display:flex;gap:12px}.tier ul li::before{content:"—";color:var(--gold)}
+.tier .btn{margin-top:auto;text-align:center}
+.care{margin-top:30px;font-size:.92rem;padding:20px 26px;border:1px dashed rgba(217,178,61,.4);border-radius:12px}
+.care strong{color:var(--gold);font-weight:600}
+.work{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.work a{background:var(--navy-3);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:30px;transition:.2s;display:block}
+.work a:hover{border-color:var(--line);transform:translateY(-4px)}
+.work .kind{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:500}
+.work h3{font-size:1.2rem;margin:10px 0 8px;font-weight:600}.work p{font-size:.9rem}
+.strip{background:var(--navy-2);border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06);padding:64px 0}
+.strip .grid-2{gap:40px}.strip h2{font-size:1.8rem;font-weight:600}
+.contact-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:64px}
+form{display:grid;gap:18px}
+label{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--grey);font-weight:500}
+input,textarea,select{width:100%;background:var(--navy-3);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:14px 16px;color:var(--white);font-family:'Poppins',sans-serif;font-size:1rem;margin-top:6px}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--gold);outline-offset:1px;border-color:transparent}
+textarea{min-height:130px;resize:vertical}
+footer{border-top:1px solid rgba(255,255,255,.06);padding:44px 0;font-size:.85rem}
+.foot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:18px}
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+.action-bar{position:fixed;left:0;right:0;bottom:0;z-index:60;display:none;align-items:center;gap:10px;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:rgba(13,21,38,.97);backdrop-filter:blur(12px);border-top:1px solid rgba(255,255,255,.08);box-shadow:0 -8px 30px rgba(0,0,0,.35)}
+.pill{display:flex;align-items:center;justify-content:center;gap:8px;font-family:'Poppins',sans-serif;font-weight:600;border-radius:999px;transition:.2s}
+.pill-call{flex:0 0 auto;width:50px;height:50px;padding:0;background:var(--navy-3);color:var(--gold);border:1px solid rgba(217,178,61,.45)}
+.pill-call:active{background:var(--gold);color:var(--navy)}
+.pill-start{flex:1;background:var(--gold);color:var(--navy);position:relative;height:50px;font-size:.98rem;letter-spacing:.01em;box-shadow:0 4px 14px rgba(217,178,61,.25)}
+.pill-start:active{background:var(--gold-soft)}.pill svg{width:19px;height:19px;flex:0 0 auto}
+@keyframes pulseGold{0%{box-shadow:0 0 0 0 rgba(217,178,61,.55)}70%{box-shadow:0 0 0 16px rgba(217,178,61,0)}100%{box-shadow:0 0 0 0 rgba(217,178,61,0)}}
+.pill-start.nudge{animation:pulseGold 1.6s ease-out 3}
+.tip{position:absolute;bottom:calc(100% + 14px);left:50%;transform:translateX(-50%) translateY(6px);background:var(--white);color:var(--navy);font-weight:500;font-size:.9rem;padding:10px 16px;border-radius:12px;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .35s ease,transform .35s ease}
+.tip::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border:8px solid transparent;border-top-color:var(--white)}
+.tip.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(prefers-reduced-motion:reduce){.pill-start.nudge{animation:none;box-shadow:0 0 0 3px rgba(217,178,61,.6)}.tip{transition:none}}
+@media(max-width:900px){
+  .steps,.work{grid-template-columns:1fr}
+  .grid-2,.tiers,.contact-grid{grid-template-columns:1fr}
+  .nav-links{position:fixed;inset:73px 0 auto 0;background:var(--navy-2);flex-direction:column;gap:0;padding:10px 0 22px;display:none;border-bottom:1px solid rgba(255,255,255,.08)}
+  .nav-links.open{display:flex}
+  .nav-links a{padding:14px 24px;width:100%;text-align:center}
+  .nav-cta{margin:10px 24px 0;width:calc(100% - 48px)}
+  .burger{display:block}.hero{padding:80px 0 90px}
+  .action-bar{display:flex}body{padding-bottom:72px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <a href="#top" class="logo" aria-label="StoneBridge Solutions home">
+      <div class="word">STONE<span>BRIDGE</span></div>
+      <div class="sub">Solutions</div>
+    </a>
+    <button class="burger" aria-label="Menu" aria-expanded="false" onclick="toggleNav(this)">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="nav-links" id="navLinks">
+      <a href="#how">How It Works</a>
+      <a href="#included">What's Included</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#work">Our Work</a>
+      <a href="#contact" class="nav-cta">Start My Website</a>
+    </nav>
+  </div>
+</header>
+<section class="hero" id="top">
+  <div class="diag"></div><div class="diag"></div>
+  <div class="wrap">
+    <div class="eyebrow">Website Design for Local Business</div>
+    <h1>Your Website. <em>Live in 48 Hours.</em></h1>
+    <p class="lead">Most web designers take six weeks and charge whatever the meter says. We build clean, fast, professional websites for a flat price — and your business is online before the weekend.</p>
+    <div class="cta-row">
+      <a class="btn btn-gold" href="#contact">Start My Website</a>
+      <a class="btn btn-ghost" href="#how">See How It Works</a>
+    </div>
+    <div class="hero-meta">
+      <div><strong>48 hrs</strong><span>From order to live</span></div>
+      <div><strong>Flat price</strong><span>No hourly billing</span></div>
+      <div><strong>Mobile-first</strong><span>Built for phones</span></div>
+    </div>
+  </div>
+</section>
+<section class="alt" id="how">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">How It Works</div>
+      <h2>48 hours. Three steps. Done.</h2>
+      <p>No discovery phases, no six-week timelines, no surprise invoices. Order today, review your draft tomorrow, launch the day after.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="when">Today</div>
+        <h3>Tell us about your business</h3>
+        <p>A 15-minute call or a simple form. Send your logo, photos, and services — or just point us at your Facebook page and we'll pull what we need.</p>
+      </div>
+      <div class="step reveal">
+        <div class="when">Tomorrow</div>
+        <h3>Review your draft site</h3>
+        <p>We send a private link to your finished draft. Love it? Say the word and we go live. Want changes? You get 3 design revisions — each one adds 2 days to the build.</p>
+      </div>
+      <div class="step reveal">
+        <div class="when">Day After</div>
+        <h3>Your site goes live</h3>
+        <p>We connect your domain, set up your contact form, and hand you the keys. Customers can find you, call you, and reach you — in 48 hours.</p>
+      </div>
+    </div>
+    <p class="reveal" style="margin-top:34px;font-size:.92rem;max-width:720px;padding:18px 24px;border:1px dashed rgba(217,178,61,.4);border-radius:12px">
+      <strong style="color:var(--gold);font-weight:600">How the clock works:</strong> the timer pauses whenever the site is in your hands for review, and starts again when you tell us to revise or go live. Take a day or a week to look it over — you're never rushed, and it never counts against your 48 hours.
+    </p>
+  </div>
+</section>
+<section id="included">
+  <div class="wrap grid-2">
+    <div class="reveal">
+      <div class="eyebrow">What's Included</div>
+      <h2 style="font-size:clamp(1.9rem,4vw,2.6rem);font-weight:600;margin:14px 0 18px">Everything a local business actually needs.</h2>
+      <p style="margin-bottom:28px">No bloated plugins. No page builders that break. Just a fast, secure site that does its job: getting customers to contact you.</p>
+      <ul class="inc-list">
+        <li>Up to 7 professionally designed pages</li>
+        <li>Contact form delivered straight to your email</li>
+        <li>Click-to-call buttons and Google Maps</li>
+        <li>Photo galleries, service lists, and reviews</li>
+        <li>Mobile-ready and fast on every connection</li>
+        <li>Google-friendly structure so customers find you</li>
+      </ul>
+    </div>
+    <div class="panel reveal">
+      <h3>Why so fast?</h3>
+      <p>We build static websites — the same modern approach used by top tech companies. No database to hack, no updates to babysit, nothing to slow it down.</p>
+      <div class="big">&lt; 1s</div>
+      <p>Typical load time. Fast sites keep visitors, and Google ranks them higher. Your six-week WordPress site can't say that.</p>
+    </div>
+  </div>
+</section>
+<section class="alt" id="pricing">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">Pricing</div>
+      <h2>One flat price. Zero surprises.</h2>
+      <p>You'll know your total before we write a single line. Half up front, half when you approve the finished site.</p>
+    </div>
+    <div class="tiers">
+      <div class="tier reveal">
+        <div class="tag">Standard</div>
+        <h3>3-Page Site</h3>
+        <div class="price">$300 <small>flat</small></div>
+        <ul>
+          <li>Home, Services &amp; Contact pages</li>
+          <li>Contact form + click-to-call</li>
+          <li>Google Maps &amp; business hours</li>
+          <li>3 design revisions included</li>
+          <li>Live in 48 hours</li>
+        </ul>
+        <a class="btn btn-ghost" href="#contact">Choose Standard</a>
+      </div>
+      <div class="tier feature reveal">
+        <div class="tag">Most Popular</div>
+        <h3>5-Page Site</h3>
+        <div class="price">$400 <small>flat</small></div>
+        <ul>
+          <li>Everything in Standard</li>
+          <li>Up to 5 pages + photo gallery</li>
+          <li>Review &amp; testimonial section</li>
+          <li>3 design revisions included</li>
+          <li>Live in 48 hours</li>
+        </ul>
+        <a class="btn btn-gold" href="#contact">Choose 5-Page</a>
+      </div>
+      <div class="tier reveal">
+        <div class="tag">Premium</div>
+        <h3>7-Page Site</h3>
+        <div class="price">$525 <small>flat</small></div>
+        <ul>
+          <li>Everything in 5-Page</li>
+          <li>Up to 7 pages for full coverage</li>
+          <li>Room for every service you offer</li>
+          <li>3 design revisions included</li>
+          <li>Live in 48 hours</li>
+        </ul>
+        <a class="btn btn-ghost" href="#contact">Choose Premium</a>
+      </div>
+    </div>
+    <div class="care reveal">
+      <strong>Care Plan — $35/mo.</strong> Hosting, security, and up to 2 content updates a month. Cancel anytime; your site is yours either way.
+    </div>
+  </div>
+</section>
+<section id="work">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">Our Work</div>
+      <h2>Built for businesses like yours.</h2>
+      <p>Real sites, live right now, for real local companies in the Triad.</p>
+    </div>
+    <div class="work">
+      <a href="#" class="reveal">
+        <div class="kind">Training School</div>
+        <h3>RVA Trucking Academy</h3>
+        <p>CDL training school site with program pages and enrollment contact flow.</p>
+      </a>
+      <a href="#" class="reveal">
+        <div class="kind">Auto Services</div>
+        <h3>CEP Auto Detailing</h3>
+        <p>Service showcase with gallery, pricing, and one-tap booking contact.</p>
+      </a>
+      <a href="#" class="reveal">
+        <div class="kind">Land Services</div>
+        <h3>Triad Land WorX</h3>
+        <p>Land clearing and grading company site built to turn calls into jobs.</p>
+      </a>
+    </div>
+  </div>
+</section>
+<section class="strip">
+  <div class="wrap grid-2">
+    <div class="reveal">
+      <div class="eyebrow">After Launch</div>
+      <h2>Your website is step one. We can run the rest.</h2>
+    </div>
+    <div class="reveal">
+      <p>StoneBridge also builds AI phone agents, missed-call text-back, and marketing automation for the businesses we launch. When you're ready to be everywhere automatically — we're already your team.</p>
+    </div>
+  </div>
+</section>
+<section id="contact">
+  <div class="wrap contact-grid">
+    <div class="reveal">
+      <div class="eyebrow">Start My Website</div>
+      <h2 style="font-size:clamp(1.9rem,4vw,2.6rem);font-weight:600;margin:14px 0 18px">Tell us about your business today. Launch it this week.</h2>
+      <p>Fill this out and we'll reply within one business day with your build slot and a short list of what we need from you. No pressure, no sales calls unless you want one.</p>
+    </div>
+    <form name="website-inquiry" method="POST" data-netlify="true" class="reveal">
+      <input type="hidden" name="form-name" value="website-inquiry">
+      <div>
+        <label for="f-name">Your name</label>
+        <input id="f-name" name="name" type="text" autocomplete="name" required>
+      </div>
+      <div>
+        <label for="f-biz">Business name</label>
+        <input id="f-biz" name="business" type="text" autocomplete="organization" required>
+      </div>
+      <div>
+        <label for="f-email">Email</label>
+        <input id="f-email" name="email" type="email" autocomplete="email" required>
+      </div>
+      <div>
+        <label for="f-pkg">Package</label>
+        <select id="f-pkg" name="package">
+          <option>Standard — 3 pages, $300</option>
+          <option selected>5-Page Site — $400</option>
+          <option>Premium — 7 pages, $525</option>
+          <option>Not sure yet</option>
+        </select>
+      </div>
+      <div>
+        <label for="f-msg">What does your business do?</label>
+        <textarea id="f-msg" name="message" placeholder="e.g. We're a detailing shop in Greensboro. We have a logo and photos but no website."></textarea>
+      </div>
+      <button class="btn btn-gold" type="submit">Request My Build Slot</button>
+    </form>
+  </div>
+</section>
+<footer>
+  <div class="wrap foot">
+    <div><div style="font-family:'Playfair Display',serif;font-weight:700;font-size:1.1rem;color:var(--white)">STONE<span style="color:var(--gold)">BRIDGE</span> <span style="font-family:'Poppins',sans-serif;font-weight:300;font-size:.7rem;letter-spacing:.4em;color:var(--grey)">SOLUTIONS</span></div></div>
+    <div>Websites in 48 hours &middot; Triad Area, NC &middot; <a href="#contact" style="color:var(--gold)">Start My Website</a></div>
+    <div>&copy; 2026 StoneBridge Solutions</div>
+  </div>
+</footer>
+<div class="action-bar" id="actionBar">
+  <a class="pill pill-call" href="tel:+13360000000" aria-label="Call StoneBridge Solutions">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+  </a>
+  <a class="pill pill-start" href="#contact" id="startPill">
+    <span class="tip" id="startTip">Tap here — it takes 2 minutes</span>
+    Start My Website
+  </a>
+</div>
+<script>
+function toggleNav(btn){const nav=document.getElementById('navLinks');const open=nav.classList.toggle('open');btn.setAttribute('aria-expanded',open)}
+document.querySelectorAll('#navLinks a').forEach(a=>a.addEventListener('click',()=>{document.getElementById('navLinks').classList.remove('open');document.querySelector('.burger').setAttribute('aria-expanded','false')}));
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+(function(){const pill=document.getElementById('startPill');const tip=document.getElementById('startTip');if(!pill||!tip)return;let nudged=false,dismissed=false;
+function showNudge(){if(dismissed||nudged)return;nudged=true;pill.classList.add('nudge');tip.classList.add('show');setTimeout(()=>tip.classList.remove('show'),7000)}
+const nudgeTimer=setTimeout(showNudge,6000);
+function dismiss(){dismissed=true;clearTimeout(nudgeTimer);tip.classList.remove('show');pill.classList.remove('nudge')}
+pill.addEventListener('click',dismiss);
+const contact=document.getElementById('contact');
+if(contact){new IntersectionObserver((es,obs)=>{es.forEach(e=>{if(e.isIntersecting){dismiss();obs.disconnect()}})},{threshold:.3}).observe(contact)}})();
+</script>
+</body>
+</html>
