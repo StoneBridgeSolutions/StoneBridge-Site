@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>StoneBridge Solutions — Websites Built in 48 Hours</title>
-<meta name="description" content="StoneBridge Solutions builds fast, professional websites for Triad-area NC businesses. Flat pricing, live in 48 hours. Contact forms, maps, click-to-call included.">
+<meta name="description" content="StoneBridge Solutions builds fast, professional static websites for Triad-area NC businesses. Flat pricing, live in 48 hours. Contact forms, maps, click-to-call included.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -61,8 +61,9 @@ section{position:relative;padding:96px 0}.sec-head{max-width:640px;margin-bottom
 .panel h3{font-size:1.4rem;margin-bottom:14px;font-weight:600}.panel p{font-size:.95rem}
 .panel .big{font-family:'Playfair Display',serif;font-size:3.4rem;color:var(--gold);font-weight:600;line-height:1;margin:10px 0 4px}
 .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
-.tier{background:var(--navy-3);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:42px 38px;display:flex;flex-direction:column}
+.tier{background:var(--navy-3);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:42px 38px;display:flex;flex-direction:column;position:relative}
 .tier.feature{border-color:var(--line);box-shadow:0 0 0 1px var(--line)}
+.ribbon{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--navy);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;padding:6px 16px;border-radius:999px;box-shadow:0 4px 10px rgba(217,178,61,.35);white-space:nowrap}
 .tier .tag{font-size:.75rem;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);font-weight:500}
 .tier h3{font-size:1.5rem;margin:10px 0 4px;font-weight:600}
 .tier .price{font-family:'Playfair Display',serif;font-size:3rem;color:var(--white);font-weight:600}
@@ -77,8 +78,6 @@ section{position:relative;padding:96px 0}.sec-head{max-width:640px;margin-bottom
 .work a:hover{border-color:var(--line);transform:translateY(-4px)}
 .work .kind{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:500}
 .work h3{font-size:1.2rem;margin:10px 0 8px;font-weight:600}.work p{font-size:.9rem}
-.strip{background:var(--navy-2);border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06);padding:64px 0}
-.strip .grid-2{gap:40px}.strip h2{font-size:1.8rem;font-weight:600}
 .contact-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:64px}
 form{display:grid;gap:18px}
 label{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--grey);font-weight:500}
@@ -138,7 +137,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:44px 0;font-size:.85re
   <div class="wrap">
     <div class="eyebrow">Website Design for Local Business</div>
     <h1>Your Website. <em>Live in 48 Hours.</em></h1>
-    <p class="lead">Most web designers take six weeks and charge whatever the meter says. We build clean, fast, professional websites for a flat price — and your business is online before the weekend.</p>
+    <p class="lead">Most web designers take six weeks and charge whatever the meter says. We build clean, fast, professional websites for a flat price. Bring your business idea to life in just a few days—and look like you've been in business for years.</p>
     <div class="cta-row">
       <a class="btn btn-gold" href="#contact">Start My Website</a>
       <a class="btn btn-ghost" href="#how">See How It Works</a>
@@ -184,8 +183,9 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:44px 0;font-size:.85re
     <div class="reveal">
       <div class="eyebrow">What's Included</div>
       <h2 style="font-size:clamp(1.9rem,4vw,2.6rem);font-weight:600;margin:14px 0 18px">Everything a local business actually needs.</h2>
-      <p style="margin-bottom:28px">No bloated plugins. No page builders that break. Just a fast, secure site that does its job: getting customers to contact you.</p>
+      <p style="margin-bottom:28px">No bloated plugins. No page builders that break. Every plan below is a fast, secure static site that does its job: getting customers to contact you.</p>
       <ul class="inc-list">
+        <li>A hand-built static site — no WordPress, no plugins, nothing to hack</li>
         <li>Up to 7 professionally designed pages</li>
         <li>Contact form delivered straight to your email</li>
         <li>Click-to-call buttons and Google Maps</li>
@@ -212,7 +212,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:44px 0;font-size:.85re
     <div class="tiers">
       <div class="tier reveal">
         <div class="tag">Simple</div>
-        <h3>3-Page Site</h3>
+        <h3>3-Page Static Site</h3>
         <div class="price">$300 <small>flat</small></div>
         <ul>
           <li>Home, Services &amp; Contact pages</li>
@@ -224,8 +224,9 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:44px 0;font-size:.85re
         <a class="btn btn-ghost" href="#contact">Choose Simple</a>
       </div>
       <div class="tier feature reveal">
-        <div class="tag">Most Popular</div>
-        <h3>5-Page Site</h3>
+        <div class="ribbon">Most Popular</div>
+        <div class="tag">Standard</div>
+        <h3>5-Page Static Site</h3>
         <div class="price">$400 <small>flat</small></div>
         <ul>
           <li>Everything in Simple</li>
@@ -234,14 +235,14 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:44px 0;font-size:.85re
           <li>3 design revisions included</li>
           <li>Live in 48 hours</li>
         </ul>
-        <a class="btn btn-gold" href="#contact">Choose 5-Page</a>
+        <a class="btn btn-gold" href="#contact">Choose Standard</a>
       </div>
       <div class="tier reveal">
         <div class="tag">Premium</div>
-        <h3>7-Page Site</h3>
+        <h3>7-Page Static Site</h3>
         <div class="price">$525 <small>flat</small></div>
         <ul>
-          <li>Everything in 5-Page</li>
+          <li>Everything in Standard</li>
           <li>Up to 7 pages for full coverage</li>
           <li>Room for every service you offer</li>
           <li>3 design revisions included</li>
@@ -251,7 +252,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:44px 0;font-size:.85re
       </div>
     </div>
     <div class="care reveal">
-      <strong>Care Plan — $35/mo.</strong> Hosting, security, and up to 2 content updates a month. Cancel anytime; your site is yours either way.
+      <strong>Care Plan — $35/mo.</strong> Available exclusively to Simple, Standard, and Premium static site clients above. Hosting, security, and up to 2 content updates a month. Cancel anytime; your site is yours either way.
     </div>
   </div>
 </section>
@@ -268,8 +269,8 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:44px 0;font-size:.85re
         <h3>Paws Next Door</h3>
         <p>Professional pet sitting &amp; dog walking for Suffolk County, NY — services, pricing, and a full booking form.</p>
       </a>
-      <a href="https://triad-hero.com" target="_blank" rel="noopener" class="reveal">
-        <div class="kind">Emergency Services</div>
+      <a href="https://triadhero.com" target="_blank" rel="noopener" class="reveal">
+        <div class="kind">Emergency Restoration Services</div>
         <h3>Triad Hero</h3>
         <p>Lead gen and call routing connecting Triad residents to emergency restoration contractors — fast.</p>
       </a>
@@ -278,17 +279,6 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:44px 0;font-size:.85re
         <h3>Triad Land WorX</h3>
         <p>Land clearing, grading, and paving company serving the Triad — built to turn visits into calls.</p>
       </a>
-    </div>
-  </div>
-</section>
-<section class="strip">
-  <div class="wrap grid-2">
-    <div class="reveal">
-      <div class="eyebrow">After Launch</div>
-      <h2>Your website is step one. We can run the rest.</h2>
-    </div>
-    <div class="reveal">
-      <p>StoneBridge also builds AI phone agents, missed-call text-back, and marketing automation for the businesses we launch. When you're ready to be everywhere automatically — we're already your team.</p>
     </div>
   </div>
 </section>
@@ -316,10 +306,10 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:44px 0;font-size:.85re
       <div>
         <label for="f-pkg">Package</label>
         <select id="f-pkg" name="package">
-          <option>Simple — 3 pages, $300</option>
-          <option selected>5-Page Site — $400</option>
-          <option>Premium — 7 pages, $525</option>
-          <option>Not sure yet</option>
+          <option>Simple — 3 Pages $300</option>
+          <option selected>Standard — 5 Pages $400</option>
+          <option>Premium — 7 Pages $525</option>
+          <option>Not Sure Yet</option>
         </select>
       </div>
       <div>
