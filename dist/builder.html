@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Website Builder — StoneBridge Solutions</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0d1526;--navy-2:#111b30;--navy-3:#16233d;--gold:#d9b23d;--gold-soft:#e5c766;--white:#f7f7f5;--grey:#c6cbd6}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--navy);color:var(--grey);font-family:'Poppins',sans-serif;font-weight:300;line-height:1.6;min-height:100vh}
+.wrap{max-width:640px;margin:0 auto;padding:48px 24px 160px}
+.eyebrow{font-size:.78rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:14px}
+h1{font-family:'Playfair Display',serif;color:var(--white);font-size:1.9rem;margin-bottom:8px}
+.sub{font-size:.98rem;margin-bottom:36px}
+#loading,#error,#form-area,#doneState{display:none}
+#error{text-align:center;padding:40px 0}
+.autosave-note{font-size:.82rem;color:var(--grey);background:var(--navy-2);border:1px dashed rgba(217,178,61,.4);border-radius:10px;padding:14px 18px;margin-bottom:28px}
+.field{margin-bottom:26px}
+.field label{display:block;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--grey);margin-bottom:8px}
+.field .hint{font-size:.82rem;color:var(--grey);margin-bottom:10px;opacity:.75}
+input[type=text],textarea{width:100%;background:var(--navy-2);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:13px 15px;color:var(--white);font-family:'Poppins',sans-serif;font-size:.98rem}
+input[type=text]:focus,textarea:focus{outline:2px solid var(--gold);outline-offset:1px;border-color:transparent}
+textarea{min-height:100px;resize:vertical}
+.color-row{display:flex;align-items:center;gap:14px}
+input[type=color]{width:56px;height:56px;border-radius:12px;border:1px solid rgba(255,255,255,.15);background:var(--navy-2);cursor:pointer;padding:4px}
+.color-hex{font-family:monospace;font-size:1rem;color:var(--white)}
+.upload-box{background:var(--navy-2);border:1px dashed rgba(255,255,255,.2);border-radius:12px;padding:20px;text-align:center}
+.upload-box input[type=file]{width:100%;color:var(--grey);font-size:.88rem}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.thumbs img{width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,.1)}
+.field-status{font-size:.78rem;color:var(--gold);margin-top:6px;min-height:16px}
+#doneBar{position:fixed;bottom:0;left:0;right:0;background:rgba(13,21,38,.97);backdrop-filter:blur(12px);border-top:1px solid rgba(255,255,255,.08);padding:18px 24px}
+.done-inner{max-width:640px;margin:0 auto}
+#doneBtn{width:100%;padding:16px;background:var(--gold);color:var(--navy);border:0;border-radius:12px;font-family:'Poppins',sans-serif;font-weight:600;font-size:1rem;cursor:pointer}
+#doneBtn:hover{background:var(--gold-soft)}
+#doneBtn:disabled{opacity:.5;cursor:not-allowed}
+.done-note{font-size:.8rem;color:var(--grey);text-align:center;margin-top:10px}
+#doneState{text-align:center;padding:60px 0}
+#doneState h2{font-family:'Playfair Display',serif;color:var(--white);font-size:1.7rem;margin-bottom:14px}
+.already-banner{background:rgba(217,178,61,.12);border:1px solid rgba(217,178,61,.4);border-radius:10px;padding:14px 18px;font-size:.88rem;margin-bottom:28px;color:var(--gold)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Website Builder</div>
+  <h1 id="heading">Tell us about your style</h1>
+  <p class="sub" id="subLine">Loading your details...</p>
+
+  <div id="loading">Loading...</div>
+  <div id="error"></div>
+
+  <div id="form-area">
+    <div class="autosave-note">Everything here saves automatically as you go. Close this tab anytime and come back to this same link — nothing gets lost.</div>
+    <div id="alreadyBanner" class="already-banner" style="display:none">You already hit "I'm Done" on this brief — your 48-hour clock is running. You can still make edits below; just let us know if anything major changed.</div>
+
+    <div class="field">
+      <label>Color Scheme</label>
+      <p class="hint">Pick a starting color — we'll build a full palette around it.</p>
+      <div class="color-row">
+        <input type="color" id="colorPicker" value="#d9b23d">
+        <span class="color-hex" id="colorHex">#d9b23d</span>
+      </div>
+      <div class="field-status" id="colorStatus"></div>
+    </div>
+
+    <div class="field">
+      <label>Tone of Voice</label>
+      <p class="hint">e.g. friendly and casual, professional and to-the-point, warm and family-owned</p>
+      <input type="text" id="toneInput" placeholder="Describe the tone you want">
+      <div class="field-status" id="toneStatus"></div>
+    </div>
+
+    <div class="field">
+      <label>Target Audience</label>
+      <p class="hint">Who are you trying to reach?</p>
+      <textarea id="audienceInput" placeholder="e.g. homeowners in Greensboro, ages 30-60"></textarea>
+      <div class="field-status" id="audienceStatus"></div>
+    </div>
+
+    <div class="field">
+      <label>Logo</label>
+      <div class="upload-box">
+        <input type="file" id="logoInput" accept="image/*">
+        <div class="thumbs" id="logoThumb"></div>
+      </div>
+      <div class="field-status" id="logoStatus"></div>
+    </div>
+
+    <div class="field">
+      <label>Photos</label>
+      <p class="hint">Up to 10. You can add more later too.</p>
+      <div class="upload-box">
+        <input type="file" id="photosInput" accept="image/*" multiple>
+        <div class="thumbs" id="photosThumb"></div>
+      </div>
+      <div class="field-status" id="photosStatus"></div>
+    </div>
+
+    <div class="field">
+      <label>Features &amp; Pages You Want</label>
+      <p class="hint">Anything specific — sections, must-haves, sites you admire, things to avoid.</p>
+      <textarea id="notesInput" placeholder="Tell us anything that will help us build this right the first time"></textarea>
+      <div class="field-status" id="notesStatus"></div>
+    </div>
+  </div>
+
+  <div id="doneState">
+    <h2>You're all set!</h2>
+    <p>We've got everything we need. Your 48-hour build clock starts now — we'll be in touch with your draft link soon.</p>
+  </div>
+</div>
+
+<div id="doneBar" style="display:none">
+  <div class="done-inner">
+    <button id="doneBtn" onclick="finishBrief()">I'm Done — Start My Build</button>
+    <div class="done-note">This starts your 48-hour build clock. You can still request changes after, but the timer begins now.</div>
+  </div>
+</div>
+
+<script>
+const API = 'https://api.stonebridgesolutions.io';
+const params = new URLSearchParams(window.location.search);
+const token = params.get('token');
+let saveTimer = null;
+
+function showStatus(id, text) {
+  const el = document.getElementById(id);
+  el.textContent = text;
+  if (text === 'Saved') setTimeout(() => { if (el.textContent === 'Saved') el.textContent = ''; }, 2000);
+}
+
+async function saveTextFields() {
+  const fd = new FormData();
+  fd.append('token', token);
+  fd.append('color_scheme_pref', document.getElementById('colorPicker').value);
+  fd.append('text_style_pref', document.getElementById('toneInput').value);
+  fd.append('target_audience', document.getElementById('audienceInput').value);
+  fd.append('style_notes', document.getElementById('notesInput').value);
+  try {
+    const res = await fetch(`${API}/builder/save`, { method: 'POST', body: fd });
+    const data = await res.json();
+    ['colorStatus','toneStatus','audienceStatus','notesStatus'].forEach(id => showStatus(id, data.ok ? 'Saved' : 'Save failed'));
+  } catch {
+    ['colorStatus','toneStatus','audienceStatus','notesStatus'].forEach(id => showStatus(id, 'Save failed'));
+  }
+}
+
+function debouncedSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveTextFields, 900);
+}
+
+document.getElementById('colorPicker').addEventListener('input', (e) => {
+  document.getElementById('colorHex').textContent = e.target.value;
+  debouncedSave();
+});
+['toneInput','audienceInput','notesInput'].forEach(id => {
+  document.getElementById(id).addEventListener('input', debouncedSave);
+});
+
+async function uploadLogo(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  showStatus('logoStatus', 'Uploading...');
+  const fd = new FormData();
+  fd.append('token', token);
+  fd.append('logo', file);
+  try {
+    const res = await fetch(`${API}/builder/save`, { method: 'POST', body: fd });
+    const data = await res.json();
+    if (data.ok) {
+      showStatus('logoStatus', 'Saved');
+      document.getElementById('logoThumb').innerHTML = `<img src="${URL.createObjectURL(file)}">`;
+    } else {
+      showStatus('logoStatus', data.error || 'Upload failed');
+    }
+  } catch { showStatus('logoStatus', 'Upload failed'); }
+}
+
+async function uploadPhotos(e) {
+  const files = Array.from(e.target.files);
+  if (!files.length) return;
+  showStatus('photosStatus', 'Uploading...');
+  const fd = new FormData();
+  fd.append('token', token);
+  files.forEach(f => fd.append('photos', f));
+  try {
+    const res = await fetch(`${API}/builder/save`, { method: 'POST', body: fd });
+    const data = await res.json();
+    if (data.ok) {
+      showStatus('photosStatus', 'Saved');
+      const thumbs = document.getElementById('photosThumb');
+      files.forEach(f => { const img = document.createElement('img'); img.src = URL.createObjectURL(f); thumbs.appendChild(img); });
+    } else {
+      showStatus('photosStatus', data.error || 'Upload failed');
+    }
+  } catch { showStatus('photosStatus', 'Upload failed'); }
+}
+
+document.getElementById('logoInput').addEventListener('change', uploadLogo);
+document.getElementById('photosInput').addEventListener('change', uploadPhotos);
+
+async function finishBrief() {
+  if (!confirm('This starts your 48-hour build clock. Ready to go?')) return;
+  const btn = document.getElementById('doneBtn');
+  btn.disabled = true;
+  btn.textContent = 'Starting your build...';
+  try {
+    const res = await fetch(`${API}/builder/complete`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Something went wrong.');
+    document.getElementById('form-area').style.display = 'none';
+    document.getElementById('doneBar').style.display = 'none';
+    document.getElementById('doneState').style.display = 'block';
+  } catch (err) {
+    alert(err.message);
+    btn.disabled = false;
+    btn.textContent = "I'm Done — Start My Build";
+  }
+}
+
+async function init() {
+  if (!token) {
+    document.getElementById('error').style.display = 'block';
+    document.getElementById('error').textContent = 'This link is missing information. Please use the link we emailed you, or contact us directly.';
+    document.getElementById('subLine').style.display = 'none';
+    return;
+  }
+  try {
+    const res = await fetch(`${API}/builder/status?token=${encodeURIComponent(token)}`);
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Link not recognized.');
+    const order = data.order;
+    document.getElementById('heading').textContent = `${order.business_name}, tell us about your style`;
+    document.getElementById('subLine').textContent = 'Fill this out whenever you have a few minutes — everything saves as you go.';
+    if (order.color_scheme_pref) { document.getElementById('colorPicker').value = order.color_scheme_pref; document.getElementById('colorHex').textContent = order.color_scheme_pref; }
+    if (order.text_style_pref) document.getElementById('toneInput').value = order.text_style_pref;
+    if (order.target_audience) document.getElementById('audienceInput').value = order.target_audience;
+    if (order.style_notes) document.getElementById('notesInput').value = order.style_notes;
+    if (order.logo_url) document.getElementById('logoThumb').innerHTML = `<img src="${order.logo_url}">`;
+    if (order.photo_urls && order.photo_urls.length) {
+      document.getElementById('photosThumb').innerHTML = order.photo_urls.map(u => `<img src="${u}">`).join('');
+    }
+    if (order.builder_completed_at) document.getElementById('alreadyBanner').style.display = 'block';
+    document.getElementById('form-area').style.display = 'block';
+    document.getElementById('doneBar').style.display = 'block';
+  } catch (err) {
+    document.getElementById('error').style.display = 'block';
+    document.getElementById('error').textContent = err.message;
+    document.getElementById('subLine').style.display = 'none';
+  }
+}
+init();
+</script>
+</body>
+</html>
