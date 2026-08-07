@@ -67,13 +67,17 @@ section{position:relative;padding:96px 0}.sec-head{max-width:640px;margin-bottom
 .ribbon{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--navy);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;padding:6px 16px;border-radius:999px;box-shadow:0 4px 10px rgba(217,178,61,.35);white-space:nowrap}
 .tier .tag{font-size:.75rem;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);font-weight:500}
 .tier h3{font-size:1.5rem;margin:10px 0 4px;font-weight:600}
-.tier .price{font-family:'Playfair Display',serif;font-size:3rem;color:var(--white);font-weight:600}
+.tier .price{font-family:'Playfair Display',serif;font-size:3rem;color:var(--white);font-weight:600;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
 .tier .price small{font-family:'Poppins',sans-serif;font-size:.9rem;color:var(--grey);font-weight:300}
-.tier ul{list-style:none;margin:24px 0 34px;display:grid;gap:12px;font-size:.95rem}
+.was{font-family:'Poppins',sans-serif;font-size:1.1rem;color:var(--grey);font-weight:300;text-decoration:line-through;opacity:.7}
+.save-badge{display:inline-block;background:rgba(217,178,61,.15);color:var(--gold);font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:4px 12px;border-radius:999px;margin:6px 0 4px;border:1px solid rgba(217,178,61,.3)}
+.turnaround{font-size:.82rem;color:var(--grey);margin-bottom:4px;font-weight:400}
+.tier ul{list-style:none;margin:16px 0 34px;display:grid;gap:12px;font-size:.95rem}
 .tier ul li{display:flex;gap:12px}.tier ul li::before{content:"—";color:var(--gold)}
 .tier .btn{margin-top:auto;text-align:center}
 .care{margin-top:30px;font-size:.92rem;padding:20px 26px;border:1px dashed rgba(217,178,61,.4);border-radius:12px}
 .care strong{color:var(--gold);font-weight:600}
+.care-price{display:inline-flex;align-items:baseline;gap:8px}
 .work{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
 .work a{background:var(--navy-3);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:30px;transition:.2s;display:block}
 .work a:hover{border-color:var(--line);transform:translateY(-4px)}
@@ -139,7 +143,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:44px 0;font-size:.85re
   <div class="wrap">
     <div class="eyebrow">Website Design for Local Business</div>
     <h1>Your Website. <em>Live in 48 Hours.</em></h1>
-    <p class="lead">Most web designers take six weeks and charge whatever the meter says. We build clean, fast, professional websites for a flat price. Bring your business idea to life in just a few days—and look like you've been in business for years.</p>
+    <p class="lead">Most web designers take six weeks and charge whatever the meter says. We build clean, fast, professional websites for a flat price. Bring your business idea to life in just a few days&mdash;and look like you've been in business for years.</p>
     <div class="cta-row">
       <a class="btn btn-gold" href="#contact">Start My Website</a>
       <a class="btn btn-ghost" href="#how">See How It Works</a>
@@ -162,21 +166,21 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:44px 0;font-size:.85re
       <div class="step reveal">
         <div class="when">Today</div>
         <h3>Tell us about your business</h3>
-        <p>A 15-minute call or a simple form. Send your logo, photos, and services — or just point us at your Facebook page and we'll pull what we need.</p>
+        <p>A 15-minute call or a simple form. Send your logo, photos, and services &mdash; or just point us at your Facebook page and we'll pull what we need.</p>
       </div>
       <div class="step reveal">
         <div class="when">Tomorrow</div>
         <h3>Review your draft site</h3>
-        <p>We send a private link to your finished draft. Love it? Say the word and we go live. Want changes? You get 3 design revisions — each one adds 2 days to the build.</p>
+        <p>We send a private link to your finished draft. Love it? Say the word and we go live. Want changes? You get 3 design revisions &mdash; each one adds 2 days to the build.</p>
       </div>
       <div class="step reveal">
         <div class="when">Day After</div>
         <h3>Your site goes live</h3>
-        <p>We connect your domain, set up your contact form, and hand you the keys. Customers can find you, call you, and reach you — in 48 hours.</p>
+        <p>We connect your domain, set up your contact form, and hand you the keys. Customers can find you, call you, and reach you &mdash; in 48 hours.</p>
       </div>
     </div>
     <p class="reveal" style="margin-top:34px;font-size:.92rem;max-width:720px;padding:18px 24px;border:1px dashed rgba(217,178,61,.4);border-radius:12px">
-      <strong style="color:var(--gold);font-weight:600">How the clock works:</strong> the timer pauses whenever the site is in your hands for review, and starts again when you tell us to revise or go live. Take a day or a week to look it over — you're never rushed, and it never counts against your 48 hours.
+      <strong style="color:var(--gold);font-weight:600">How the clock works:</strong> the timer pauses whenever the site is in your hands for review, and starts again when you tell us to revise or go live. Take a day or a week to look it over &mdash; you're never rushed, and it never counts against your 48 hours.
     </p>
   </div>
 </section>
@@ -197,7 +201,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:44px 0;font-size:.85re
     </div>
     <div class="panel reveal">
       <h3>Why so fast?</h3>
-      <p>We build static websites — the same modern approach used by top tech companies. No database to hack, no updates to babysit, nothing to slow it down.</p>
+      <p>We build static websites &mdash; the same modern approach used by top tech companies. No database to hack, no updates to babysit, nothing to slow it down.</p>
       <div class="big">&lt; 1s</div>
       <p>Typical load time. Fast sites keep visitors, and Google ranks them higher. Your six-week WordPress site can't say that.</p>
     </div>
@@ -214,13 +218,14 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:44px 0;font-size:.85re
       <div class="tier reveal">
         <div class="tag">Simple</div>
         <h3>3-Page Static Site</h3>
-        <div class="price">$300 <small>flat</small></div>
+        <div class="price">$350 <small>flat</small><span class="was">$500</span></div>
+        <div class="save-badge">Save $150 &mdash; Limited Time</div>
+        <div class="turnaround">&#9200; 48-hour turnaround</div>
         <ul>
           <li>Home, Services &amp; Contact pages</li>
           <li>Contact form + click-to-call</li>
           <li>Google Maps &amp; business hours</li>
           <li>3 design revisions included</li>
-          <li>Live in 48 hours</li>
         </ul>
         <a class="btn btn-ghost" href="#contact">Choose Simple</a>
       </div>
@@ -228,32 +233,36 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:44px 0;font-size:.85re
         <div class="ribbon">Most Popular</div>
         <div class="tag">Standard</div>
         <h3>5-Page Static Site</h3>
-        <div class="price">$400 <small>flat</small></div>
+        <div class="price">$500 <small>flat</small><span class="was">$650</span></div>
+        <div class="save-badge">Save $150 &mdash; Limited Time</div>
+        <div class="turnaround">&#9200; 1-week turnaround</div>
         <ul>
           <li>Everything in Simple</li>
           <li>Up to 5 pages + photo gallery</li>
           <li>Review &amp; testimonial section</li>
           <li>3 design revisions included</li>
-          <li>Live in 48 hours</li>
         </ul>
         <a class="btn btn-gold" href="#contact">Choose Standard</a>
       </div>
       <div class="tier reveal">
         <div class="tag">Premium</div>
         <h3>7-Page Static Site</h3>
-        <div class="price">$525 <small>flat</small></div>
+        <div class="price">$650 <small>flat</small><span class="was">$800</span></div>
+        <div class="save-badge">Save $150 &mdash; Limited Time</div>
+        <div class="turnaround">&#9200; 10-day turnaround</div>
         <ul>
           <li>Everything in Standard</li>
           <li>Up to 7 pages for full coverage</li>
           <li>Room for every service you offer</li>
           <li>3 design revisions included</li>
-          <li>Live in 48 hours</li>
         </ul>
         <a class="btn btn-ghost" href="#contact">Choose Premium</a>
       </div>
     </div>
     <div class="care reveal">
-      <strong>Care Plan — $35/mo.</strong> Available exclusively to Simple, Standard, and Premium static site clients above. Hosting, security, and up to 2 content updates a month. Cancel anytime; your site is yours either way.
+      <strong>Care Plan &mdash; <span class="care-price">$35/mo <span class="was" style="font-size:.9rem">$50/mo</span></span></strong>
+      <span class="save-badge" style="font-size:.68rem;vertical-align:middle;margin-left:6px">Save $15/mo</span>
+      Available exclusively to static site clients above. Hosting, security, and up to 2 content updates a month. Cancel anytime; your site is yours either way.
     </div>
   </div>
 </section>
@@ -266,19 +275,19 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:44px 0;font-size:.85re
     </div>
     <div class="work">
       <a href="https://pawsnextdoor.net" target="_blank" rel="noopener" class="reveal">
-          <div class="kind">Pet Services</div>
+        <div class="kind">Pet Services</div>
         <h3>Paws Next Door</h3>
-        <p>Professional pet sitting &amp; dog walking for Suffolk County, NY — services, pricing, and a full booking form.</p>
+        <p>Professional pet sitting &amp; dog walking for Suffolk County, NY &mdash; services, pricing, and a full booking form.</p>
       </a>
       <a href="https://triadhero.com" target="_blank" rel="noopener" class="reveal">
         <div class="kind">Emergency Restoration Services</div>
         <h3>Triad Hero</h3>
-        <p>Lead gen and call routing connecting Triad residents to emergency restoration contractors — fast.</p>
+        <p>Lead gen and call routing connecting Triad residents to emergency restoration contractors &mdash; fast.</p>
       </a>
       <a href="https://triad-landworx.com" target="_blank" rel="noopener" class="reveal">
         <div class="kind">Land Services</div>
         <h3>Triad Land WorX</h3>
-        <p>Land clearing, grading, and paving company serving the Triad — built to turn visits into calls.</p>
+        <p>Land clearing, grading, and paving company serving the Triad &mdash; built to turn visits into calls.</p>
       </a>
     </div>
   </div>
@@ -288,7 +297,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:44px 0;font-size:.85re
     <div class="reveal">
       <div class="eyebrow">Start My Website</div>
       <h2 style="font-size:clamp(1.9rem,4vw,2.6rem);font-weight:600;margin:14px 0 18px">Tell us about your business today. Launch it this week.</h2>
-      <p>Fill this out and we'll take you straight to the next step — no waiting on a callback. Prefer to talk it through first? Call or email us instead, no pressure either way.</p>
+      <p>Fill this out and we'll take you straight to the next step &mdash; no waiting on a callback. Prefer to talk it through first? Call or email us instead, no pressure either way.</p>
     </div>
     <form id="orderForm" class="reveal">
       <div>
@@ -310,9 +319,9 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:44px 0;font-size:.85re
       <div>
         <label for="f-pkg">Package</label>
         <select id="f-pkg" name="tier">
-          <option value="simple">Simple — 3 Pages $300</option>
-          <option value="standard" selected>Standard — 5 Pages $400</option>
-          <option value="premium">Premium — 7 Pages $525</option>
+          <option value="simple">Simple &mdash; 3 Pages $350 (was $500)</option>
+          <option value="standard" selected>Standard &mdash; 5 Pages $500 (was $650)</option>
+          <option value="premium">Premium &mdash; 7 Pages $650 (was $800)</option>
           <option value="not_sure">Not Sure Yet</option>
         </select>
       </div>
@@ -337,7 +346,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:44px 0;font-size:.85re
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg>
   </a>
   <a class="pill pill-start" href="#contact" id="startPill">
-    <span class="tip" id="startTip">Tap here — it takes 2 minutes</span>
+    <span class="tip" id="startTip">Tap here &mdash; it takes 2 minutes</span>
     Start My Website
   </a>
 </div>
@@ -353,7 +362,6 @@ function dismiss(){dismissed=true;clearTimeout(nudgeTimer);tip.classList.remove(
 pill.addEventListener('click',dismiss);
 const contact=document.getElementById('contact');
 if(contact){new IntersectionObserver((es,obs)=>{es.forEach(e=>{if(e.isIntersecting){dismiss();obs.disconnect()}})},{threshold:.3}).observe(contact)}})();
-
 document.getElementById('orderForm').addEventListener('submit', async function(e){
   e.preventDefault();
   const btn = document.getElementById('orderSubmit');
