@@ -16,20 +16,31 @@ h1{font-family:'Playfair Display',serif;color:var(--white);font-size:1.9rem;marg
 #loading,#error,#form-area,#doneState{display:none}
 #error{text-align:center;padding:40px 0}
 .autosave-note{font-size:.82rem;color:var(--grey);background:var(--navy-2);border:1px dashed rgba(217,178,61,.4);border-radius:10px;padding:14px 18px;margin-bottom:28px}
-.field{margin-bottom:26px}
-.field label{display:block;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--grey);margin-bottom:8px}
-.field .hint{font-size:.82rem;color:var(--grey);margin-bottom:10px;opacity:.75}
-input[type=text],textarea{width:100%;background:var(--navy-2);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:13px 15px;color:var(--white);font-family:'Poppins',sans-serif;font-size:.98rem}
+.section{background:var(--navy-2);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:26px;margin-bottom:22px}
+.section > label.title{display:block;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;font-weight:600}
+.section .hint{font-size:.85rem;color:var(--grey);margin-bottom:16px;opacity:.85}
+.master-check{display:flex;align-items:flex-start;gap:10px;margin-bottom:18px;font-size:.92rem;color:var(--white)}
+.master-check input{margin-top:3px;width:auto}
+.color-block{margin-bottom:16px}
+.color-block:last-child{margin-bottom:0}
+.color-row{display:flex;align-items:center;gap:14px;margin-top:8px}
+input[type=color]{width:52px;height:52px;border-radius:12px;border:1px solid rgba(255,255,255,.15);background:var(--navy-3);cursor:pointer;padding:4px}
+.color-hex{font-family:monospace;font-size:.95rem;color:var(--white)}
+.toggle-row{display:flex;align-items:center;gap:8px;font-size:.88rem;color:var(--grey);margin-bottom:4px}
+.toggle-row input{width:auto}
+.check-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:16px}
+.check-item{display:flex;align-items:center;gap:8px;font-size:.88rem;color:var(--white);background:var(--navy-3);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:10px 12px;cursor:pointer}
+.check-item input{width:auto;flex:0 0 auto}
+.check-item.checked{border-color:rgba(217,178,61,.5);background:rgba(217,178,61,.08)}
+.subgroup-label{font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);margin:14px 0 8px;opacity:.8}
+input[type=text],textarea{width:100%;background:var(--navy-3);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px 14px;color:var(--white);font-family:'Poppins',sans-serif;font-size:.95rem}
 input[type=text]:focus,textarea:focus{outline:2px solid var(--gold);outline-offset:1px;border-color:transparent}
-textarea{min-height:100px;resize:vertical}
-.color-row{display:flex;align-items:center;gap:14px}
-input[type=color]{width:56px;height:56px;border-radius:12px;border:1px solid rgba(255,255,255,.15);background:var(--navy-2);cursor:pointer;padding:4px}
-.color-hex{font-family:monospace;font-size:1rem;color:var(--white)}
+textarea{min-height:70px;resize:vertical}
 .upload-box{background:var(--navy-2);border:1px dashed rgba(255,255,255,.2);border-radius:12px;padding:20px;text-align:center}
 .upload-box input[type=file]{width:100%;color:var(--grey);font-size:.88rem}
 .thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
 .thumbs img{width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,.1)}
-.field-status{font-size:.78rem;color:var(--gold);margin-top:6px;min-height:16px}
+.field-status{font-size:.78rem;color:var(--gold);margin-top:8px;min-height:16px}
 #doneBar{position:fixed;bottom:0;left:0;right:0;background:rgba(13,21,38,.97);backdrop-filter:blur(12px);border-top:1px solid rgba(255,255,255,.08);padding:18px 24px}
 .done-inner{max-width:640px;margin:0 auto}
 #doneBtn{width:100%;padding:16px;background:var(--gold);color:var(--navy);border:0;border-radius:12px;font-family:'Poppins',sans-serif;font-weight:600;font-size:1rem;cursor:pointer}
@@ -54,32 +65,67 @@ input[type=color]{width:56px;height:56px;border-radius:12px;border:1px solid rgb
     <div class="autosave-note">Everything here saves automatically as you go. Close this tab anytime and come back to this same link — nothing gets lost.</div>
     <div id="alreadyBanner" class="already-banner" style="display:none">You already hit "I'm Done" on this brief — your 48-hour clock is running. You can still make edits below; just let us know if anything major changed.</div>
 
-    <div class="field">
-      <label>Color Scheme</label>
-      <p class="hint">Pick a starting color — we'll build a full palette around it.</p>
-      <div class="color-row">
-        <input type="color" id="colorPicker" value="#d9b23d">
-        <span class="color-hex" id="colorHex">#d9b23d</span>
+    <!-- COLOR SCHEME -->
+    <div class="section">
+      <label class="title">Color Scheme</label>
+      <p class="hint">Pick a primary color to build your palette around. Add a secondary and accent color too if you have them in mind.</p>
+      <label class="master-check"><input type="checkbox" id="colorUnsure"> I'm not sure — surprise us with the whole palette</label>
+
+      <div id="colorPickers">
+        <div class="color-block">
+          <div class="subgroup-label">Primary Color</div>
+          <div class="color-row"><input type="color" id="colorPrimary" value="#d9b23d"><span class="color-hex" id="hexPrimary">#d9b23d</span></div>
+        </div>
+
+        <div class="color-block">
+          <label class="toggle-row"><input type="checkbox" id="addSecondary"> Add a secondary color</label>
+          <div class="color-row" id="secondaryRow" style="display:none"><input type="color" id="colorSecondary" value="#0d1526"><span class="color-hex" id="hexSecondary">#0d1526</span></div>
+        </div>
+
+        <div class="color-block">
+          <label class="toggle-row"><input type="checkbox" id="addAccent"> Add a third / accent color</label>
+          <div class="color-row" id="accentRow" style="display:none"><input type="color" id="colorAccent" value="#f7f7f5"><span class="color-hex" id="hexAccent">#f7f7f5</span></div>
+        </div>
       </div>
       <div class="field-status" id="colorStatus"></div>
     </div>
 
-    <div class="field">
-      <label>Tone of Voice</label>
-      <p class="hint">e.g. friendly and casual, professional and to-the-point, warm and family-owned</p>
-      <input type="text" id="toneInput" placeholder="Describe the tone you want">
+    <!-- TONE OF VOICE -->
+    <div class="section">
+      <label class="title">Tone of Voice</label>
+      <p class="hint">Pick as many as fit — or none, and just describe it below.</p>
+      <div class="check-grid" id="toneGrid"></div>
+      <div class="subgroup-label">Other / Comments</div>
+      <textarea id="toneOther" placeholder="Anything else about how your site should sound"></textarea>
       <div class="field-status" id="toneStatus"></div>
     </div>
 
-    <div class="field">
-      <label>Target Audience</label>
+    <!-- TARGET AUDIENCE -->
+    <div class="section">
+      <label class="title">Target Audience</label>
       <p class="hint">Who are you trying to reach?</p>
-      <textarea id="audienceInput" placeholder="e.g. homeowners in Greensboro, ages 30-60"></textarea>
+      <div class="subgroup-label">Age Groups</div>
+      <div class="check-grid" id="ageGrid"></div>
+      <div class="subgroup-label">Income Level</div>
+      <div class="check-grid" id="incomeGrid"></div>
+      <div class="subgroup-label">Other / Comments</div>
+      <textarea id="audienceOther" placeholder="e.g. homeowners new to Winston-Salem, busy parents, etc."></textarea>
       <div class="field-status" id="audienceStatus"></div>
     </div>
 
-    <div class="field">
-      <label>Logo</label>
+    <!-- FEATURES -->
+    <div class="section">
+      <label class="title">Features &amp; Pages You Want</label>
+      <p class="hint">Check anything that applies.</p>
+      <div class="check-grid" id="featureGrid"></div>
+      <div class="subgroup-label">Other / Comments</div>
+      <textarea id="featureOther" placeholder="Specific pages, sites you admire, things to avoid — anything that helps us build this right the first time"></textarea>
+      <div class="field-status" id="featureStatus"></div>
+    </div>
+
+    <!-- LOGO -->
+    <div class="section">
+      <label class="title">Logo</label>
       <div class="upload-box">
         <input type="file" id="logoInput" accept="image/*">
         <div class="thumbs" id="logoThumb"></div>
@@ -87,21 +133,15 @@ input[type=color]{width:56px;height:56px;border-radius:12px;border:1px solid rgb
       <div class="field-status" id="logoStatus"></div>
     </div>
 
-    <div class="field">
-      <label>Photos</label>
+    <!-- PHOTOS -->
+    <div class="section">
+      <label class="title">Photos</label>
       <p class="hint">Up to 10. You can add more later too.</p>
       <div class="upload-box">
         <input type="file" id="photosInput" accept="image/*" multiple>
         <div class="thumbs" id="photosThumb"></div>
       </div>
       <div class="field-status" id="photosStatus"></div>
-    </div>
-
-    <div class="field">
-      <label>Features &amp; Pages You Want</label>
-      <p class="hint">Anything specific — sections, must-haves, sites you admire, things to avoid.</p>
-      <textarea id="notesInput" placeholder="Tell us anything that will help us build this right the first time"></textarea>
-      <div class="field-status" id="notesStatus"></div>
     </div>
   </div>
 
@@ -124,40 +164,122 @@ const params = new URLSearchParams(window.location.search);
 const token = params.get('token');
 let saveTimer = null;
 
+const TONE_OPTIONS = ['Friendly & Casual', 'Professional & Polished', 'Warm & Family-Owned', 'Bold & Energetic', 'Calm & Reassuring', 'Luxury & Upscale', 'Straightforward & No-Nonsense'];
+const AGE_OPTIONS = ['Under 18', '18-24', '25-34', '35-44', '45-54', '55-64', '65+'];
+const INCOME_OPTIONS = ['Budget-conscious', 'Middle income', 'Upper-middle income', 'High income / luxury'];
+const FEATURE_OPTIONS = ['Photo Gallery', 'Testimonials / Reviews', 'Online Booking or Scheduling', 'Service Area Map', 'FAQ Section', 'Blog / News', 'Pricing Table', 'Before & After Photos', 'Team / Staff Bios'];
+
+function buildCheckGrid(containerId, options, groupName) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = options.map((opt, i) => `
+    <label class="check-item" id="${groupName}_item_${i}">
+      <input type="checkbox" data-group="${groupName}" value="${opt}" onchange="onCheckChange('${groupName}_item_${i}')">
+      ${opt}
+    </label>`).join('');
+}
+buildCheckGrid('toneGrid', TONE_OPTIONS, 'tone');
+buildCheckGrid('ageGrid', AGE_OPTIONS, 'age');
+buildCheckGrid('incomeGrid', INCOME_OPTIONS, 'income');
+buildCheckGrid('featureGrid', FEATURE_OPTIONS, 'feature');
+
+function onCheckChange(itemId) {
+  const item = document.getElementById(itemId);
+  const checked = item.querySelector('input').checked;
+  item.classList.toggle('checked', checked);
+  debouncedSave();
+}
+
+function getChecked(groupName) {
+  return Array.from(document.querySelectorAll(`input[data-group="${groupName}"]:checked`)).map(i => i.value);
+}
+
+function setChecked(groupName, values) {
+  document.querySelectorAll(`input[data-group="${groupName}"]`).forEach(input => {
+    if (values.includes(input.value)) {
+      input.checked = true;
+      input.closest('.check-item').classList.add('checked');
+    }
+  });
+}
+
+// Parses "Tag One, Tag Two; Other: some text" back into checkbox + other field
+function parseComposed(str, groupName, otherFieldId) {
+  if (!str) return;
+  const otherMatch = str.match(/Other:\s*(.*)$/s);
+  if (otherMatch) document.getElementById(otherFieldId).value = otherMatch[1].trim();
+  const tagsPart = str.split(';')[0].replace(/^[A-Za-z ]+:\s*/, '');
+  const tags = tagsPart.split(',').map(s => s.trim()).filter(Boolean);
+  setChecked(groupName, tags);
+}
+
+function composeField(label, groupName, otherFieldId) {
+  const tags = getChecked(groupName);
+  const other = document.getElementById(otherFieldId).value.trim();
+  let parts = [];
+  if (tags.length) parts.push(`${label}: ${tags.join(', ')}`);
+  if (other) parts.push(`Other: ${other}`);
+  return parts.join('; ');
+}
+
 function showStatus(id, text) {
   const el = document.getElementById(id);
   el.textContent = text;
   if (text === 'Saved') setTimeout(() => { if (el.textContent === 'Saved') el.textContent = ''; }, 2000);
 }
 
-async function saveTextFields() {
+async function saveAll() {
   const fd = new FormData();
   fd.append('token', token);
-  fd.append('color_scheme_pref', document.getElementById('colorPicker').value);
-  fd.append('text_style_pref', document.getElementById('toneInput').value);
-  fd.append('target_audience', document.getElementById('audienceInput').value);
-  fd.append('style_notes', document.getElementById('notesInput').value);
+
+  const colorUnsure = document.getElementById('colorUnsure').checked;
+  fd.append('color_scheme_pref', colorUnsure ? '' : document.getElementById('colorPrimary').value);
+  fd.append('color_secondary', (!colorUnsure && document.getElementById('addSecondary').checked) ? document.getElementById('colorSecondary').value : '');
+  fd.append('color_accent', (!colorUnsure && document.getElementById('addAccent').checked) ? document.getElementById('colorAccent').value : '');
+
+  fd.append('text_style_pref', composeField('Tone', 'tone', 'toneOther'));
+  const ageStr = composeField('Age', 'age', 'audienceOther');
+  const incomeTags = getChecked('income');
+  const audienceOther = document.getElementById('audienceOther').value.trim();
+  let audienceParts = [];
+  const ageTags = getChecked('age');
+  if (ageTags.length) audienceParts.push(`Age: ${ageTags.join(', ')}`);
+  if (incomeTags.length) audienceParts.push(`Income: ${incomeTags.join(', ')}`);
+  if (audienceOther) audienceParts.push(`Other: ${audienceOther}`);
+  fd.append('target_audience', audienceParts.join('; '));
+
+  fd.append('style_notes', composeField('Features', 'feature', 'featureOther'));
+
   try {
     const res = await fetch(`${API}/builder/save`, { method: 'POST', body: fd });
     const data = await res.json();
-    ['colorStatus','toneStatus','audienceStatus','notesStatus'].forEach(id => showStatus(id, data.ok ? 'Saved' : 'Save failed'));
+    const status = data.ok ? 'Saved' : (data.error || 'Save failed');
+    ['colorStatus','toneStatus','audienceStatus','featureStatus'].forEach(id => showStatus(id, status));
   } catch {
-    ['colorStatus','toneStatus','audienceStatus','notesStatus'].forEach(id => showStatus(id, 'Save failed'));
+    ['colorStatus','toneStatus','audienceStatus','featureStatus'].forEach(id => showStatus(id, 'Save failed'));
   }
 }
 
 function debouncedSave() {
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(saveTextFields, 900);
+  saveTimer = setTimeout(saveAll, 900);
 }
 
-document.getElementById('colorPicker').addEventListener('input', (e) => {
-  document.getElementById('colorHex').textContent = e.target.value;
+document.getElementById('colorUnsure').addEventListener('change', (e) => {
+  document.getElementById('colorPickers').style.display = e.target.checked ? 'none' : 'block';
   debouncedSave();
 });
-['toneInput','audienceInput','notesInput'].forEach(id => {
-  document.getElementById(id).addEventListener('input', debouncedSave);
+document.getElementById('addSecondary').addEventListener('change', (e) => {
+  document.getElementById('secondaryRow').style.display = e.target.checked ? 'flex' : 'none';
+  debouncedSave();
 });
+document.getElementById('addAccent').addEventListener('change', (e) => {
+  document.getElementById('accentRow').style.display = e.target.checked ? 'flex' : 'none';
+  debouncedSave();
+});
+document.getElementById('colorPrimary').addEventListener('input', (e) => { document.getElementById('hexPrimary').textContent = e.target.value; debouncedSave(); });
+document.getElementById('colorSecondary').addEventListener('input', (e) => { document.getElementById('hexSecondary').textContent = e.target.value; debouncedSave(); });
+document.getElementById('colorAccent').addEventListener('input', (e) => { document.getElementById('hexAccent').textContent = e.target.value; debouncedSave(); });
+['toneOther','audienceOther','featureOther'].forEach(id => document.getElementById(id).addEventListener('input', debouncedSave));
 
 async function uploadLogo(e) {
   const file = e.target.files[0];
@@ -238,10 +360,40 @@ async function init() {
     const order = data.order;
     document.getElementById('heading').textContent = `${order.business_name}, tell us about your style`;
     document.getElementById('subLine').textContent = 'Fill this out whenever you have a few minutes — everything saves as you go.';
-    if (order.color_scheme_pref) { document.getElementById('colorPicker').value = order.color_scheme_pref; document.getElementById('colorHex').textContent = order.color_scheme_pref; }
-    if (order.text_style_pref) document.getElementById('toneInput').value = order.text_style_pref;
-    if (order.target_audience) document.getElementById('audienceInput').value = order.target_audience;
-    if (order.style_notes) document.getElementById('notesInput').value = order.style_notes;
+
+    if (order.color_scheme_pref) {
+      document.getElementById('colorPrimary').value = order.color_scheme_pref;
+      document.getElementById('hexPrimary').textContent = order.color_scheme_pref;
+    } else {
+      document.getElementById('colorUnsure').checked = true;
+      document.getElementById('colorPickers').style.display = 'none';
+    }
+    if (order.color_secondary) {
+      document.getElementById('addSecondary').checked = true;
+      document.getElementById('secondaryRow').style.display = 'flex';
+      document.getElementById('colorSecondary').value = order.color_secondary;
+      document.getElementById('hexSecondary').textContent = order.color_secondary;
+    }
+    if (order.color_accent) {
+      document.getElementById('addAccent').checked = true;
+      document.getElementById('accentRow').style.display = 'flex';
+      document.getElementById('colorAccent').value = order.color_accent;
+      document.getElementById('hexAccent').textContent = order.color_accent;
+    }
+
+    parseComposed(order.text_style_pref, 'tone', 'toneOther');
+
+    if (order.target_audience) {
+      const ageMatch = order.target_audience.match(/Age:\s*([^;]*)/);
+      if (ageMatch) setChecked('age', ageMatch[1].split(',').map(s => s.trim()).filter(Boolean));
+      const incomeMatch = order.target_audience.match(/Income:\s*([^;]*)/);
+      if (incomeMatch) setChecked('income', incomeMatch[1].split(',').map(s => s.trim()).filter(Boolean));
+      const otherMatch = order.target_audience.match(/Other:\s*(.*)$/s);
+      if (otherMatch) document.getElementById('audienceOther').value = otherMatch[1].trim();
+    }
+
+    parseComposed(order.style_notes, 'feature', 'featureOther');
+
     if (order.logo_url) document.getElementById('logoThumb').innerHTML = `<img src="${order.logo_url}">`;
     if (order.photo_urls && order.photo_urls.length) {
       document.getElementById('photosThumb').innerHTML = order.photo_urls.map(u => `<img src="${u}">`).join('');
