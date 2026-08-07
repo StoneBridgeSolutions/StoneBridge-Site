@@ -42,6 +42,7 @@ header{position:sticky;top:0;z-index:50;background:rgba(13,21,38,.92);backdrop-f
 .cta-row{display:flex;gap:16px;flex-wrap:wrap}
 .btn{display:inline-block;font-family:'Poppins',sans-serif;font-weight:600;font-size:1rem;padding:16px 34px;border-radius:12px;cursor:pointer;border:0;transition:.2s}
 .btn-gold{background:var(--gold);color:var(--navy)}.btn-gold:hover{background:var(--gold-soft);transform:translateY(-2px)}
+.btn-gold:disabled{opacity:.6;cursor:not-allowed;transform:none}
 .btn-ghost{background:transparent;color:var(--white);border:1px solid rgba(255,255,255,.35)}.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
 .hero-meta{display:flex;gap:36px;margin-top:56px;flex-wrap:wrap}
 .hero-meta div strong{display:block;font-family:'Playfair Display',serif;font-size:1.9rem;color:var(--white);font-weight:600}
@@ -84,6 +85,7 @@ label{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--
 input,textarea,select{width:100%;background:var(--navy-3);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:14px 16px;color:var(--white);font-family:'Poppins',sans-serif;font-size:1rem;margin-top:6px}
 input:focus,textarea:focus,select:focus{outline:2px solid var(--gold);outline-offset:1px;border-color:transparent}
 textarea{min-height:130px;resize:vertical}
+#orderMsg{font-size:.85rem;color:var(--grey);margin-top:4px}
 footer{border-top:1px solid rgba(255,255,255,.06);padding:44px 0;font-size:.85rem}
 .foot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:18px}
 .reveal{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}
@@ -286,17 +288,20 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:44px 0;font-size:.85re
     <div class="reveal">
       <div class="eyebrow">Start My Website</div>
       <h2 style="font-size:clamp(1.9rem,4vw,2.6rem);font-weight:600;margin:14px 0 18px">Tell us about your business today. Launch it this week.</h2>
-      <p>Fill this out and we'll reply within one business day with your build slot and a short list of what we need from you. No pressure, no sales calls unless you want one.</p>
+      <p>Fill this out and we'll take you straight to the next step — no waiting on a callback. Prefer to talk it through first? Call or email us instead, no pressure either way.</p>
     </div>
-    <form name="website-inquiry" method="POST" data-netlify="true" class="reveal">
-      <input type="hidden" name="form-name" value="website-inquiry">
+    <form id="orderForm" class="reveal">
       <div>
         <label for="f-name">Your name</label>
-        <input id="f-name" name="name" type="text" autocomplete="name" required>
+        <input id="f-name" name="contact_name" type="text" autocomplete="name" required>
       </div>
       <div>
         <label for="f-biz">Business name</label>
-        <input id="f-biz" name="business" type="text" autocomplete="organization" required>
+        <input id="f-biz" name="business_name" type="text" autocomplete="organization" required>
+      </div>
+      <div>
+        <label for="f-phone">Phone</label>
+        <input id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required>
       </div>
       <div>
         <label for="f-email">Email</label>
@@ -304,18 +309,19 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:44px 0;font-size:.85re
       </div>
       <div>
         <label for="f-pkg">Package</label>
-        <select id="f-pkg" name="package">
-          <option>Simple — 3 Pages $300</option>
-          <option selected>Standard — 5 Pages $400</option>
-          <option>Premium — 7 Pages $525</option>
-          <option>Not Sure Yet</option>
+        <select id="f-pkg" name="tier">
+          <option value="simple">Simple — 3 Pages $300</option>
+          <option value="standard" selected>Standard — 5 Pages $400</option>
+          <option value="premium">Premium — 7 Pages $525</option>
+          <option value="not_sure">Not Sure Yet</option>
         </select>
       </div>
       <div>
         <label for="f-msg">What does your business do?</label>
-        <textarea id="f-msg" name="message" placeholder="e.g. We're a detailing shop in Greensboro. We have a logo and photos but no website."></textarea>
+        <textarea id="f-msg" name="services" placeholder="e.g. We're a detailing shop in Greensboro. We have a logo and photos but no website."></textarea>
       </div>
-      <button class="btn btn-gold" type="submit">Request My Build Slot</button>
+      <button class="btn btn-gold" type="submit" id="orderSubmit">Start My Website</button>
+      <p id="orderMsg"></p>
     </form>
   </div>
 </section>
@@ -347,6 +353,26 @@ function dismiss(){dismissed=true;clearTimeout(nudgeTimer);tip.classList.remove(
 pill.addEventListener('click',dismiss);
 const contact=document.getElementById('contact');
 if(contact){new IntersectionObserver((es,obs)=>{es.forEach(e=>{if(e.isIntersecting){dismiss();obs.disconnect()}})},{threshold:.3}).observe(contact)}})();
+
+document.getElementById('orderForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const btn = document.getElementById('orderSubmit');
+  const msg = document.getElementById('orderMsg');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+  msg.textContent = '';
+  try {
+    const fd = new FormData(this);
+    const res = await fetch('https://api.stonebridgesolutions.io/website-order', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Something went wrong.');
+    window.location.href = data.redirect_url;
+  } catch (err) {
+    msg.textContent = err.message + ' — or call/email us directly.';
+    btn.disabled = false;
+    btn.textContent = 'Start My Website';
+  }
+});
 </script>
 </body>
 </html>
