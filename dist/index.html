@@ -78,6 +78,7 @@ section{position:relative;padding:96px 0}.sec-head{max-width:640px;margin-bottom
 .care{margin-top:30px;font-size:.92rem;padding:20px 26px;border:1px dashed rgba(217,178,61,.4);border-radius:12px}
 .care strong{color:var(--gold);font-weight:600}
 .care-price{display:inline-flex;align-items:baseline;gap:8px}
+.care-disclosure{font-size:.82rem;color:var(--grey);margin-top:10px;line-height:1.6}
 .work{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
 .work a{background:var(--navy-3);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:30px;transition:.2s;display:block}
 .work a:hover{border-color:var(--line);transform:translateY(-4px)}
@@ -89,9 +90,15 @@ label{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--
 input,textarea,select{width:100%;background:var(--navy-3);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:14px 16px;color:var(--white);font-family:'Poppins',sans-serif;font-size:1rem;margin-top:6px}
 input:focus,textarea:focus,select:focus{outline:2px solid var(--gold);outline-offset:1px;border-color:transparent}
 textarea{min-height:130px;resize:vertical}
+.checkbox-row{display:flex;align-items:flex-start;gap:12px;margin-top:4px}
+.checkbox-row input[type=checkbox]{width:auto;margin-top:4px;flex:0 0 auto;accent-color:var(--gold)}
+.checkbox-row label{font-size:.82rem;letter-spacing:0;text-transform:none;line-height:1.5;font-weight:300;color:var(--grey)}
+.checkbox-row a{color:var(--gold);text-decoration:underline}
 #orderMsg{font-size:.85rem;color:var(--grey);margin-top:4px}
 footer{border-top:1px solid rgba(255,255,255,.06);padding:44px 0;font-size:.85rem}
 .foot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:18px}
+.foot-legal{display:flex;gap:20px;font-size:.8rem}
+.foot-legal a{color:var(--grey);transition:color .2s}.foot-legal a:hover{color:var(--gold)}
 .reveal{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}
 .reveal.in{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
@@ -180,7 +187,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:44px 0;font-size:.85re
       </div>
     </div>
     <p class="reveal" style="margin-top:34px;font-size:.92rem;max-width:720px;padding:18px 24px;border:1px dashed rgba(217,178,61,.4);border-radius:12px">
-      <strong style="color:var(--gold);font-weight:600">How the clock works:</strong> your build timer is based on your chosen package &mdash; 48 hours, 1 week, or 10 days. It only runs while we're actively working. The clock pauses when we send your draft and waits for your response. Take a day, take a week &mdash; you're never rushed. Each revision round adds a couple of days, and we don't restart until you tell us to.
+      <strong style="color:var(--gold);font-weight:600">How the clock works:</strong> your build timer starts only after we receive your signed service agreement, initial payment, completed intake form, and all required materials. From that point it runs based on your package &mdash; 48 hours, 1 week, or 10 days. It pauses whenever the draft is in your hands and resumes when you respond. Each revision round adds a couple of days. You're never rushed.
     </p>
   </div>
 </section>
@@ -201,9 +208,9 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:44px 0;font-size:.85re
     </div>
     <div class="panel reveal">
       <h3>Why so fast?</h3>
-      <p>We build static websites &mdash; the same modern approach used by top tech companies. No database to hack, no updates to babysit, nothing to slow it down.</p>
-      <div class="big">&lt; 1s</div>
-      <p>Typical load time. Fast sites keep visitors, and Google ranks them higher. Your six-week WordPress site can't say that.</p>
+      <p>We build static websites &mdash; the same modern approach used by top tech companies. No website database to maintain, no plugins to update, nothing extra to slow it down.</p>
+      <div class="big">Fast</div>
+      <p>Static sites are built for speed. They load quickly on most connections and devices &mdash; and Google tends to rank faster sites higher than slower ones.</p>
     </div>
   </div>
 </section>
@@ -262,7 +269,8 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:44px 0;font-size:.85re
     <div class="care reveal">
       <strong>Care Plan &mdash; <span class="care-price">$35/mo <span class="was" style="font-size:.9rem">$50/mo</span></span></strong>
       <span class="save-badge" style="font-size:.68rem;vertical-align:middle;margin-left:6px">Save $15/mo</span>
-      Available exclusively to static site clients above. Hosting, security, and up to 2 content updates a month. Cancel anytime; your site is yours either way.
+      <span style="display:block;margin-top:6px">Available exclusively to static site clients above. Hosting, security, and up to 2 content updates a month.</span>
+      <span class="care-disclosure">The Care Plan is a recurring monthly subscription at $35/mo. Your card will be charged each month on your billing date until you cancel. You may cancel at any time before your next billing date by emailing <a href="mailto:carl@stonebridgesolutions.io" style="color:var(--gold)">carl@stonebridgesolutions.io</a> &mdash; no fees, no hassle. Your site files are always yours.</span>
     </div>
   </div>
 </section>
@@ -329,6 +337,10 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:44px 0;font-size:.85re
         <label for="f-msg">What does your business do?</label>
         <textarea id="f-msg" name="services" placeholder="e.g. We're a detailing shop in Greensboro. We have a logo and photos but no website."></textarea>
       </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="f-terms" name="terms_accepted" value="1" required>
+        <label for="f-terms">I have read and agree to the <a href="/terms" target="_blank">Terms of Use</a> and <a href="/service-agreement" target="_blank">Service Agreement</a>. I understand that my build timer starts only after StoneBridge receives my signed agreement, initial payment, completed intake, and required materials.</label>
+      </div>
       <button class="btn btn-gold" type="submit" id="orderSubmit">Start My Website</button>
       <p id="orderMsg"></p>
     </form>
@@ -338,7 +350,11 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:44px 0;font-size:.85re
   <div class="wrap foot">
     <div><div style="font-family:'Playfair Display',serif;font-weight:700;font-size:1.1rem;color:var(--white)">STONE<span style="color:var(--gold)">BRIDGE</span> <span style="font-family:'Poppins',sans-serif;font-weight:300;font-size:.7rem;letter-spacing:.4em;color:var(--grey)">SOLUTIONS</span></div></div>
     <div>Websites in 48 hours &middot; Triad Area, NC &middot; <a href="#contact" style="color:var(--gold)">Start My Website</a></div>
-    <div>&copy; 2026 StoneBridge Solutions</div>
+    <div class="foot-legal">
+      <a href="/terms">Terms of Use</a>
+      <a href="/privacy">Privacy Policy</a>
+      <span style="color:var(--grey)">&copy; 2026 StoneBridge Solutions</span>
+    </div>
   </div>
 </footer>
 <div class="action-bar" id="actionBar">
@@ -351,6 +367,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:44px 0;font-size:.85re
   </a>
 </div>
 <script>
+const TERMS_VERSION = '2026-08-07';
 function toggleNav(btn){const nav=document.getElementById('navLinks');const open=nav.classList.toggle('open');btn.setAttribute('aria-expanded',open)}
 document.querySelectorAll('#navLinks a').forEach(a=>a.addEventListener('click',()=>{document.getElementById('navLinks').classList.remove('open');document.querySelector('.burger').setAttribute('aria-expanded','false')}));
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
@@ -371,6 +388,8 @@ document.getElementById('orderForm').addEventListener('submit', async function(e
   msg.textContent = '';
   try {
     const fd = new FormData(this);
+    fd.append('terms_version', TERMS_VERSION);
+    fd.append('terms_accepted_at', new Date().toISOString());
     const res = await fetch('https://api.stonebridgesolutions.io/website-order', { method: 'POST', body: fd });
     const data = await res.json();
     if (!data.ok) throw new Error(data.error || 'Something went wrong.');
