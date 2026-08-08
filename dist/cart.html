@@ -18,8 +18,10 @@ h1{font-family:'Playfair Display',serif;color:var(--white);font-size:1.9rem;marg
 .card{background:var(--navy-2);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:28px;margin-bottom:18px;transition:opacity .3s ease}
 .card.hidden{display:none}
 .card h3{font-family:'Playfair Display',serif;color:var(--white);font-size:1.25rem;margin-bottom:6px}
-.card p{font-size:.92rem;margin-bottom:20px}
+.card p{font-size:.92rem;margin-bottom:12px}
 .card .price-tag{color:var(--gold);font-weight:600}
+.card .price-cross{text-decoration:line-through;opacity:.6;font-weight:300}
+.urgency{font-size:.82rem;color:var(--gold);font-weight:500;margin-bottom:16px;padding:8px 12px;border:1px solid rgba(217,178,61,.3);border-radius:8px;background:rgba(217,178,61,.07)}
 .btn-row{display:flex;gap:12px;flex-wrap:wrap}
 .btn{flex:1;min-width:140px;padding:14px 18px;border-radius:10px;border:0;font-family:'Poppins',sans-serif;font-weight:600;font-size:.95rem;cursor:pointer;transition:.15s}
 .btn-yes{background:var(--gold);color:var(--navy)}.btn-yes:hover{background:var(--gold-soft)}
@@ -53,16 +55,17 @@ h1{font-family:'Playfair Display',serif;color:var(--white);font-size:1.9rem;marg
   <div id="cards" style="display:none">
     <div class="card" id="careCard">
       <h3>Want us to host it, secure it, and keep it fresh?</h3>
-      <p>The Care Plan covers hosting, security, and up to 2 content updates a month for <span class="price-tag">$35/mo</span>. It only starts after your site launches — nothing charged today.</p>
+      <p>The Care Plan covers hosting, security, and up to 2 content updates a month. Commit today and lock in <span class="price-tag">$35/mo</span> starting when your site goes live &mdash; nothing charged now.</p>
+      <p class="urgency">&#9200; Lock-in pricing: $35/mo today &rarr; $50/mo if you add it later</p>
       <div class="btn-row">
-        <button class="btn btn-yes" onclick="answerCare(true)">Yes, add Care Plan</button>
-        <button class="btn btn-no" onclick="answerCare(false)">No thanks</button>
+        <button class="btn btn-yes" onclick="answerCare(true)">Yes, lock in $35/mo</button>
+        <button class="btn btn-no" onclick="answerCare(false)">No thanks &mdash; maybe later at $50/mo</button>
       </div>
     </div>
 
     <div class="card hidden" id="copyCard">
       <h3>Want us to write your website copy?</h3>
-      <p>If you don't have text ready for your pages, we'll write it for you — <span class="price-tag">+$75</span>, added to today's payment.</p>
+      <p>If you don't have text ready for your pages, we'll write it for you &mdash; <span class="price-tag">+$75</span>, added to today's payment.</p>
       <div class="btn-row">
         <button class="btn btn-yes" onclick="answerCopy(true)">Yes, add Copywriting</button>
         <button class="btn btn-no" onclick="answerCopy(false)">No thanks</button>
@@ -77,7 +80,7 @@ h1{font-family:'Playfair Display',serif;color:var(--white);font-size:1.9rem;marg
     <div class="line-item" id="copyLineItem" style="display:none"><span>Copywriting</span><span>+$75</span></div>
     <div class="line-item total"><span>Due today</span><span class="amt" id="totalAmt">$0</span></div>
     <div class="note" id="balanceNote"></div>
-    <div class="note" id="careNote" style="display:none">+ $35/mo Care Plan — billed after your site launches, not today</div>
+    <div class="note" id="careNote" style="display:none">+ $35/mo Care Plan &mdash; starts when your site goes live, not today</div>
     <button id="checkoutBtn" disabled onclick="goToCheckout()">Continue to Secure Checkout</button>
     <div id="msg"></div>
   </div>
@@ -103,7 +106,7 @@ function answerCare(yes) {
   careSelected = yes;
   careAnswered = true;
   const card = document.getElementById('careCard');
-  card.innerHTML = `<div class="answered"><span class="label">Care Plan</span><span class="value">${yes ? 'Added — $35/mo after launch' : 'Not added'}</span><button class="edit" onclick="location.reload()">change</button></div>`;
+  card.innerHTML = `<div class="answered"><span class="label">Care Plan</span><span class="value">${yes ? 'Locked in — $35/mo starting at launch' : 'Not added — available later at $50/mo'}</span><button class="edit" onclick="location.reload()">change</button></div>`;
   document.getElementById('copyCard').classList.remove('hidden');
   document.getElementById('summaryBar').classList.add('show');
   updateTotal();
