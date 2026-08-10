@@ -490,6 +490,55 @@ Mark all content gaps as [CONTENT NEEDED].
 
 ## STAGE 6 — CONTRACT GENERATION
 
+MAJOR DISCOVERY (Aug 10, 2026): this stage is much further along than the
+checklist below suggested. A full, real implementation already exists in
+/root/stonebridge-orders/docusign-service.js (356 lines) and is ACTIVELY
+FIRING on every order right now (sendAgreement() is called from
+/website-order in server.js, on every form submission). Investigated but
+did NOT modify anything below without Carl's input first — see urgent
+items.
+
+CONFIRMED ALREADY WORKING (not credited before):
+- [x] DocuSign fires immediately on form submit — sendAgreement() called
+      directly inside the /website-order handler.
+- [x] Dynamic agreement text — buildAgreementText(order, tierInfo) builds
+      a real "STONEBRIDGE SOLUTIONS INC. STANDARD SERVICE AGREEMENT" with
+      agreement number, effective date, both parties, Schedule A (product/
+      price/deposit/final payment/turnaround/revision allowance), and a
+      set of client-initial clauses (scope, payment/chargeback, deemed
+      acceptance, no guaranteed results, liability cap, NC law/Forsyth
+      County venue).
+- [x] Routing order — client (recipientId 1, routingOrder 1) signs first,
+      then StoneBridge/Carl (recipientId 2, routingOrder 2) signs second.
+      Matches the spec's intended order.
+
+URGENT -- FOUND, NOT FIXED, NEEDS CARL'S INPUT:
+- [ ] BUG: Carl's DocuSign signer name is hardcoded as "Carl Loser"
+      (docusign-service.js, sbSigner.name). This is going out on REAL
+      legal agreements to real clients right now, every time someone
+      submits the order form. Did not guess a replacement -- need the
+      correct name from Carl before touching this.
+- [ ] Auto-sign for Carl -- NOT implemented. Despite routingOrder placing
+      him second, he's a completely normal DocuSign signer who has to
+      manually open the email and click through to sign, same as any
+      client. No embedded/API signing flow exists. This is the opposite
+      of "server-side, no manual click" from the original spec.
+- [ ] ID verification on client signer -- NOT implemented. No
+      identityVerification / recipientAuthentication config anywhere in
+      docusign-service.js.
+- [ ] DocuSign Connect webhook -- does NOT exist. Only /docusign/auth,
+      /docusign/callback (OAuth), and /docusign/status exist -- nothing
+      listens for envelope-completed events at all.
+      CONSEQUENCE (important): because there's no completion webhook, and
+      because the /website-order redirect to cart.html (payment) fires
+      immediately on form SUBMIT rather than after signing completes, a
+      client can currently pay their deposit before their contract is
+      confirmed signed, or even without ever finishing signing at all.
+      This is the opposite of the "correct legal order" Stage 7 describes.
+      Not fixed -- this needs a real decision from Carl on the intended
+      behavior (block cart.html until signed? just track it for now?)
+      before building anything here.
+
 PRE-DOCUSIGN COLLECTION (confirm before generating)
 - [ ] Legal entity name
 - [ ] Legal registered agent address
