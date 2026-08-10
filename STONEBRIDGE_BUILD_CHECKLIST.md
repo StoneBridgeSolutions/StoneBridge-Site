@@ -1,13 +1,15 @@
 # STONEBRIDGE SOLUTIONS — FULL BUILD CHECKLIST
 Builder, Pipeline, Contracts, Payments — August 2026
-Last Updated: August 10, 2026
+Last Updated: August 10, 2026 (Stage 1 DB work + Stage 2 Stripe catalog completed by Claude)
 
 ## CONTEXT FOR AI
 - Full session transcript: /mnt/transcripts/ (check journal.txt for index)
 - Google Drive checklist: https://docs.google.com/document/d/1cYLWEckirk1GWiY7IpKju9-bN3mjsj-slSiZmMyRLuo/edit
 - GitHub repo: StoneBridgeSolutions/StoneBridge-Site (branch: main)
 - Server: srv1416856.hstgr.cloud (187.77.219.6)
-- Supabase project: hbxdzhzxznqegbdpgsqb
+- Supabase project: stonebridge-remote (xvzhsaivjbjlhzgckfkw) — CORRECTED Aug 10, 2026.
+  Original ID hbxdzhzxznqegbdpgsqb above was stale/wrong; verified against live
+  data (real test order, business_id 1cfbce29-2125-4c41-9a2d-12b4367c41a7).
 - API: /root/stonebridge-orders/server.js (PM2: stonebridge-orders, port 3005)
 - Site files: /root/stonebridge-marketing/dist/
 - DocuSign integration key: 1750125b-7e98-4495-9248-1199f390c33f (sandbox auth active)
@@ -23,25 +25,39 @@ then begin Stage 1 below.
 
 ---
 
+## ARCHITECTURE NOTE (added Aug 10, 2026)
+An intake system already existed in stonebridge-remote before this checklist:
+client_intake_tokens + client_intake_responses + intake_admin_config. Rather
+than build a second, competing intake_sessions/intake_links system as
+originally spec'd below, Stage 1 EXTENDED the existing tables instead. See
+Stage 1 checkboxes for exactly what was added.
+
 ## STAGE 1 — FOUNDATION & INFRASTRUCTURE ← START HERE
 Prerequisites everything else depends on
 
 - [x] Sign up for RapidAPI → Domains API Basic/Free subscribed
 - [x] Add RAPIDAPI_KEY to /root/stonebridge-orders/.env
 - [x] Add RAPIDAPI_DOMAIN_HOST to .env
-- [ ] Add INTAKE_MASTER_KEY (bcrypt hash) to .env for admin access
-- [ ] Create Supabase `intake_sessions` table:
-      id, order_id (nullable), first_name, email, password_hash (nullable),
-      progress (jsonb), completed (bool), created_at, updated_at
-- [ ] Create Supabase `intake_links` table:
-      id, token (uuid), first_name, email, order_id (nullable),
-      used (bool), created_at, expires_at
-- [ ] Add Supabase column: care_plan_early_commit boolean DEFAULT false
-      to website_orders table (run in Supabase SQL editor:
-      ALTER TABLE website_orders ADD COLUMN IF NOT EXISTS 
-      care_plan_early_commit boolean DEFAULT false;)
+- [ ] INTAKE_MASTER_KEY — OPEN DECISION, not done. An admin passcode already
+      exists in Supabase (intake_admin_config.passcode, plaintext, 1 row set).
+      Decide: keep DB-passcode approach as-is, or migrate to bcrypt hash in
+      .env as originally spec'd. Two auth systems should not coexist.
+- [x] intake_sessions equivalent — DONE Aug 10, 2026 (not built fresh — see
+      architecture note above). Extended existing client_intake_responses:
+      added password_hash (text, nullable), created_at (timestamptz).
+      Migration: extend_intake_tables_for_builder_flow
+- [x] intake_links equivalent — DONE Aug 10, 2026. Extended existing
+      client_intake_tokens: added order_id (uuid, FK -> website_orders.id),
+      first_name (text), email (text), expires_at (timestamptz).
+      Migration: extend_intake_tables_for_builder_flow
+- [x] care_plan_early_commit column — ALREADY EXISTED on website_orders
+      before this checklist was written (verified Aug 10, 2026, not newly
+      added). Checklist below was wrong to list this as pending.
 - [ ] Add nginx routes /intake/ and /admin/intake/ proxying to port 3005
+      — BLOCKED, needs Hostinger terminal (no VPS access available to Claude)
 - [ ] Update stonebridge-orders .env with all new Stripe price IDs (Stage 2)
+      — BLOCKED, needs Hostinger terminal. Full price ID list is in Stage 2
+      below, all confirmed live in Stripe as of Aug 10, 2026.
 
 ---
 
@@ -53,9 +69,12 @@ DEPOSIT PRICES (already created)
 - [x] Premium deposit $325 — price_1U2CrtJVEx5yNpj6MLvpUm1J
 
 FINAL BALANCE PRICES (pay in full)
-- [ ] Simple final balance ($175)
-- [ ] Standard final balance ($250)
-- [ ] Premium final balance ($325)
+- [x] Simple final balance ($175) — price_1U2CrYJVEx5yNpj6tC5tfQb6
+      (already existed pre-checklist, checklist wrongly listed as pending)
+- [x] Standard final balance ($250) — price_1U2CrmJVEx5yNpj6dGynwTve
+      (already existed pre-checklist)
+- [x] Premium final balance ($325) — price_1U2Cs0JVEx5yNpj6IFcWLJTk
+      (already existed pre-checklist)
 
 PAYMENT PLAN PRODUCTS (Stripe subscriptions, recurring monthly)
 Rules:
@@ -68,27 +87,41 @@ Rules:
 - Non-payment/cancellation: deposit non-refundable, site offline,
   IP reverted, domain reverted if StoneBridge-controlled
 
-- [ ] 3-month plan Stripe subscription product
-- [ ] 6-month plan Stripe subscription product
-- [ ] 12-month plan Stripe subscription product (dynamic per client)
+- [x] 3-month plan Stripe PRODUCT — prod_V36odufNAE6ZYd (created Aug 10, 2026)
+- [x] 6-month plan Stripe PRODUCT — prod_V36oBkir96qqTu (created Aug 10, 2026)
+- [x] 12-month plan Stripe PRODUCT — prod_V36ofleMllDou8 (created Aug 10, 2026)
+      NOTE: these are Products only, no fixed Price attached, since the
+      monthly amount depends on each client's remaining balance. Fee
+      formulas are stored in each product's metadata. server.js must
+      compute the amount and pass it via price_data at subscription
+      creation time — do not look up a pre-set price_id for these.
 
-ADD-ON PRICES (one-time)
-- [ ] Extra page 4th (+$100)
-- [ ] Extra page 6th (+$90)
-- [ ] Extra page 7+ each (+$80)
-- [ ] Extra section (+$35 each, after 5/page or after 15 on 1-page site)
-- [ ] Copywriting per page standard up to 5 sections ($25)
-- [ ] Copywriting per extra charged section (+$10)
-- [ ] Copywriting from URL — extra sections only ($5, standard sections free)
-- [ ] Full site copywriting + 5 extra sections package ($175, up to 7 pages)
+ADD-ON PRICES (one-time) — all created Aug 10, 2026
+- [x] Extra page 4th (+$100) — price_1U30ZGJVEx5yNpj6QrSE2dt3
+- [x] Extra page 6th (+$90) — price_1U30ZQJVEx5yNpj65fNlDbgh
+- [x] Extra page 7+ each (+$80) — price_1U30ZWJVEx5yNpj6d3BjBwSK
+- [x] Extra section (+$35 each, after 5/page or after 15 on 1-page site)
+      — price_1U30ZeJVEx5yNpj67CDX1Cnt (also reused for 1-page 16+ below)
+- [x] Copywriting per page standard up to 5 sections ($25)
+      — price_1U30ZlJVEx5yNpj6LDx0da5M
+- [x] Copywriting per extra charged section (+$10)
+      — price_1U30ZsJVEx5yNpj69yOLJvrD
+- [x] Copywriting from URL — extra sections only ($5, standard sections free)
+      — price_1U30ZzJVEx5yNpj6GcrwTehL
+- [x] Full site copywriting + 5 extra sections package ($175, up to 7 pages)
+      — price_1U30a6JVEx5yNpj65ZionKcW
       Suggested at billing if individual total exceeds $175, shows savings.
       One or the other — not combinable with individual.
-- [ ] Logo creation ($35 base, 2 revisions included, +$20 each after)
+- [x] Logo creation ($35 base, 2 revisions included) — price_1U30aDJVEx5yNpj6O31Pb8gs
+- [x] Logo extra revision (+$20 each after 2) — price_1U30aKJVEx5yNpj6nLnlN2ke
       2 color PNG files, transparent background, client owns rights
-- [ ] 1-page site extra sections 16+ ($35 each, first 15 included in $350)
+- [x] 1-page site extra sections 16+ ($35 each) — reuses Extra Section price
+      above (price_1U30ZeJVEx5yNpj67CDX1Cnt), same amount, no separate price
+      needed
 - [x] Care Plan early commit ($35/mo) — price_1U2CutJVEx5yNpj6wXAvVa02
 - [x] Care Plan standard ($50/mo) — price_1U2CueJVEx5yNpj6TNlYscQL
-- [ ] Third-party integrations: custom quote only, no fixed price
+- [x] Third-party integrations: custom quote only, no fixed price (correct
+      as-is, no Stripe object needed)
 
 ---
 
@@ -320,6 +353,8 @@ Correct legal order:
 ---
 
 ## STAGE 8 — STRIPE CUSTOMER PORTAL & CARE PLAN
+(Verified Aug 10, 2026: zero portal configurations exist on the live Stripe
+account — this stage is genuinely untouched, not just unchecked.)
 - [ ] Enable Stripe Customer Portal (allow cancel, update payment, view invoices)
 - [ ] Add portal link to post-launch client email
 - [ ] Enable Stripe dunning emails (Settings → Billing → Subscriptions)
