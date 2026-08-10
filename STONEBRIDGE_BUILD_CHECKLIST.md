@@ -392,12 +392,51 @@ STEP 7 — Pricing Summary & Submit
 ---
 
 ## STAGE 5 — OUTPUT GENERATION
-What gets created on submit
+BUILT Aug 10, 2026 — tested live end-to-end against the real test order,
+confirmed the DB update happened correctly and no send errors in logs.
 
-- [ ] Supabase: mark completed, store JSON, link order_id if pipeline client
-- [ ] Email to Carl: formatted HTML with all answers + pricing summary
-- [ ] Markdown summary: organized by step, emailed as .md attachment
-- [ ] AI prompt .txt file (dynamic, paste directly into any AI):
+- [x] Supabase: mark completed
+      Already existed (status='building', building_started_at,
+      builder_completed_at) — unchanged, just confirmed still correct.
+- [x] Email to Carl: formatted plain-text with all answers + pricing summary
+      DONE — new /root/stonebridge-orders/output-generator.js exports
+      buildAiPrompt() and buildMarkdownSummary(). /builder/complete now
+      selects every builder field (business/legal/domain/terms/colors/
+      tone/audience/etc, added earlier this session) and builds a real
+      email body: package + price, add-ons, contact info, business
+      description, goal, audience, colors, tone, features, domain status,
+      terms/privacy choice, legal entity info. NOT HTML — plain text
+      (matches the existing email style used everywhere else in this
+      codebase; no HTML template system exists here, wasn't worth
+      introducing one for a single internal email).
+- [x] Markdown summary: organized by section, emailed as .md attachment
+      DONE — buildMarkdownSummary() in output-generator.js, attached to
+      the completion email as {business-name}-summary.md.
+- [x] AI prompt .txt file (dynamic, paste directly into any AI)
+      DONE — buildAiPrompt() in output-generator.js, attached as
+      {business-name}-ai-prompt.txt. Follows the spec format below as
+      closely as the available data allows.
+      HONEST GAP: the PAGES section of the spec format (page-by-page
+      structure, sections, per-page copywriting) can't be populated —
+      the builder never collects page/site-structure data (this was
+      explicitly flagged as deferred scope earlier in this session, see
+      Stage 4 notes). The generated prompt marks this section
+      "[CONTENT NEEDED -- page/section structure not yet collected]"
+      rather than fabricating a fake structure, per the spec's own
+      "mark all content gaps as [CONTENT NEEDED]" instruction.
+      Also not populated: INSPIRATION (URLs), Avoid list, Font selection —
+      none of these are fields the builder currently collects either.
+
+IMPORTANT FINDING WHILE TESTING (Aug 10, 2026): ALERT_EMAILS in .env is
+set to "carl@stonebridgesolutions.io,jared@triadlandworx.com" — every
+completion notification (including my live test of this feature) goes to
+BOTH addresses. jared@triadlandworx.com appears to be an actual client
+(Triad Land WorX), not a StoneBridge team member. My test call sent a
+builder-completion email with attachments (containing "Test Business LLC"
+test data) to that address — it already happened, can't be unsent. Did
+NOT touch this value since I don't know if it's intentional (maybe Jared
+has some other role) or a leftover misconfiguration — Carl needs to check
+this directly.
 
 FORMAT:
 Create a [X]-page static website for [Business Name], a [business type]
