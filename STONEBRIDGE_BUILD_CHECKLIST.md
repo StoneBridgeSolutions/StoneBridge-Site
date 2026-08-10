@@ -520,21 +520,50 @@ Correct legal order:
           Invoice history + payment method update enabled, cancellation
           BUTTON REMOVED (subscription_cancel.enabled = false). Verified
           both via API after saving.
-      REMAINING WORK (not done, needs VPS code):
-        1. server.js must pass the correct `configuration` ID when creating
-           a portal session — Default for Care Plan customers, the Payment
-           Plan config for installment customers. No code exists for this
-           yet; without it every customer gets whichever config is default.
-        2. Disabling the cancel button does NOT create "remaining balance
-           due in full on cancellation" — that has no Stripe dashboard
-           setting. Needs a webhook handler (customer.subscription.deleted
-           or an admin-triggered cancel endpoint) that immediately
-           generates + sends an invoice for the unpaid remaining balance
-           when a payment-plan subscription ends. Not built yet. Until
-           built, payment-plan clients who want to cancel should go through
-           Carl manually (no self-serve path exists for them at all right
-           now, by design).
-- [ ] Add portal link to post-launch client email
+- [x] server.js portal session creation — BUILT Aug 10, 2026 (this was a
+      real gap, not just a config-passing bug — no portal code existed at
+      all before this). Built:
+        - GET /portal?token=X — looks up the order by builder_link_token,
+          reads stripe_customer_id, picks the Care Plan or Payment Plan
+          config based on whether care_plan_stripe_subscription_id is set,
+          creates the Stripe billing portal session, redirects. Tested live
+          — confirmed real 302 redirect to a genuine billing.stripe.com
+          session URL using a real test Stripe customer.
+        - New nginx route: `location = /portal` -> port 3005.
+      DEEPER GAP FOUND AND FIXED: there was no stripe_customer_id column
+      and no code anywhere that ever captured a Stripe customer ID. Care
+      Plan signups go through hardcoded, generic Stripe Payment Links
+      (CARE_PLAN_EARLY_LINK / CARE_PLAN_STANDARD_LINK in server.js) with no
+      reference back to the order at all. Fixed by:
+        - Added stripe_customer_id and care_plan_confirmed_at columns to
+          website_orders.
+        - Extended webhook-handler.js: checkout.session.completed events
+          with session.mode === 'subscription' are now matched to an order
+          by customer email (best available correlation signal given the
+          Payment Link has no client_reference_id), which stores
+          stripe_customer_id + care_plan_stripe_subscription_id and sends a
+          confirmation email containing the portal link.
+      CAVEAT: email-match correlation isn't bulletproof — if a client pays
+      with a different email than what's on their order, this silently
+      fails to link (logs an error server-side, no customer-facing
+      breakage, but their stripe_customer_id won't get captured). A more
+      robust fix would be Stripe Payment Links with a `client_reference_id`
+      or per-order Checkout Sessions instead of static links — bigger
+      change, not done here.
+- [ ] "Remaining balance due in full on cancellation" for payment plans —
+      STILL NOT BUILT. Disabling the cancel button (done above) stops
+      self-serve cancellation but doesn't create this behavior — that has
+      no Stripe dashboard setting. Needs a webhook handler
+      (customer.subscription.deleted, or an admin-triggered cancel
+      endpoint) that immediately generates + sends an invoice for the
+      unpaid remaining balance when a payment-plan subscription ends. Until
+      built, payment-plan clients who want to cancel go through Carl
+      manually (no self-serve path exists for them at all, by design).
+- [x] Add portal link to post-launch client email
+      DONE as part of the work above — the Care Plan confirmation email
+      (new, sent from the new subscription webhook handler) includes the
+      portal link. There was no separate distinct "post-launch" email to
+      add this to; this is the natural point it belongs.
 - [x] Enable Stripe dunning emails (Settings → Billing → Subscriptions)
       DONE Aug 10, 2026 — "card payments fail" and "bank debit payments fail"
       customer email toggles turned on, verified persisted after reload.
