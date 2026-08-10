@@ -198,7 +198,44 @@ Generate intake links manually for off-pipeline clients (name + email only)
 
 ---
 
+## BUILDER UX REBUILT (Aug 10, 2026)
+Before working through the Stage 4 spec below (which describes the original
+8-step design), note that builder.html was rebuilt into a real one-card-
+per-screen wizard on the LIVE system (not the spec below, which predates
+this and is kept for field-content reference only). Built and verified live
+against the real order in website_orders:
+  - Each existing section (Colors, Tone, Audience, Features, Business,
+    Legal, Domain, Terms, Timeline, Logo, Photos — 11 total) is now its own
+    full-screen card, one visible at a time.
+  - Top nav bar with 11 clickable pills, jump to any section anytime.
+    Visited sections show dimmed/gold; current section highlighted solid gold.
+  - Back / Next buttons at the fixed bottom bar. Back hidden on card 1.
+  - "I'm Done — Start My Build" only replaces Next once ALL 11 cards have
+    been visited AND you're on the last one. If you reach the last card
+    without visiting everything, the button reads "Next unanswered ->" and
+    jumps to the first unvisited card instead.
+  - Removed the "This starts your 48-hour build clock" line from under the
+    done button per Carl's request (the JS confirm() popup before
+    submission was left in place as a safety check, not requested for
+    removal).
+  - <select> dropdowns restyled to match the dark navy/gold theme (were
+    unstyled browser defaults before) — custom gold chevron icon, dark
+    background, proper focus states.
+  - Personalization: hints on 6 of the 11 cards (Colors, Features,
+    Business, Legal, Domain, Timeline) now dynamically read the client's
+    actual business_name and first name (from contact_name) instead of
+    generic copy — e.g. "Should Test Business LLC have any of these, Test?"
+    Requires contact_name to be added to the /builder/status select
+    (done — was previously not selected).
+  - All saves still go through the same /builder/save whitelist and
+    website_orders columns as before -- zero changes to the backend data
+    model or field mapping, only presentation/navigation.
+  - Full backups kept on server: /root/claude-work/builder.html.backup-*
+    and /root/claude-work/server.js.backup-20260810.
+
 ## STAGE 4 — BUILDER FORM
+Original design spec (kept for field-content reference; superseded in UX
+by the stepper rebuild above, which uses the same fields/logic):
 Prompt-by-prompt intake. Auto-save 8 seconds after last keystroke.
 
 STEP 0 — Link Validation & Resume
