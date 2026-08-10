@@ -184,17 +184,73 @@ ADD-ON PRICES (one-time) — all created Aug 10, 2026
 ---
 
 ## STAGE 3 — ADMIN LINK GENERATOR
-Generate intake links manually for off-pipeline clients (name + email only)
+BUILT Aug 10, 2026 — real, live, tested end-to-end (create link -> real
+website_orders row -> real working builder.html link, verified in browser).
+Uses website_orders directly, NOT a separate intake_links table (see
+architecture note above — this is the extend-not-duplicate decision).
+Auth reuses the existing x-admin-secret header pattern already used by
+/admin/approve (not a new bcrypt system).
 
-- [ ] Build /admin/intake page — bcrypt master key protected
-- [ ] Form: first name + email → UUID token → store in intake_links table
-- [ ] Generated link: stonebridgesolutions.io/builder?token=UUID
-- [ ] Show link on screen (copy button) + auto-email to client
-- [ ] Client email: "Hi [First Name], here's your website builder link: [link].
-      It saves automatically so pick up where you left off anytime."
-- [ ] Admin dashboard: all sessions — name, email, progress %, last active, completed
-- [ ] Master key: read access to ALL sessions regardless of client password
-- [ ] Works for pipeline clients (order_id present) AND off-pipeline (no order_id)
+- [x] Build /admin page — protected by ADMIN_SECRET passcode (matches
+      existing /admin/approve auth pattern, not bcrypt-hashed since that's
+      not how the existing admin auth works; passcode entered once, kept in
+      sessionStorage for the tab). Live at stonebridgesolutions.io/admin.html
+- [x] Form: first name + business name (optional) + email -> creates a real
+      website_orders row -> auto-generated builder_link_token (DB default,
+      not a separate UUID/table) -> deposit_paid set true immediately since
+      this is for clients Carl is handling directly, so the link works right
+      away without a separate payment step.
+- [x] Generated link: stonebridgesolutions.io/builder.html?token=... (shown
+      on screen with a copy button, exactly as built)
+- [ ] Auto-email to client — NOT built. Link is shown + copyable, but
+      nothing sends it automatically. Carl currently has to copy/paste and
+      send it himself.
+- [x] Admin dashboard: all sessions listed — business, contact, email,
+      deposit status, progress (Not started / In progress / Submitted based
+      on builder_last_saved_at / builder_completed_at), created date, copy
+      link button per row. Refresh button included.
+- [x] Passcode-gated access to all sessions (not client-password-gated,
+      since there's no per-client password in this system)
+- [x] Works for both pipeline clients (real orders, already have a token)
+      and off-pipeline (created here) — same table, same mechanism.
+
+New backend routes added to server.js (both tested live):
+  POST /admin/create-link — creates the order, returns the link
+  GET /admin/orders — lists all orders for the dashboard table
+Both protected by the same x-admin-secret check as /admin/approve.
+New nginx location block added: /admin/ -> proxy to port 3005 (needed —
+didn't exist before, confirmed via 404 test, fixed, verified working).
+Found and fixed a real CORS bug in the process: server.js's
+Access-Control-Allow-Headers only allowed "Content-Type", which silently
+blocked the x-admin-secret header on every cross-subdomain request
+(admin.html is served from stonebridgesolutions.io, API is on
+api.stonebridgesolutions.io). Fixed to allow both headers.
+
+FIX (Aug 10, 2026, after Carl reviewed the live page): the "I'm not sure —
+surprise us with the whole palette" checkbox on the Colors card was
+defaulting to CHECKED for any new client (init() set colorUnsure.checked =
+true and hid the color pickers whenever color_scheme_pref was empty).
+Removed that default — the checkbox now starts unchecked and the color
+pickers are visible from the start, same as a first-time visitor would
+expect, rather than pre-selecting "unsure" for them. Verified live with a
+fresh order (no saved color pref).
+
+FEATURE ADDED (Aug 10, 2026): proper payment-gate page. Previously, an
+unpaid order just saw a raw "Payment not yet confirmed for this order."
+error string with no way to actually pay. Now /builder/status returns
+business_name, contact_name, and stripe_deposit_link on the 403 response,
+and builder.html renders a full branded gate screen (matching the site's
+navy/gold theme) with the business name, a clear explanation, and a real
+"Pay Deposit" button linking straight to that order's actual Stripe
+deposit link. If no stripe_deposit_link exists on the order, the button is
+hidden and a "Contact us" fallback message shows instead — verified both
+paths live. This completely supersedes the builder form; no card content
+is reachable until deposit_paid is true.
+
+NOT done / explicitly deferred: file dist/checklist.html exists (0 bytes,
+untouched, not linked anywhere) — did NOT assume it was meant for this and
+build into it, since there's no way to confirm what Carl intended it for.
+Built a clearly-named dist/admin.html instead.
 
 ---
 
