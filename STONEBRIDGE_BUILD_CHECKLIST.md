@@ -437,6 +437,11 @@ test data) to that address — it already happened, can't be unsent. Did
 NOT touch this value since I don't know if it's intentional (maybe Jared
 has some other role) or a leftover misconfiguration — Carl needs to check
 this directly.
+RESOLVED same day, per Carl: removed jared@triadlandworx.com from
+ALERT_EMAILS (now just carl@stonebridgesolutions.io) and from the unused
+NOTIFY_EMAIL_3 var (found while fixing this -- not referenced by any code
+anywhere, dead config, commented out rather than deleted). Restarted,
+confirmed clean, verified no other occurrence of his email in .env.
 
 FORMAT:
 Create a [X]-page static website for [Business Name], a [business type]
