@@ -32,6 +32,27 @@ than build a second, competing intake_sessions/intake_links system as
 originally spec'd below, Stage 1 EXTENDED the existing tables instead. See
 Stage 1 checkboxes for exactly what was added.
 
+The RPC functions backing this system (create_intake_link, get_intake_link,
+list_intake_links, revoke_intake_link, change_intake_passcode,
+save_intake_draft, submit_intake) were verified as real, working logic —
+not stubs. create_intake_link/get_intake_link/list_intake_links were updated
+Aug 10, 2026 to actually use the new order_id/first_name/email/expires_at
+columns (they weren't wired in originally). get_intake_link now also
+enforces expiry. Passcode check is plaintext SQL comparison inside each
+SECURITY DEFINER function, not bcrypt/RLS — functionally sound (anon can
+call the function but not read data without the right passcode) but weaker
+than the bcrypt-in-.env approach originally spec'd. Still an open decision,
+see INTAKE_MASTER_KEY line below.
+
+TABLE CLEANUP (Aug 10, 2026): Removed 11 unused tables + 1 view related to
+Retell/voice-agent and phone/CRM-log features that are no longer part of
+the plan: agent_intake_fields, call_minute_logs, agent_free_minutes,
+voice_agent_setup_requests, retell_agents, voice_agents, voice_agent_setups,
+retell_logs, crm_logs, phone_numbers, ai_phone_agents, plus the
+call_minutes_monthly view. All had 0 rows; no data was lost. Confirmed via
+Supabase advisors afterward that nothing else references the dropped
+objects.
+
 ## STAGE 1 — FOUNDATION & INFRASTRUCTURE ← START HERE
 Prerequisites everything else depends on
 
@@ -53,11 +74,42 @@ Prerequisites everything else depends on
 - [x] care_plan_early_commit column — ALREADY EXISTED on website_orders
       before this checklist was written (verified Aug 10, 2026, not newly
       added). Checklist below was wrong to list this as pending.
-- [ ] Add nginx routes /intake/ and /admin/intake/ proxying to port 3005
-      — BLOCKED, needs Hostinger terminal (no VPS access available to Claude)
-- [ ] Update stonebridge-orders .env with all new Stripe price IDs (Stage 2)
-      — BLOCKED, needs Hostinger terminal. Full price ID list is in Stage 2
-      below, all confirmed live in Stripe as of Aug 10, 2026.
+- [x] Update stonebridge-orders .env with all new Stripe price IDs (Stage 2)
+      DONE Aug 10, 2026 — accessed VPS directly via Hostinger's browser web
+      terminal (bos.hostingervps.com), not just given as instructions.
+      Backed up .env first (.env.backup-20260810). Appended 20 Stripe env
+      vars (all price/product/portal-config IDs from Stage 2 + Stage 8).
+      Restarted stonebridge-orders via pm2 — confirmed clean restart,
+      "injected env (100)" (up from 78), running on port 3005, no errors.
+- [x] Add nginx routes /intake/ and /admin/intake/ proxying to port 3005
+      CORRECTED, not done as originally spec'd — this was based on a wrong
+      architecture assumption. Checked the actual frontend
+      (/root/stonebridge-marketing): it's a React SPA. Routes /intake,
+      /intake/voice-ai, /intake/intake-forms already exist client-side in
+      App.jsx. nginx's existing `location / { try_files $uri $uri/ $uri.html
+      /index.html; }` catch-all ALREADY serves any client-side route,
+      including a future /admin/intake — no new nginx config needed, ever,
+      for this. server.js (port 3005) has ZERO intake-related routes and
+      isn't involved in this flow at all — the frontend is meant to call
+      Supabase RPCs directly via the Supabase JS client, not through
+      server.js.
+      IMPORTANT GAP FOUND: Intake.jsx (209 lines) is just a menu/chooser
+      page. IntakeForms.jsx is only 24 lines — a stub, not a real form.
+      Neither calls submit_intake/save_intake_draft/get_intake_link or any
+      Supabase RPC. Despite the backend RPC functions being solid (see
+      architecture note above), the actual client-facing builder form does
+      NOT functionally exist yet. Same is true for /admin/intake — no route
+      or page exists for it at all. Stage 3 and Stage 4 need real frontend
+      build work, not just wiring.
+- [ ] BUG FOUND, NOT FIXED (Aug 10, 2026): .env has STRIPE_PUBLISHABLE_KEY
+      defined TWICE — line ~117 is the live key (pk_live_...), line ~121 is
+      a test key (pk_test_...). The second definition silently overrides
+      the first when the .env is parsed, meaning the live site may
+      currently be sending the TEST publishable key to the Stripe.js
+      checkout frontend while the backend uses the live secret key — a
+      mismatch that could be breaking real customer payments right now.
+      Did not touch this without asking Carl first. Needs a decision: which
+      line to remove/comment out.
 
 ---
 
@@ -86,6 +138,12 @@ Rules:
   ((remaining - $250) * 1.15) / 12 per month
 - Non-payment/cancellation: deposit non-refundable, site offline,
   IP reverted, domain reverted if StoneBridge-controlled
+- CANCELLATION RULE (added Aug 10, 2026): payment plans cannot be
+  self-serve cancelled by the client — cancelling a payment plan (for
+  services already built/completed) makes the full remaining balance
+  due immediately, not just stops future installments. Care Plan
+  (ongoing service) remains cancellable by the client anytime, no
+  penalty, standard at-period-end behavior.
 
 - [x] 3-month plan Stripe PRODUCT — prod_V36odufNAE6ZYd (created Aug 10, 2026)
 - [x] 6-month plan Stripe PRODUCT — prod_V36oBkir96qqTu (created Aug 10, 2026)
@@ -307,6 +365,10 @@ DYNAMIC AGREEMENT FIELDS
 - [ ] Payment plan terms: monthly amount, duration, fee, non-payment clause
       Non-payment: deposit non-refundable, site offline, IP reverted,
       domain reverted if StoneBridge-controlled
+      Cancellation: client cannot self-serve cancel a payment plan (added
+      Aug 10, 2026); cancelling makes the full remaining balance due
+      immediately since the service was already built. This must be
+      spelled out explicitly in the agreement, not just enforced in Stripe.
 - [ ] Add-ons contracted
 - [ ] Care Plan terms (if selected)
 - [ ] Legal entity info + addresses
@@ -353,12 +415,39 @@ Correct legal order:
 ---
 
 ## STAGE 8 — STRIPE CUSTOMER PORTAL & CARE PLAN
-(Verified Aug 10, 2026: zero portal configurations exist on the live Stripe
-account — this stage is genuinely untouched, not just unchecked.)
-- [ ] Enable Stripe Customer Portal (allow cancel, update payment, view invoices)
+- [x] Enable Stripe Customer Portal (allow cancel, update payment, view invoices)
+      DONE Aug 10, 2026, then REFINED same day per business rule: payment
+      plans (installments for already-completed builds) must NOT be
+      self-serve cancellable; Care Plan (ongoing service) can be cancelled
+      anytime. Two separate portal configurations now exist:
+        - Default (bpc_1U31N7JVEx5yNpj6mYsch7Gn) — for CARE PLAN customers.
+          Cancel enabled, at period end, reason collection on.
+        - "Payment Plan Customers (no self-serve cancel)"
+          (bpc_1U31T8JVEx5yNpj6clAqxm6w) — for 3/6/12-MONTH PLAN customers.
+          Invoice history + payment method update enabled, cancellation
+          BUTTON REMOVED (subscription_cancel.enabled = false). Verified
+          both via API after saving.
+      REMAINING WORK (not done, needs VPS code):
+        1. server.js must pass the correct `configuration` ID when creating
+           a portal session — Default for Care Plan customers, the Payment
+           Plan config for installment customers. No code exists for this
+           yet; without it every customer gets whichever config is default.
+        2. Disabling the cancel button does NOT create "remaining balance
+           due in full on cancellation" — that has no Stripe dashboard
+           setting. Needs a webhook handler (customer.subscription.deleted
+           or an admin-triggered cancel endpoint) that immediately
+           generates + sends an invoice for the unpaid remaining balance
+           when a payment-plan subscription ends. Not built yet. Until
+           built, payment-plan clients who want to cancel should go through
+           Carl manually (no self-serve path exists for them at all right
+           now, by design).
 - [ ] Add portal link to post-launch client email
-- [ ] Enable Stripe dunning emails (Settings → Billing → Subscriptions)
-- [ ] Enable Smart Retries
+- [x] Enable Stripe dunning emails (Settings → Billing → Subscriptions)
+      DONE Aug 10, 2026 — "card payments fail" and "bank debit payments fail"
+      customer email toggles turned on, verified persisted after reload.
+- [x] Enable Smart Retries
+      ALREADY ENABLED (found pre-configured, not newly set) — Smart Retries
+      selected over Custom retries, up to 8 attempts within 2 weeks.
 
 ---
 
