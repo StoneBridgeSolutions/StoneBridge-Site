@@ -372,6 +372,36 @@ STEP 4 — Domain
 - [ ] "Would you like StoneBridge to register and manage your domain?"
       Yes / No / Already handled
 
+LIVE STATUS (Aug 10, 2026): "Check Availability" button built and live on
+the Domain card. Per Carl's direction, chose "try several based on what
+they typed" over relying on the API's own suggestion feature -- more
+predictable, more controllable, and works with any single-domain-check
+endpoint shape rather than depending on a specific suggestions feature
+that may not exist on this API tier. Behavior: if the client typed a
+domain with a TLD, checks that exact domain plus 3 alternate TLDs; if they
+typed just a name, checks it against 5 common TLDs (.com/.net/.co/.org/
+.biz). Full pipeline built and tested live: button, results display
+(green Available / red Taken / grey Couldn't check badges), new POST
+/domain-check backend route, new nginx location block (this was missing
+at first and caused a real "Failed to fetch" -- caught and fixed during
+live testing, not shipped broken).
+BLOCKED on one piece: the actual RapidAPI call. checkDomainAvailability()
+in server.js is a clearly isolated stub -- tried roughly 18 different
+endpoint path/method guesses against the live domains-api.p.rapidapi.com
+API (GET and POST, various path conventions) and none matched; stopped
+guessing rather than keep hammering a live third-party API on a possibly-
+metered key. Until the real endpoint is confirmed (logged on the Google
+Drive to-do list -- needs Carl to check the RapidAPI dashboard Endpoints
+tab), the feature degrades gracefully: every check shows "Couldn't check"
+with a "Domain checking is being connected -- check back soon" note,
+verified this looks intentional rather than broken. Once the real
+endpoint is known, filling in checkDomainAvailability() is the only
+remaining work -- everything else (parsing, batching, UI, error handling)
+is done.
+NOT DONE: price display (+10% markup), suggestions-on-unavailable, saving
+up to 5 fallback preferences -- deferred until the base check works, and
+some of these depend on data the API response format will determine.
+
 STEP 5 — Site Structure & Pages
 - [ ] Package (pre-selected from order if available):
       Simple 1-page / Simple 3-page / Standard 5-page / Premium 7-page
