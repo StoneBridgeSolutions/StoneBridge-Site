@@ -253,6 +253,7 @@ input[type=text]{margin-bottom:12px}
     <option value="yes">Yes</option>
     <option value="no">No / not yet</option>
   </select>
+  <div id="legalEntityDetails" style="display:none;margin-top:10px">
   <input type="text" id="legalEntityName" placeholder="Legal entity name (or your full legal name if not yet registered)">
   <input type="text" id="legalMailingAddress" placeholder="Registered / mailing address">
   <input type="text" id="ein" placeholder="EIN (optional)">
@@ -260,6 +261,7 @@ input[type=text]{margin-bottom:12px}
     <option value="">Your relationship to the business</option>
     <option>Owner</option><option>Officer</option><option>Authorized Agent</option><option>Member</option><option>Other</option>
   </select>
+  </div>
   <div class="field-status" id="legalStatus"></div>
 </div>
 </div>
@@ -358,10 +360,28 @@ input[type=text]{margin-bottom:12px}
 <div class="card" id="card10" data-step="10">
 <div class="section">
       <label class="title">Logo</label>
-      <div class="upload-box">
-        <input type="file" id="logoInput" accept="image/*">
-        <div class="thumbs" id="logoThumb"></div>
-      </div>
+  <p class="hint">Do you have a logo ready to upload, or do you need one made?</p>
+  <div class="check-grid" style="margin-bottom:12px">
+    <label><input type="radio" name="logoChoice" id="logoUpload" value="upload"> I have a logo — upload it</label>
+    <label><input type="radio" name="logoChoice" id="logoCreate" value="create"> I need one made <span style="color:var(--grey);font-size:.78rem">(+$35, 2 revisions)</span></label>
+    <label><input type="radio" name="logoChoice" id="logoNone" value="none" checked> Don’t have one yet — proceed without</label>
+  </div>
+  <div id="logoUploadBox" style="display:none">
+    <div class="upload-box">
+      <input type="file" id="logoInput" accept="image/*">
+      <div class="thumbs" id="logoThumb"></div>
+    </div>
+  </div>
+  <label class="title" style="margin-top:20px">Favicon</label>
+  <p class="hint">The small icon shown in browser tabs. If you have a logo, we’ll use that — or you can upload a custom one.</p>
+  <div class="check-grid">
+    <label><input type="radio" name="faviconChoice" id="faviconLogo" value="logo" checked> Use my logo</label>
+    <label><input type="radio" name="faviconChoice" id="faviconSB" value="sb"> StoneBridge chooses</label>
+    <label><input type="radio" name="faviconChoice" id="faviconUpload" value="upload"> Upload a custom one</label>
+  </div>
+  <div id="faviconUploadBox" style="display:none;margin-top:8px">
+    <input type="file" id="faviconInput" accept="image/*,.ico">
+  </div>
       <div class="field-status" id="logoStatus"></div>
     </div>
 </div>
@@ -596,6 +616,9 @@ async function saveAll() {
   fd.append('terms_content', document.getElementById('termsContent')?.value.trim()||'');
   fd.append('integrations', JSON.stringify(getIntegrations()));
   fd.append('payment_plan_selected', getPaymentPlan ? getPaymentPlan() : 'full');
+  fd.append('logo_choice', (document.querySelector('input[name=logoChoice]:checked')||{}).value||'none');
+  fd.append('favicon_choice', (document.querySelector('input[name=faviconChoice]:checked')||{}).value||'logo');
+
   fd.append('font_preference', (document.querySelector('input[name=fontPref]:checked') || {}).value || 'no-preference');
   const inspirRows = document.querySelectorAll('#inspirationRows .inspiration-row');
   const insps = [];
@@ -730,11 +753,19 @@ const TIER_PRICES = { simple: 349, friend_family: 199, friend_exclusive: 0, stan
 function calcCost() {
   const tier = window._ORDER_TIER || 'standard';
   let base = TIER_PRICES[tier] || 699;
-  const pages = getPagesData();
-  const sbPages = pages.filter(p => p.copy === 'sb').length;
-  const deposit = Math.round(base * 0.5);
-  const remaining = base - deposit;
-  return { base, sbPages, copyExtra: sbPages * 25, deposit, remaining };
+  const pages = getPagesData(); const pageCount = pages.length;
+  let extraPageCost = 0;
+  if (tier === 'simple' || tier === 'friend_family' || tier === 'friend_exclusive') {
+    if (pageCount === 2) extraPageCost = 100; else if (pageCount > 3) extraPageCost = (pageCount - 3) * 80;
+  } else if (tier === 'standard' || tier === 'not_sure') {
+    if (pageCount === 4) extraPageCost = 100; else if (pageCount === 6) extraPageCost = 90; else if (pageCount > 6) extraPageCost = 90 + (pageCount - 6) * 80;
+  } else if (tier === 'premium') { if (pageCount > 7) extraPageCost = (pageCount - 7) * 80; }
+  const sbPages = pages.filter(p => p.copy === 'sb').length; const copyExtra = sbPages * 25;
+  const logoChoice = (document.querySelector('input[name=logoChoice]:checked')||{}).value||'none';
+  const logoAddOn = logoChoice === 'create' ? 35 : 0;
+  const total = base + extraPageCost + copyExtra + logoAddOn;
+  const deposit = Math.round(total * 0.5); const remaining = total - deposit;
+  return { base, extraPageCost, sbPages, copyExtra, logoAddOn, total, deposit, remaining };
 }
 
 function buildSummary() {
@@ -743,12 +774,16 @@ function buildSummary() {
   const { base, sbPages, copyExtra, deposit, remaining } = calcCost();
   const pages = getPagesData();
   const row = (l, v, bold) => `<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.06);${bold?'font-weight:600;color:#e4e9f2':''}"><span>${l}</span><span>${v}</span></div>`;
+    const { extraPageCost, logoAddOn, total } = calcCost();
   let html = '<div style="font-weight:600;color:var(--gold);margin-bottom:10px">Project Summary</div>';
-  html += row('Base package', '$' + base);
-  if (sbPages) html += row('Copywriting (' + sbPages + ' pages)', '+$' + copyExtra);
-  html += row('Total', '$' + (base + copyExtra), true);
+  html += row('Base package (' + tier.replace(/_/g," ") + ')', '$' + base);
+  if (extraPageCost) html += row('Extra pages (' + pages.length + ' pages)', '+$' + extraPageCost);
+  if (sbPages) html += row('Copywriting (' + sbPages + ' pages x $25)', '+$' + copyExtra);
+  if (logoAddOn) html += row('Logo design', '+$35');
+  html += row('Total', '$' + total, true);
   html += row('Deposit due now (50%)', '$' + deposit, true);
   html += row('Remaining balance', '$' + remaining);
+  if (copyExtra > 175) { const sav = copyExtra - 175; html += '<div style="margin-top:14px;background:rgba(217,178,61,.1);border:1px solid rgba(217,178,61,.3);border-radius:8px;padding:12px;font-size:.82rem"><strong style="color:var(--gold)">Package tip:</strong> You are spending $'+copyExtra+' on individual copywriting. The Full Site Copywriting Package is $175 and covers everything - saving you $'+sav+'. Mention it in your Pages notes if interested.</div>'; }
   if (pages.length) {
     html += '<div style="margin-top:12px;font-weight:600;color:var(--gold)">Pages</div>';
     pages.forEach(p => {
@@ -846,6 +881,12 @@ document.getElementById('wantsDomainHelp').addEventListener('change', debouncedS
 document.querySelectorAll('input[name=fontPref]').forEach(r => r.addEventListener('change', debouncedSave));
 document.querySelectorAll('#inspirationRows .insp-url, #inspirationRows .insp-note').forEach(el => el.addEventListener('input', debouncedSave));
 document.getElementById('domainRegistrar')?.addEventListener('change', debouncedSave);
+document.getElementById('isLegalEntity').addEventListener('change', function() {
+  document.getElementById('legalEntityDetails').style.display = (this.value === 'yes' || this.value === 'in_progress') ? 'block' : 'none';
+  debouncedSave();
+});
+document.querySelectorAll('input[name=logoChoice]').forEach(function(r){r.addEventListener('change',function(){document.getElementById('logoUploadBox').style.display=this.value==='upload'?'block':'none';debouncedSave();});});
+document.querySelectorAll('input[name=faviconChoice]').forEach(function(r){r.addEventListener('change',function(){document.getElementById('faviconUploadBox').style.display=this.value==='upload'?'block':'none';debouncedSave();});});
 document.getElementById('hasDomainSelect').addEventListener('change', function() {
   const reg = document.getElementById('registrarRow');
   reg.style.display = this.value === 'yes' ? 'block' : 'none';
@@ -1056,6 +1097,18 @@ async function init() {
       if (order.has_domain === 'yes') document.getElementById('registrarRow').style.display = 'block';
     }
     if (order.site_name && document.getElementById('siteNameInput')) document.getElementById('siteNameInput').value = order.site_name;
+    if (order.is_legal_entity && document.getElementById('isLegalEntity')) {
+      document.getElementById('isLegalEntity').value = order.is_legal_entity;
+      document.getElementById('legalEntityDetails').style.display = (order.is_legal_entity === 'yes' || order.is_legal_entity === 'in_progress') ? 'block' : 'none';
+    }
+    if (order.logo_choice) {
+      const lr = document.querySelector('input[name=logoChoice][value="'+order.logo_choice+'"]');
+      if (lr) { lr.checked=true; document.getElementById('logoUploadBox').style.display=order.logo_choice==='upload'?'block':'none'; }
+    }
+    if (order.favicon_choice) {
+      const fr = document.querySelector('input[name=faviconChoice][value="'+order.favicon_choice+'"]');
+      if (fr) { fr.checked=true; document.getElementById('faviconUploadBox').style.display=order.favicon_choice==='upload'?'block':'none'; }
+    }
     if (order.terms_privacy_choice) document.getElementById('termsPrivacyChoice').value = order.terms_privacy_choice;
     if (order.terms_privacy_content) document.getElementById('termsPrivacyContent').value = order.terms_privacy_content;
     if (order.timeline_preference) document.getElementById('timelinePreference').value = order.timeline_preference;
