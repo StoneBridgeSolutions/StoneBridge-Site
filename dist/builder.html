@@ -20,6 +20,8 @@ h1{font-family:'Playfair Display',serif;color:var(--white);font-size:1.9rem;marg
 .gate-pay-btn{display:inline-block;background:var(--gold);color:var(--navy);font-family:'Poppins',sans-serif;font-weight:600;font-size:1rem;padding:16px 36px;border-radius:10px;text-decoration:none}
 .gate-pay-btn:hover{background:var(--gold-soft)}
 .gate-fallback{font-size:.88rem;color:var(--grey)}
+.inspiration-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.inspiration-row .insp-url,.inspiration-row .insp-note{width:100%}
 .check-avail-btn{background:var(--navy-3);border:1px solid rgba(217,178,61,.4);color:var(--gold);font-family:'Poppins',sans-serif;font-weight:600;font-size:.85rem;padding:9px 16px;border-radius:8px;cursor:pointer;margin-top:4px;margin-bottom:10px}
 .check-avail-btn:hover{background:rgba(217,178,61,.1)}
 .check-avail-btn:disabled{opacity:.5;cursor:not-allowed}
@@ -152,6 +154,28 @@ input[type=text]{margin-bottom:12px}
         </div>
       </div>
       <div class="field-status" id="colorStatus"></div>
+
+  <label class="title" style="margin-top:20px">Font Style</label>
+  <p class="hint">Pick the feel that fits your brand best.</p>
+  <div class="check-grid">
+    <label><input type="radio" name="fontPref" id="fontModern" value="modern-sans"> Modern sans-serif</label>
+    <label><input type="radio" name="fontPref" id="fontSerif" value="classic-serif"> Classic serif</label>
+    <label><input type="radio" name="fontPref" id="fontMixed" value="mixed"> Mixed (heading + body)</label>
+    <label><input type="radio" name="fontPref" id="fontNoPref" value="no-preference" checked> No preference &mdash; StoneBridge chooses</label>
+  </div>
+
+  <label class="title" style="margin-top:20px">Inspiration Sites</label>
+  <p class="hint">Paste up to 3 URLs of sites whose look you love. A quick note on what appeals to you about each helps a lot.</p>
+  <div id="inspirationRows">
+    <div class="inspiration-row"><input type="url" class="insp-url" placeholder="https://example.com"><input type="text" class="insp-note" placeholder="What do you like about it?"></div>
+    <div class="inspiration-row"><input type="url" class="insp-url" placeholder="https://example.com"><input type="text" class="insp-note" placeholder="What do you like about it?"></div>
+    <div class="inspiration-row"><input type="url" class="insp-url" placeholder="https://example.com"><input type="text" class="insp-note" placeholder="What do you like about it?"></div>
+  </div>
+
+  <label class="title" style="margin-top:20px">Anything to Avoid</label>
+  <p class="hint">Colors, styles, fonts, vibes &mdash; anything you&rsquo;ve seen that you definitely don&rsquo;t want.</p>
+  <textarea id="avoidText" placeholder="e.g. No red, nothing too corporate, avoid dark backgrounds"></textarea>
+
     </div>
 </div>
 
@@ -196,6 +220,9 @@ input[type=text]{margin-bottom:12px}
   <label class="title">Business Details</label>
   <p class="hint" id="hint4">Tell us more about your business.</p>
   <div class="subgroup-label">What does your business do?</div>
+  <label class="subgroup-label">Site Name <span style="font-weight:400;color:var(--grey)">(optional &mdash; if different from your business name)</span></label>
+  <input type="text" id="siteNameInput" placeholder="Leave blank to use your business name">
+  <div style="height:14px"></div>
   <textarea id="businessDescription" placeholder="Briefly describe what you do"></textarea>
   <div class="subgroup-label">What are you trying to accomplish with this website?</div>
   <textarea id="siteGoal" placeholder="e.g. get more calls, showcase work, sell online"></textarea>
@@ -236,6 +263,18 @@ input[type=text]{margin-bottom:12px}
     <option value="unsure">Not sure</option>
   </select>
   <input type="text" id="domainNameInput" placeholder="yourdomain.com (if you have one)">
+  <div id="registrarRow" style="display:none">
+    <label class="subgroup-label" style="margin-top:10px">Where is it registered?</label>
+    <select id="domainRegistrar">
+      <option value="">Select registrar</option>
+      <option value="godaddy">GoDaddy</option>
+      <option value="namecheap">Namecheap</option>
+      <option value="google">Google Domains / Squarespace</option>
+      <option value="cloudflare">Cloudflare</option>
+      <option value="porkbun">Porkbun</option>
+      <option value="other">Other</option>
+    </select>
+  </div>
   <button type="button" class="check-avail-btn" id="checkDomainBtn">Check Availability</button>
   <div class="domain-results" id="domainResults"></div>
   <div class="toggle-row"><input type="checkbox" id="wantsDomainHelp"><label for="wantsDomainHelp">I would like StoneBridge to help register/manage my domain</label></div>
@@ -486,6 +525,14 @@ async function saveAll() {
   fd.append('has_domain', document.getElementById('hasDomainSelect').value);
   fd.append('domain_name', document.getElementById('domainNameInput').value.trim());
   fd.append('wants_domain_help', document.getElementById('wantsDomainHelp').checked ? 'yes' : 'no');
+  fd.append('font_preference', (document.querySelector('input[name=fontPref]:checked') || {}).value || 'no-preference');
+  const inspirRows = document.querySelectorAll('#inspirationRows .inspiration-row');
+  const insps = [];
+  inspirRows.forEach(r => { const u = r.querySelector('.insp-url').value.trim(); const n = r.querySelector('.insp-note').value.trim(); if (u) insps.push({url:u, note:n}); });
+  fd.append('inspiration_urls', JSON.stringify(insps));
+  fd.append('avoid_text', document.getElementById('avoidText').value.trim());
+  fd.append('domain_registrar', document.getElementById('domainRegistrar') ? document.getElementById('domainRegistrar').value : '');
+  fd.append('site_name', document.getElementById('siteNameInput') ? document.getElementById('siteNameInput').value.trim() : '');
   fd.append('terms_privacy_choice', document.getElementById('termsPrivacyChoice').value);
   fd.append('terms_privacy_content', document.getElementById('termsPrivacyContent').value.trim());
   fd.append('timeline_preference', document.getElementById('timelinePreference').value);
@@ -524,6 +571,20 @@ document.getElementById('colorAccent').addEventListener('input', (e) => { docume
 ['toneOther','audienceOther','featureOther'].forEach(id => document.getElementById(id).addEventListener('input', debouncedSave));
 ['businessDescription','siteGoal','competitors','legalEntityName','legalMailingAddress','ein','relationshipToBusiness','isLegalEntity','hasDomainSelect','domainNameInput','termsPrivacyChoice','termsPrivacyContent','timelinePreference','preferredContactMethod'].forEach(id => { const el = document.getElementById(id); el.addEventListener(el.tagName === 'SELECT' ? 'change' : 'input', debouncedSave); });
 document.getElementById('wantsDomainHelp').addEventListener('change', debouncedSave);
+['avoidText','siteNameInput'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener(el.tagName === 'SELECT' ? 'change' : 'input', debouncedSave);
+});
+document.querySelectorAll('input[name=fontPref]').forEach(r => r.addEventListener('change', debouncedSave));
+document.querySelectorAll('#inspirationRows .insp-url, #inspirationRows .insp-note').forEach(el => el.addEventListener('input', debouncedSave));
+document.getElementById('domainRegistrar')?.addEventListener('change', debouncedSave);
+document.getElementById('hasDomainSelect').addEventListener('change', function() {
+  const reg = document.getElementById('registrarRow');
+  reg.style.display = this.value === 'yes' ? 'block' : 'none';
+  if (this.value !== 'yes') document.getElementById('domainRegistrar').value = '';
+  debouncedSave();
+});
+
 
 async function uploadLogo(e) {
   const file = e.target.files[0];
@@ -697,6 +758,28 @@ async function init() {
     if (order.has_domain) document.getElementById('hasDomainSelect').value = order.has_domain;
     if (order.domain_name) document.getElementById('domainNameInput').value = order.domain_name;
     if (order.wants_domain_help === 'yes') document.getElementById('wantsDomainHelp').checked = true;
+    if (order.font_preference) {
+      const r = document.querySelector(`input[name=fontPref][value="${order.font_preference}"]`);
+      if (r) r.checked = true;
+    }
+    if (order.inspiration_urls) {
+      try {
+        const insps = JSON.parse(order.inspiration_urls);
+        insps.forEach((item, i) => {
+          const row = document.querySelectorAll('#inspirationRows .inspiration-row')[i];
+          if (row) {
+            if (item.url) row.querySelector('.insp-url').value = item.url;
+            if (item.note) row.querySelector('.insp-note').value = item.note;
+          }
+        });
+      } catch(e) {}
+    }
+    if (order.avoid_text) document.getElementById('avoidText').value = order.avoid_text;
+    if (order.domain_registrar && document.getElementById('domainRegistrar')) {
+      document.getElementById('domainRegistrar').value = order.domain_registrar;
+      if (order.has_domain === 'yes') document.getElementById('registrarRow').style.display = 'block';
+    }
+    if (order.site_name && document.getElementById('siteNameInput')) document.getElementById('siteNameInput').value = order.site_name;
     if (order.terms_privacy_choice) document.getElementById('termsPrivacyChoice').value = order.terms_privacy_choice;
     if (order.terms_privacy_content) document.getElementById('termsPrivacyContent').value = order.terms_privacy_content;
     if (order.timeline_preference) document.getElementById('timelinePreference').value = order.timeline_preference;
