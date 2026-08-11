@@ -688,11 +688,52 @@ Correct legal order:
 6. Carl manually starts clock → client notified
 
 - [ ] Change form redirect: /cart.html → /thank-you page
-- [ ] DocuSign fires immediately on form submit
+      NOT DONE — tied to the payment-before-signing sequencing decision
+      logged on the Google Drive to-do list; needs Carl's call before
+      touching this, not a guess Claude should make.
+- [x] DocuSign fires immediately on form submit
+      Already true (found, not built) — see Stage 6.
 - [ ] DocuSign webhook → deposit payment link email
+      Partially done — the completion webhook itself was built in Stage 6
+      and does fire on signing, but it currently just marks
+      agreement_signed_at and emails Carl, not the client a deposit link
+      (the client already gets sent straight to the payment page on form
+      submit today, so this specific step doesn't apply the same way until
+      the sequencing decision above is resolved).
 - [ ] Stripe deposit webhook → builder link email
-- [ ] Builder submit → Carl alert + manual clock start from admin panel
-- [ ] Client notified with expected start date on clock start
+      Already exists independently — handleOrderPayment() in
+      webhook-handler.js already emails the client their builder link on
+      deposit payment. Not new work, just confirming it was already there.
+- [x] Builder submit → Carl alert + manual clock start from admin panel
+      BUILT Aug 10, 2026. This was a real behavior change, not just a
+      missing button — /builder/complete was auto-starting the 48-hour
+      clock the instant a client finished their brief, with no manual
+      step at all. Changed to:
+        - /builder/complete now sets status='brief_complete' and
+          builder_completed_at only — does NOT set building_started_at
+          anymore. Carl's alert email updated to say "click Start Clock in
+          the admin panel" instead of "the clock starts now."
+        - New POST /admin/start-clock endpoint: looks up the order, checks
+          it's actually ready (brief done, clock not already started),
+          sets status='building' + building_started_at, computes an
+          expected-ready date from the tier's turnaround text (exported
+          TIER_INFO from docusign-service.js for this), and emails the
+          client with that date.
+        - New "Clock" column + "Start Clock" button in admin.html's
+          sessions table, only shown for orders waiting on this step.
+          progressLabel() now distinguishes Building / Waiting to start /
+          In progress / Not started instead of just Submitted.
+      BUG CAUGHT DURING TESTING: website_orders.status has a check
+      constraint that didn't include 'brief_complete' as a valid value —
+      would have thrown a real error the first time any real client
+      completed their builder. Fixed via migration (added 'brief_complete'
+      to the allowed status list) before this could hit production.
+      Tested live end-to-end: real order, clicked Start Clock in the
+      browser, confirmed status/building_started_at updated correctly and
+      no errors in server logs.
+- [x] Client notified with expected start date on clock start
+      Built as part of the same work above — the client email includes a
+      computed expected-ready date based on their tier's turnaround.
 
 ---
 
