@@ -20,6 +20,16 @@ h1{font-family:'Playfair Display',serif;color:var(--white);font-size:1.9rem;marg
 .gate-pay-btn{display:inline-block;background:var(--gold);color:var(--navy);font-family:'Poppins',sans-serif;font-weight:600;font-size:1rem;padding:16px 36px;border-radius:10px;text-decoration:none}
 .gate-pay-btn:hover{background:var(--gold-soft)}
 .gate-fallback{font-size:.88rem;color:var(--grey)}
+.page-row{background:var(--navy-3);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px 16px;margin-bottom:10px}
+.page-row-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.page-row-header input{flex:1;font-size:.9rem}
+.page-row-header .del-page{background:none;border:none;color:var(--grey);cursor:pointer;font-size:1.1rem;padding:2px 6px;border-radius:6px}
+.page-row-header .del-page:hover{color:#f0938e;background:rgba(226,86,79,.1)}
+.copy-options{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:.83rem}
+.copy-options label{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:8px 10px;cursor:pointer}
+.copy-options label:hover{border-color:rgba(217,178,61,.3)}
+.copy-extra{margin-top:8px;font-size:.83rem}
+.copy-extra input,.copy-extra textarea{width:100%;margin-top:4px}
 .inspiration-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
 .inspiration-row .insp-url,.inspiration-row .insp-note{width:100%}
 .check-avail-btn{background:var(--navy-3);border:1px solid rgba(217,178,61,.4);color:var(--gold);font-family:'Poppins',sans-serif;font-weight:600;font-size:.85rem;padding:9px 16px;border-radius:8px;cursor:pointer;margin-top:4px;margin-bottom:10px}
@@ -126,8 +136,9 @@ input[type=text]{margin-bottom:12px}
   <button type="button" class="nav-pill" id="navPill6" onclick="showStep(6)" title="Domain"><span class="np-icon">🌐</span><span class="np-label">Domain</span></button>
   <button type="button" class="nav-pill" id="navPill7" onclick="showStep(7)" title="Terms"><span class="np-icon">📝</span><span class="np-label">Terms</span></button>
   <button type="button" class="nav-pill" id="navPill8" onclick="showStep(8)" title="Timeline"><span class="np-icon">📅</span><span class="np-label">Timeline</span></button>
-  <button type="button" class="nav-pill" id="navPill9" onclick="showStep(9)" title="Logo"><span class="np-icon">✨</span><span class="np-label">Logo</span></button>
-  <button type="button" class="nav-pill" id="navPill10" onclick="showStep(10)" title="Photos"><span class="np-icon">📷</span><span class="np-label">Photos</span></button>
+  <button type="button" class="nav-pill" id="navPill9" onclick="showStep(9)" title="Pages"><span class="np-icon">📄</span><span class="np-label">Pages</span></button>
+  <button type="button" class="nav-pill" id="navPill10" onclick="showStep(10)" title="Logo"><span class="np-icon">✨</span><span class="np-label">Logo</span></button>
+  <button type="button" class="nav-pill" id="navPill11" onclick="showStep(11)" title="Photos"><span class="np-icon">📷</span><span class="np-label">Photos</span></button>
 </nav>
 
 <div id="cardsWrap">
@@ -313,6 +324,38 @@ input[type=text]{margin-bottom:12px}
 
 <div class="card" id="card9" data-step="9">
 <div class="section">
+  <label class="title">Pages &amp; Site Structure</label>
+  <p class="hint" id="hint9">Tell us what pages you need. We’ve added defaults based on your package — rename, remove, or add pages as you like. For each page, let us know how you’d like to handle the copy.</p>
+
+  <div id="pagesContainer"></div>
+
+  <button type="button" class="check-avail-btn" id="addPageBtn" style="margin-top:4px">+ Add a page</button>
+
+  <label class="title" style="margin-top:24px">Terms &amp; Privacy Page</label>
+  <p class="hint">Every StoneBridge site includes a Terms of Use and Privacy Policy page at no extra charge.</p>
+  <div class="check-grid">
+    <label><input type="radio" name="termsSource" id="termsProvide" value="provide"> I’ll provide my own content</label>
+    <label><input type="radio" name="termsSource" id="termsGenerate" value="generate" checked> StoneBridge generates a template based on my business info</label>
+  </div>
+  <textarea id="termsContent" placeholder="Paste your Terms of Use and Privacy Policy here (optional, if providing your own)" style="display:none;margin-top:10px"></textarea>
+
+  <label class="title" style="margin-top:24px">Third-Party Integrations</label>
+  <p class="hint">Check any you need. These are custom quoted — you’ll provide credentials when we get started.</p>
+  <div class="check-grid">
+    <label><input type="checkbox" id="integStripe"> Stripe / payment processing</label>
+    <label><input type="checkbox" id="integEmail"> Email marketing (Mailchimp, Klaviyo, etc.)</label>
+    <label><input type="checkbox" id="integBooking"> Booking / scheduling</label>
+    <label><input type="checkbox" id="integSocial"> Social media feed</label>
+    <label><input type="checkbox" id="integOther"> Other</label>
+  </div>
+  <input type="text" id="integOtherText" placeholder="Describe the integration" style="display:none;margin-top:8px">
+
+  <div class="field-status" id="pagesStatus"></div>
+</div>
+</div>
+
+<div class="card" id="card10" data-step="10">
+<div class="section">
       <label class="title">Logo</label>
       <div class="upload-box">
         <input type="file" id="logoInput" accept="image/*">
@@ -322,7 +365,7 @@ input[type=text]{margin-bottom:12px}
     </div>
 </div>
 
-<div class="card" id="card10" data-step="10">
+<div class="card" id="card11" data-step="11">
 <div class="section">
       <label class="title">Photos</label>
       <p class="hint" id="hint10">Up to 10. You can add more later too.</p>
@@ -357,7 +400,7 @@ const params = new URLSearchParams(window.location.search);
 const token = params.get('token');
 let saveTimer = null;
 
-const STEP_LABELS = ['Colors','Tone','Audience','Features','Business','Legal','Domain','Terms','Timeline','Logo','Photos'];
+const STEP_LABELS = ['Colors','Tone','Audience','Features','Business','Legal','Domain','Terms','Timeline','Pages','Logo','Photos'];
 const TOTAL_STEPS = STEP_LABELS.length;
 let currentStep = 0;
 const visitedSteps = new Set();
@@ -525,6 +568,10 @@ async function saveAll() {
   fd.append('has_domain', document.getElementById('hasDomainSelect').value);
   fd.append('domain_name', document.getElementById('domainNameInput').value.trim());
   fd.append('wants_domain_help', document.getElementById('wantsDomainHelp').checked ? 'yes' : 'no');
+  fd.append('page_structure', JSON.stringify(getPagesData()));
+  fd.append('terms_source', (document.querySelector('input[name=termsSource]:checked')||{}).value||'generate');
+  fd.append('terms_content', document.getElementById('termsContent')?.value.trim()||'');
+  fd.append('integrations', JSON.stringify(getIntegrations()));
   fd.append('font_preference', (document.querySelector('input[name=fontPref]:checked') || {}).value || 'no-preference');
   const inspirRows = document.querySelectorAll('#inspirationRows .inspiration-row');
   const insps = [];
@@ -547,6 +594,110 @@ async function saveAll() {
     ['colorStatus','toneStatus','audienceStatus','featureStatus','businessStatus','legalStatus','domainStatus','termsStatus','timelineStatus'].forEach(id => showStatus(id, 'Save failed'));
   }
 }
+
+
+// ---- Pages card JS ----
+const TIER_DEFAULTS = {
+  simple: ['Home'],
+  friend_family: ['Home'],
+  friend_exclusive: ['Home'],
+  standard: ['Home', 'About', 'Services', 'Contact'],
+  not_sure: ['Home', 'About', 'Services', 'Contact'],
+  premium: ['Home', 'About', 'Services', 'Gallery / Portfolio', 'Contact', 'Blog', 'FAQ']
+};
+
+function makeCopyId(n) { return 'copy_' + n; }
+
+function addPageRow(name, copyChoice, extraVal, container) {
+  const n = Date.now() + Math.random();
+  const id = makeCopyId(n);
+  const div = document.createElement('div');
+  div.className = 'page-row';
+  div.innerHTML = `
+    <div class="page-row-header">
+      <input type="text" class="page-name" placeholder="Page name" value="${name || ''}">
+      <button type="button" class="del-page" title="Remove page">&times;</button>
+    </div>
+    <div class="copy-options">
+      <label><input type="radio" name="${id}" value="own" ${copyChoice==='own'?'checked':''}> I have my own copy</label>
+      <label><input type="radio" name="${id}" value="url" ${copyChoice==='url'?'checked':''}> Copy from a URL I own</label>
+      <label><input type="radio" name="${id}" value="sb" ${copyChoice==='sb'?'checked':''}> StoneBridge writes it <span style="color:var(--grey);font-size:.78rem">(+$25/page)</span></label>
+      <label><input type="radio" name="${id}" value="notes" ${(!copyChoice||copyChoice==='notes')?'checked':''}> Notes for StoneBridge</label>
+    </div>
+    <div class="copy-extra">
+      <input type="text" class="copy-url" placeholder="URL to pull copy from" style="display:${copyChoice==='url'?'block':'none'}" value="${copyChoice==='url'?(extraVal||''):''}">  
+      <textarea class="copy-notes" placeholder="Share any notes, ideas, keywords or vibe — this guides us, it’s not a copywriting prompt" rows="2" style="display:${(copyChoice==='own'||copyChoice==='sb'||copyChoice==='notes')?'block':'none'}">${(copyChoice==='own'||copyChoice==='sb'||copyChoice==='notes')?(extraVal||''):''}</textarea>
+    </div>
+  `;
+  div.querySelector('.del-page').addEventListener('click', () => { div.remove(); debouncedSave(); });
+  div.querySelectorAll('.copy-options input[type=radio]').forEach(r => {
+    r.addEventListener('change', () => {
+      div.querySelector('.copy-url').style.display = r.value === 'url' ? 'block' : 'none';
+      div.querySelector('.copy-notes').style.display = (r.value === 'own' || r.value === 'sb' || r.value === 'notes') ? 'block' : 'none';
+      debouncedSave();
+    });
+  });
+  div.querySelectorAll('input, textarea').forEach(el => el.addEventListener('input', debouncedSave));
+  container.appendChild(div);
+}
+
+function initPages(savedPages) {
+  const container = document.getElementById('pagesContainer');
+  if (!container) return;
+  container.innerHTML = '';
+  const tier = (window._ORDER_TIER || 'standard');
+  const defaults = TIER_DEFAULTS[tier] || TIER_DEFAULTS['standard'];
+  if (savedPages && savedPages.length) {
+    savedPages.forEach(p => addPageRow(p.name, p.copy, p.extra, container));
+  } else {
+    defaults.forEach(name => addPageRow(name, 'notes', '', container));
+  }
+}
+
+function getPagesData() {
+  const rows = document.querySelectorAll('#pagesContainer .page-row');
+  return Array.from(rows).map(row => {
+    const name = row.querySelector('.page-name').value.trim();
+    const chosen = row.querySelector('.copy-options input:checked');
+    const copy = chosen ? chosen.value : 'notes';
+    const extra = copy === 'url' ? row.querySelector('.copy-url').value.trim() : row.querySelector('.copy-notes').value.trim();
+    return { name, copy, extra };
+  });
+}
+
+function getIntegrations() {
+  const ids = ['integStripe','integEmail','integBooking','integSocial'];
+  const checked = ids.filter(id => document.getElementById(id)?.checked).map(id => id.replace('integ','').toLowerCase());
+  if (document.getElementById('integOther')?.checked) {
+    const txt = document.getElementById('integOtherText')?.value.trim();
+    if (txt) checked.push('other:' + txt);
+    else checked.push('other');
+  }
+  return checked;
+}
+
+document.getElementById('addPageBtn')?.addEventListener('click', () => {
+  addPageRow('', 'notes', '', document.getElementById('pagesContainer'));
+  debouncedSave();
+});
+
+document.querySelectorAll('input[name=termsSource]').forEach(r => {
+  r.addEventListener('change', () => {
+    const tc = document.getElementById('termsContent');
+    if (tc) tc.style.display = r.value === 'provide' ? 'block' : 'none';
+    debouncedSave();
+  });
+});
+document.getElementById('integOther')?.addEventListener('change', function() {
+  const t = document.getElementById('integOtherText');
+  if (t) t.style.display = this.checked ? 'block' : 'none';
+  debouncedSave();
+});
+['integStripe','integEmail','integBooking','integSocial','termsContent'].forEach(id => {
+  document.getElementById(id)?.addEventListener('change', debouncedSave);
+  document.getElementById(id)?.addEventListener('input', debouncedSave);
+});
+// ---- End Pages card JS ----
 
 function debouncedSave() {
   clearTimeout(saveTimer);
@@ -684,6 +835,8 @@ async function checkDomainAvailability() {
   }
 }
 document.getElementById('checkDomainBtn').addEventListener('click', checkDomainAvailability);
+// Init pages with tier defaults for brand-new sessions (will be overwritten if order loads)
+if (!window._ORDER_TIER) { window._ORDER_TIER = 'standard'; initPages(null); }
 
 async function init() {
   if (!token) {
@@ -758,6 +911,12 @@ async function init() {
     if (order.has_domain) document.getElementById('hasDomainSelect').value = order.has_domain;
     if (order.domain_name) document.getElementById('domainNameInput').value = order.domain_name;
     if (order.wants_domain_help === 'yes') document.getElementById('wantsDomainHelp').checked = true;
+    window._ORDER_TIER = order.tier || 'standard';
+    const savedPages = order.page_structure ? (()=>{ try{return JSON.parse(order.page_structure);}catch(e){return null;} })() : null;
+    initPages(savedPages);
+    if (order.terms_source) { const r = document.querySelector('input[name=termsSource][value="'+order.terms_source+'"]'); if(r){r.checked=true; const tc=document.getElementById('termsContent'); if(tc) tc.style.display=order.terms_source==='provide'?'block':'none'; } }
+    if (order.terms_content && document.getElementById('termsContent')) document.getElementById('termsContent').value = order.terms_content;
+    if (order.integrations) { try { const ints=JSON.parse(order.integrations); ['stripe','email','booking','social'].forEach(k=>{ if(ints.includes(k)) { const el=document.getElementById('integ'+k[0].toUpperCase()+k.slice(1)); if(el) el.checked=true; } }); const oth=ints.find(x=>x.startsWith('other')); if(oth){const el=document.getElementById('integOther');if(el)el.checked=true;const t=document.getElementById('integOtherText');if(t&&oth.includes(':'))t.value=oth.split(':')[1];const td=document.getElementById('integOtherText');if(td)td.style.display='block';} } catch(e){} }
     if (order.font_preference) {
       const r = document.querySelector(`input[name=fontPref][value="${order.font_preference}"]`);
       if (r) r.checked = true;
