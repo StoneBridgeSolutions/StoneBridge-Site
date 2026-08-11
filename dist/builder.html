@@ -996,6 +996,60 @@ document.getElementById('checkDomainBtn').addEventListener('click', checkDomainA
 // Init pages with tier defaults for brand-new sessions (will be overwritten if order loads)
 if (!window._ORDER_TIER) { window._ORDER_TIER = 'standard'; initPages(null); }
 
+// ---- PASSWORD GATE ----
+async function initPasswordGate() {
+  try {
+    const r = await fetch(`${API}/builder/session-status?token=${encodeURIComponent(token)}`);
+    const d = await r.json();
+    if (!d.ok) { init(); return; }
+    if (!d.passwordSet && !d.passwordSkipped) { showPasswordSetup(); return; }
+    if (d.passwordSet) { showPasswordLogin(); return; }
+    init();
+  } catch(e) { init(); }
+}
+function showPasswordSetup() {
+  document.getElementById('pwSetupScreen').style.display = 'flex';
+  document.getElementById('pwSetBtn').addEventListener('click', async () => {
+    const pw = document.getElementById('pwSetupInput').value;
+    const pw2 = document.getElementById('pwSetupConfirm').value;
+    const err = document.getElementById('pwSetupError');
+    if (pw.length < 6) { err.textContent = 'Password must be at least 6 characters.'; return; }
+    if (pw !== pw2) { err.textContent = 'Passwords do not match.'; return; }
+    err.textContent = ''; document.getElementById('pwSetBtn').textContent = 'Setting...';
+    const fd = new FormData(); fd.append('token', token); fd.append('password', pw);
+    const r = await fetch(`${API}/builder/set-password`, { method: 'POST', body: fd });
+    const d = await r.json();
+    if (d.ok) { document.getElementById('pwSetupScreen').style.display = 'none'; init(); }
+    else { err.textContent = d.error || 'Something went wrong.'; document.getElementById('pwSetBtn').textContent = 'Set Password & Continue'; }
+  });
+  document.getElementById('pwSetupInput').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('pwSetBtn').click(); });
+  document.getElementById('pwSkipBtn').addEventListener('click', () => {
+    document.getElementById('pwSkipWarning').style.display = 'block';
+    document.getElementById('pwSkipConfirmBtn').style.display = 'inline-block';
+  });
+  document.getElementById('pwSkipConfirmBtn').addEventListener('click', async () => {
+    const fd = new FormData(); fd.append('token', token);
+    await fetch(`${API}/builder/skip-password`, { method: 'POST', body: fd });
+    document.getElementById('pwSetupScreen').style.display = 'none'; init();
+  });
+}
+function showPasswordLogin() {
+  document.getElementById('pwLoginScreen').style.display = 'flex';
+  const doLogin = async () => {
+    const pw = document.getElementById('pwLoginInput').value;
+    const err = document.getElementById('pwLoginError');
+    if (!pw) { err.textContent = 'Please enter your password.'; return; }
+    document.getElementById('pwLoginBtn').textContent = 'Checking...'; err.textContent = '';
+    const fd = new FormData(); fd.append('token', token); fd.append('password', pw);
+    const r = await fetch(`${API}/builder/verify-password`, { method: 'POST', body: fd });
+    const d = await r.json();
+    if (d.ok) { document.getElementById('pwLoginScreen').style.display = 'none'; init(); }
+    else { err.textContent = d.error || 'Incorrect password.'; document.getElementById('pwLoginBtn').textContent = 'Unlock'; }
+  };
+  document.getElementById('pwLoginBtn').addEventListener('click', doLogin);
+  document.getElementById('pwLoginInput').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+}
+// ---- END PASSWORD GATE ----
 async function init() {
   if (!token) {
     document.getElementById('error').style.display = 'block';
@@ -1130,7 +1184,7 @@ async function init() {
     document.getElementById('subLine').style.display = 'none';
   }
 }
-init();
+if (token) { initPasswordGate(); } else { init(); }
 </script>
 </body>
 </html>
