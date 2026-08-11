@@ -159,6 +159,19 @@ function progressLabel(o) {
   return '<span class="badge no">Not started</span>';
 }
 
+async function resetBuilderPassword(orderId, btn) {
+  if (!confirm('Reset this client's builder password? They will be prompted to set a new one on their next visit.')) return;
+  const orig = btn.textContent;
+  btn.textContent = 'Resetting...';
+  const r = await fetch(`${API}/admin/reset-password`, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json', 'X-Admin-Secret': ADMIN_SECRET},
+    body: JSON.stringify({ order_id: orderId })
+  });
+  const d = await r.json();
+  if (d.ok) { btn.textContent = 'Done!'; setTimeout(() => btn.textContent = orig, 3000); }
+  else { alert('Error: ' + (d.error || 'Unknown')); btn.textContent = orig; }
+}
 async function startClock(orderId, btn) {
   btn.disabled = true;
   btn.textContent = 'Starting...';
@@ -192,7 +205,7 @@ async function loadOrders() {
       const clockCell = o.building_started_at
       ? 'Started'
       : (o.builder_completed_at ? `<button class="copy-btn" onclick="startClock('${o.id}', this)">Start Clock</button>` : '-');
-    html += `<tr><td>${o.business_name || ''}</td><td>${o.contact_name || ''}</td><td>${o.email || ''}</td><td>${o.deposit_paid ? '<span class="badge yes">Paid</span>' : '<span class="badge no">Unpaid</span>'}</td><td>${progressLabel(o)}</td><td>${created}</td><td><button class="copy-btn" onclick="navigator.clipboard.writeText('${link}')">Copy link</button></td><td>${clockCell}</td></tr>`;
+    html += `<tr><td>${o.business_name || ''}</td><td>${o.contact_name || ''}</td><td>${o.email || ''}</td><td>${o.deposit_paid ? '<span class="badge yes">Paid</span>' : '<span class="badge no">Unpaid</span>'}</td><td>${progressLabel(o)}</td><td>${created}</td><td><button class="copy-btn" onclick="navigator.clipboard.writeText('${link}')">Copy link</button></td><td>${clockCell}</td><td><button class="copy-btn" style="background:#4a3060;font-size:.72rem" onclick="resetBuilderPassword('${o.id}', this)">Reset PW</button></td></tr>`;
     });
     html += '</tbody></table>';
     wrap.innerHTML = html;
