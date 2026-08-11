@@ -13,7 +13,13 @@ body{background:var(--navy);color:var(--grey);font-family:'Poppins',sans-serif;f
 .eyebrow{font-size:.78rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:14px}
 h1{font-family:'Playfair Display',serif;color:var(--white);font-size:1.9rem;margin-bottom:8px}
 .sub{font-size:.98rem;margin-bottom:36px}
-#loading,#error,#form-area,#doneState{display:none}
+#loading,#error,#form-area,#doneState,#gateScreen{display:none}
+.gate-wrap{background:var(--navy-2);border:1px solid rgba(217,178,61,.3);border-radius:16px;padding:40px 32px;text-align:center;margin-top:20px}
+.gate-wrap h2{font-family:'Playfair Display',serif;color:var(--white);font-size:1.5rem;margin-bottom:14px}
+.gate-wrap p{font-size:.95rem;color:var(--grey);margin-bottom:26px;line-height:1.7}
+.gate-pay-btn{display:inline-block;background:var(--gold);color:var(--navy);font-family:'Poppins',sans-serif;font-weight:600;font-size:1rem;padding:16px 36px;border-radius:10px;text-decoration:none}
+.gate-pay-btn:hover{background:var(--gold-soft)}
+.gate-fallback{font-size:.88rem;color:var(--grey)}
 #error{text-align:center;padding:40px 0}
 .autosave-note{font-size:.82rem;color:var(--grey);background:var(--navy-2);border:1px dashed rgba(217,178,61,.4);border-radius:10px;padding:14px 18px;margin-bottom:28px}
 .section{background:var(--navy-2);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:26px;margin-bottom:22px}
@@ -51,6 +57,24 @@ input[type=text]::placeholder,textarea::placeholder{color:#9199a8;opacity:1}
 #doneState{text-align:center;padding:60px 0}
 #doneState h2{font-family:'Playfair Display',serif;color:var(--white);font-size:1.7rem;margin-bottom:14px}
 .already-banner{background:rgba(217,178,61,.12);border:1px solid rgba(217,178,61,.4);border-radius:10px;padding:14px 18px;font-size:.88rem;margin-bottom:28px;color:var(--gold)}
+
+.stepper-nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:22px}
+.nav-pill{background:var(--navy-3);border:1px solid rgba(255,255,255,.1);color:var(--grey);font-family:'Poppins',sans-serif;font-size:.72rem;font-weight:500;padding:7px 12px;border-radius:20px;cursor:pointer;transition:all .15s}
+.nav-pill:hover{border-color:rgba(217,178,61,.4)}
+.nav-pill.visited{color:var(--gold-soft);border-color:rgba(217,178,61,.3)}
+.nav-pill.active{background:var(--gold);color:var(--navy);border-color:var(--gold);font-weight:600}
+.card{display:none}
+.card.active{display:block}
+select{width:100%;background:var(--navy-3);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px 36px 12px 14px;color:var(--white);font-family:'Poppins',sans-serif;font-size:.95rem;appearance:none;-webkit-appearance:none;-moz-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'><path d='M1 1l6 6 6-6' stroke='%23d9b23d' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");background-repeat:no-repeat;background-position:right 14px center;margin-bottom:12px;cursor:pointer}
+select:focus{outline:2px solid var(--gold);outline-offset:1px;border-color:transparent}
+select option{background:var(--navy-3);color:var(--white)}
+input[type=text]{margin-bottom:12px}
+.done-inner{display:flex;gap:12px;align-items:center;max-width:640px;margin:0 auto}
+.btn-back,.btn-next{font-family:'Poppins',sans-serif;font-weight:600;font-size:.92rem;padding:14px 22px;border-radius:10px;cursor:pointer;border:none}
+.btn-back{background:transparent;color:var(--grey);border:1px solid rgba(255,255,255,.18)}
+.btn-back:hover{border-color:rgba(255,255,255,.4);color:var(--white)}
+.btn-next{background:var(--gold);color:var(--navy);margin-left:auto;min-width:130px}
+.btn-next:hover{background:var(--gold-soft)}
 </style>
 </head>
 <body>
@@ -62,14 +86,38 @@ input[type=text]::placeholder,textarea::placeholder{color:#9199a8;opacity:1}
   <div id="loading">Loading...</div>
   <div id="error"></div>
 
+  <div id="gateScreen">
+    <div class="gate-wrap">
+      <h2 id="gateHeading">Almost there</h2>
+      <p id="gateMessage">We just need your deposit before the builder unlocks.</p>
+      <a id="gatePayBtn" class="gate-pay-btn" href="#" target="_blank">Pay Deposit</a>
+      <p class="gate-fallback" id="gateFallback" style="display:none">Contact us to complete your payment and we’ll get this unlocked right away.</p>
+    </div>
+  </div>
+
   <div id="form-area">
     <div class="autosave-note">Everything here saves automatically as you go. Close this tab anytime and come back to this same link — nothing gets lost.</div>
     <div id="alreadyBanner" class="already-banner" style="display:none">You already hit "I'm Done" on this brief — your 48-hour clock is running. You can still make edits below; just let us know if anything major changed.</div>
 
-    <!-- COLOR SCHEME -->
-    <div class="section">
+    <nav class="stepper-nav" id="stepperNav">
+  <button type="button" class="nav-pill" id="navPill0" onclick="showStep(0)">Colors</button>
+  <button type="button" class="nav-pill" id="navPill1" onclick="showStep(1)">Tone</button>
+  <button type="button" class="nav-pill" id="navPill2" onclick="showStep(2)">Audience</button>
+  <button type="button" class="nav-pill" id="navPill3" onclick="showStep(3)">Features</button>
+  <button type="button" class="nav-pill" id="navPill4" onclick="showStep(4)">Business</button>
+  <button type="button" class="nav-pill" id="navPill5" onclick="showStep(5)">Legal</button>
+  <button type="button" class="nav-pill" id="navPill6" onclick="showStep(6)">Domain</button>
+  <button type="button" class="nav-pill" id="navPill7" onclick="showStep(7)">Terms</button>
+  <button type="button" class="nav-pill" id="navPill8" onclick="showStep(8)">Timeline</button>
+  <button type="button" class="nav-pill" id="navPill9" onclick="showStep(9)">Logo</button>
+  <button type="button" class="nav-pill" id="navPill10" onclick="showStep(10)">Photos</button>
+</nav>
+
+<div id="cardsWrap">
+<div class="card" id="card0" data-step="0">
+<div class="section">
       <label class="title">Color Scheme</label>
-      <p class="hint">Pick a primary color to build your palette around. Add a secondary and accent color too if you have them in mind.</p>
+      <p class="hint" id="hint0">Pick a primary color to build your palette around. Add a secondary and accent color too if you have them in mind.</p>
       <label class="master-check"><input type="checkbox" id="colorUnsure"> I'm not sure — surprise us with the whole palette</label>
 
       <div id="colorPickers">
@@ -90,21 +138,23 @@ input[type=text]::placeholder,textarea::placeholder{color:#9199a8;opacity:1}
       </div>
       <div class="field-status" id="colorStatus"></div>
     </div>
+</div>
 
-    <!-- TONE OF VOICE -->
-    <div class="section">
+<div class="card" id="card1" data-step="1">
+<div class="section">
       <label class="title">Tone of Voice</label>
-      <p class="hint">Pick as many as fit — or none, and just describe it below.</p>
+      <p class="hint" id="hint1">Pick as many as fit — or none, and just describe it below.</p>
       <div class="check-grid" id="toneGrid"></div>
       <div class="subgroup-label">Other / Comments</div>
       <textarea id="toneOther" placeholder="Anything else about how your site should sound"></textarea>
       <div class="field-status" id="toneStatus"></div>
     </div>
+</div>
 
-    <!-- TARGET AUDIENCE -->
-    <div class="section">
+<div class="card" id="card2" data-step="2">
+<div class="section">
       <label class="title">Target Audience</label>
-      <p class="hint">Who are you trying to reach?</p>
+      <p class="hint" id="hint2">Who are you trying to reach?</p>
       <div class="subgroup-label">Age Groups</div>
       <div class="check-grid" id="ageGrid"></div>
       <div class="subgroup-label">Income Level</div>
@@ -113,19 +163,100 @@ input[type=text]::placeholder,textarea::placeholder{color:#9199a8;opacity:1}
       <textarea id="audienceOther" placeholder="e.g. homeowners new to Winston-Salem, busy parents, etc."></textarea>
       <div class="field-status" id="audienceStatus"></div>
     </div>
+</div>
 
-    <!-- FEATURES -->
-    <div class="section">
+<div class="card" id="card3" data-step="3">
+<div class="section">
       <label class="title">Features &amp; Pages You Want</label>
-      <p class="hint">Check anything that applies.</p>
+      <p class="hint" id="hint3">Check anything that applies.</p>
       <div class="check-grid" id="featureGrid"></div>
       <div class="subgroup-label">Other / Comments</div>
       <textarea id="featureOther" placeholder="Specific pages, sites you admire, things to avoid — anything that helps us build this right the first time"></textarea>
       <div class="field-status" id="featureStatus"></div>
     </div>
+</div>
 
-    <!-- LOGO -->
-    <div class="section">
+<div class="card" id="card4" data-step="4">
+<div class="section">
+  <label class="title">Business Details</label>
+  <p class="hint" id="hint4">Tell us more about your business.</p>
+  <div class="subgroup-label">What does your business do?</div>
+  <textarea id="businessDescription" placeholder="Briefly describe what you do"></textarea>
+  <div class="subgroup-label">What are you trying to accomplish with this website?</div>
+  <textarea id="siteGoal" placeholder="e.g. get more calls, showcase work, sell online"></textarea>
+  <div class="subgroup-label">Main competitors (optional)</div>
+  <textarea id="competitors" placeholder="Names or websites of similar businesses"></textarea>
+  <div class="field-status" id="businessStatus"></div>
+</div>
+</div>
+
+<div class="card" id="card5" data-step="5">
+<div class="section">
+  <label class="title">Legal Entity</label>
+  <p class="hint" id="hint5">For your service agreement -- not shown on your website.</p>
+  <select id="isLegalEntity">
+    <option value="">Are you a registered legal entity?</option>
+    <option value="yes">Yes</option>
+    <option value="no">No / not yet</option>
+  </select>
+  <input type="text" id="legalEntityName" placeholder="Legal entity name (or your full legal name if not yet registered)">
+  <input type="text" id="legalMailingAddress" placeholder="Registered / mailing address">
+  <input type="text" id="ein" placeholder="EIN (optional)">
+  <select id="relationshipToBusiness">
+    <option value="">Your relationship to the business</option>
+    <option>Owner</option><option>Officer</option><option>Authorized Agent</option><option>Member</option><option>Other</option>
+  </select>
+  <div class="field-status" id="legalStatus"></div>
+</div>
+</div>
+
+<div class="card" id="card6" data-step="6">
+<div class="section">
+  <label class="title">Domain</label>
+  <p class="hint" id="hint6">Do you already have a domain name?</p>
+  <select id="hasDomainSelect">
+    <option value="">Select one</option>
+    <option value="yes">Yes, I have one</option>
+    <option value="no">No, I need one</option>
+    <option value="unsure">Not sure</option>
+  </select>
+  <input type="text" id="domainNameInput" placeholder="yourdomain.com (if you have one)">
+  <div class="toggle-row"><input type="checkbox" id="wantsDomainHelp"><label for="wantsDomainHelp">I would like StoneBridge to help register/manage my domain</label></div>
+  <div class="field-status" id="domainStatus"></div>
+</div>
+</div>
+
+<div class="card" id="card7" data-step="7">
+<div class="section">
+  <label class="title">Terms &amp; Privacy Pages</label>
+  <p class="hint" id="hint7">These are included with every site.</p>
+  <select id="termsPrivacyChoice">
+    <option value="">Select one</option>
+    <option value="provide">I will provide my own content</option>
+    <option value="generate">Generate a standard template for me</option>
+  </select>
+  <textarea id="termsPrivacyContent" placeholder="Paste your Terms/Privacy content here if providing your own"></textarea>
+  <div class="field-status" id="termsStatus"></div>
+</div>
+</div>
+
+<div class="card" id="card8" data-step="8">
+<div class="section">
+  <label class="title">Timeline &amp; Contact</label>
+  <select id="timelinePreference">
+    <option value="">How soon do you need this?</option>
+    <option>ASAP</option><option>Within 2 weeks</option><option>Within a month</option><option>No rush</option>
+  </select>
+  <select id="preferredContactMethod">
+    <option value="">Preferred contact during revisions</option>
+    <option>Email</option><option>Text</option><option>Phone</option>
+  </select>
+  <div class="field-status" id="timelineStatus"></div>
+</div>
+</div>
+
+<div class="card" id="card9" data-step="9">
+<div class="section">
       <label class="title">Logo</label>
       <div class="upload-box">
         <input type="file" id="logoInput" accept="image/*">
@@ -133,11 +264,12 @@ input[type=text]::placeholder,textarea::placeholder{color:#9199a8;opacity:1}
       </div>
       <div class="field-status" id="logoStatus"></div>
     </div>
+</div>
 
-    <!-- PHOTOS -->
-    <div class="section">
+<div class="card" id="card10" data-step="10">
+<div class="section">
       <label class="title">Photos</label>
-      <p class="hint">Up to 10. You can add more later too.</p>
+      <p class="hint" id="hint10">Up to 10. You can add more later too.</p>
       <div class="upload-box">
         <input type="file" id="photosInput" accept="image/*" multiple>
         <div class="thumbs" id="photosThumb"></div>
@@ -145,8 +277,11 @@ input[type=text]::placeholder,textarea::placeholder{color:#9199a8;opacity:1}
       <div class="field-status" id="photosStatus"></div>
     </div>
   </div>
+</div>
 
-  <div id="doneState">
+</div>
+
+<div id="doneState">
     <h2>You're all set!</h2>
     <p>We've got everything we need. Your 48-hour build clock starts now — we'll be in touch with your draft link soon.</p>
   </div>
@@ -154,8 +289,9 @@ input[type=text]::placeholder,textarea::placeholder{color:#9199a8;opacity:1}
 
 <div id="doneBar" style="display:none">
   <div class="done-inner">
-    <button id="doneBtn" onclick="finishBrief()">I'm Done — Start My Build</button>
-    <div class="done-note">This starts your 48-hour build clock. You can still request changes after, but the timer begins now.</div>
+    <button type="button" id="backBtn" class="btn-back" onclick="goBack()">← Back</button>
+    <button type="button" id="nextBtn" class="btn-next" onclick="goNext()">Next →</button>
+    <button id="doneBtn" class="btn-next" onclick="finishBrief()" style="display:none">I'm Done — Start My Build</button>
   </div>
 </div>
 
@@ -164,6 +300,78 @@ const API = 'https://api.stonebridgesolutions.io';
 const params = new URLSearchParams(window.location.search);
 const token = params.get('token');
 let saveTimer = null;
+
+const STEP_LABELS = ['Colors','Tone','Audience','Features','Business','Legal','Domain','Terms','Timeline','Logo','Photos'];
+const TOTAL_STEPS = STEP_LABELS.length;
+let currentStep = 0;
+const visitedSteps = new Set();
+
+function buildNav() { /* nav pills are server-rendered with onclick handlers already */ }
+
+function showStep(i) {
+  if (i < 0 || i >= TOTAL_STEPS) return;
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+  const card = document.getElementById('card' + i);
+  if (card) card.classList.add('active');
+  currentStep = i;
+  visitedSteps.add(i);
+  STEP_LABELS.forEach((label, idx) => {
+    const pill = document.getElementById('navPill' + idx);
+    if (!pill) return;
+    pill.classList.toggle('active', idx === i);
+    pill.classList.toggle('visited', visitedSteps.has(idx) && idx !== i);
+  });
+  updateBottomBar();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateBottomBar() {
+  const backBtn = document.getElementById('backBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const doneBtn = document.getElementById('doneBtn');
+  backBtn.style.visibility = currentStep === 0 ? 'hidden' : 'visible';
+  const allVisited = visitedSteps.size === TOTAL_STEPS;
+  const isLast = currentStep === TOTAL_STEPS - 1;
+  if (isLast && allVisited) {
+    nextBtn.style.display = 'none';
+    doneBtn.style.display = 'inline-block';
+  } else {
+    nextBtn.style.display = 'inline-block';
+    doneBtn.style.display = 'none';
+    nextBtn.textContent = (isLast && !allVisited) ? 'Next unanswered →' : 'Next →';
+  }
+}
+
+function goNext() {
+  const allVisited = visitedSteps.size === TOTAL_STEPS;
+  if (currentStep === TOTAL_STEPS - 1 && !allVisited) {
+    for (let i = 0; i < TOTAL_STEPS; i++) { if (!visitedSteps.has(i)) { showStep(i); return; } }
+  }
+  showStep(Math.min(currentStep + 1, TOTAL_STEPS - 1));
+}
+
+function goBack() {
+  showStep(Math.max(currentStep - 1, 0));
+}
+
+function personalize(order) {
+  const biz = (order.business_name || 'your business').trim();
+  const first = ((order.contact_name || '').trim().split(/\s+/)[0]) || '';
+  const g = first ? (', ' + first) : '';
+  const map = {
+    hint0: 'Pick a primary color for ' + biz + "'s site. Add a secondary and accent too if you have them in mind" + g + '.',
+    hint3: 'Should ' + biz + ' have any of these' + g + '? Check anything that applies.',
+    hint4: 'Tell us a bit more about ' + biz + g + '.',
+    hint5: 'Quick legal question for the service agreement' + g + ' — this never shows on your website.',
+    hint6: 'Does ' + biz + ' already have a domain name' + g + '?',
+    hint8: 'How soon does ' + biz + ' need this live' + g + '?'
+  };
+  Object.keys(map).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = map[id];
+  });
+}
+
 
 const TONE_OPTIONS = ['Friendly & Casual', 'Professional & Polished', 'Warm & Family-Owned', 'Bold & Energetic', 'Calm & Reassuring', 'Luxury & Upscale', 'Straightforward & No-Nonsense'];
 const AGE_OPTIONS = ['Under 18', '18-24', '25-34', '35-44', '45-54', '55-64', '65+'];
@@ -250,13 +458,29 @@ async function saveAll() {
 
   fd.append('style_notes', composeField('Features', 'feature', 'featureOther'));
 
+  fd.append('business_description', document.getElementById('businessDescription').value.trim());
+  fd.append('site_goal', document.getElementById('siteGoal').value.trim());
+  fd.append('competitors', document.getElementById('competitors').value.trim());
+  fd.append('is_legal_entity', document.getElementById('isLegalEntity').value);
+  fd.append('legal_entity_name', document.getElementById('legalEntityName').value.trim());
+  fd.append('legal_mailing_address', document.getElementById('legalMailingAddress').value.trim());
+  fd.append('ein', document.getElementById('ein').value.trim());
+  fd.append('relationship_to_business', document.getElementById('relationshipToBusiness').value);
+  fd.append('has_domain', document.getElementById('hasDomainSelect').value);
+  fd.append('domain_name', document.getElementById('domainNameInput').value.trim());
+  fd.append('wants_domain_help', document.getElementById('wantsDomainHelp').checked ? 'yes' : 'no');
+  fd.append('terms_privacy_choice', document.getElementById('termsPrivacyChoice').value);
+  fd.append('terms_privacy_content', document.getElementById('termsPrivacyContent').value.trim());
+  fd.append('timeline_preference', document.getElementById('timelinePreference').value);
+  fd.append('preferred_contact_method', document.getElementById('preferredContactMethod').value);
+
   try {
     const res = await fetch(`${API}/builder/save`, { method: 'POST', body: fd });
     const data = await res.json();
     const status = data.ok ? 'Saved' : (data.error || 'Save failed');
-    ['colorStatus','toneStatus','audienceStatus','featureStatus'].forEach(id => showStatus(id, status));
+    ['colorStatus','toneStatus','audienceStatus','featureStatus','businessStatus','legalStatus','domainStatus','termsStatus','timelineStatus'].forEach(id => showStatus(id, status));
   } catch {
-    ['colorStatus','toneStatus','audienceStatus','featureStatus'].forEach(id => showStatus(id, 'Save failed'));
+    ['colorStatus','toneStatus','audienceStatus','featureStatus','businessStatus','legalStatus','domainStatus','termsStatus','timelineStatus'].forEach(id => showStatus(id, 'Save failed'));
   }
 }
 
@@ -281,6 +505,8 @@ document.getElementById('colorPrimary').addEventListener('input', (e) => { docum
 document.getElementById('colorSecondary').addEventListener('input', (e) => { document.getElementById('hexSecondary').textContent = e.target.value; debouncedSave(); });
 document.getElementById('colorAccent').addEventListener('input', (e) => { document.getElementById('hexAccent').textContent = e.target.value; debouncedSave(); });
 ['toneOther','audienceOther','featureOther'].forEach(id => document.getElementById(id).addEventListener('input', debouncedSave));
+['businessDescription','siteGoal','competitors','legalEntityName','legalMailingAddress','ein','relationshipToBusiness','isLegalEntity','hasDomainSelect','domainNameInput','termsPrivacyChoice','termsPrivacyContent','timelinePreference','preferredContactMethod'].forEach(id => { const el = document.getElementById(id); el.addEventListener(el.tagName === 'SELECT' ? 'change' : 'input', debouncedSave); });
+document.getElementById('wantsDomainHelp').addEventListener('change', debouncedSave);
 
 async function uploadLogo(e) {
   const file = e.target.files[0];
@@ -357,6 +583,23 @@ async function init() {
   try {
     const res = await fetch(`${API}/builder/status?token=${encodeURIComponent(token)}`);
     const data = await res.json();
+    if (data.gate) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('subLine').style.display = 'none';
+      document.getElementById('heading').textContent = data.business_name ? `${data.business_name}, tell us about your style` : 'Tell us about your style';
+      document.getElementById('gateHeading').textContent = data.business_name ? `${data.business_name}, let's get your deposit sorted` : "Let's get your deposit sorted";
+      document.getElementById('gateMessage').textContent = 'Your builder link is ready — we just need your deposit confirmed first. Once it clears, come back to this exact link and everything will be waiting for you.';
+      const payBtn = document.getElementById('gatePayBtn');
+      if (data.payment_link) {
+        payBtn.href = data.payment_link;
+        payBtn.style.display = 'inline-block';
+      } else {
+        payBtn.style.display = 'none';
+        document.getElementById('gateFallback').style.display = 'block';
+      }
+      document.getElementById('gateScreen').style.display = 'block';
+      return;
+    }
     if (!data.ok) throw new Error(data.error || 'Link not recognized.');
     const order = data.order;
     document.getElementById('heading').textContent = `${order.business_name}, tell us about your style`;
@@ -365,9 +608,6 @@ async function init() {
     if (order.color_scheme_pref) {
       document.getElementById('colorPrimary').value = order.color_scheme_pref;
       document.getElementById('hexPrimary').textContent = order.color_scheme_pref;
-    } else {
-      document.getElementById('colorUnsure').checked = true;
-      document.getElementById('colorPickers').style.display = 'none';
     }
     if (order.color_secondary) {
       document.getElementById('addSecondary').checked = true;
@@ -395,6 +635,22 @@ async function init() {
 
     parseComposed(order.style_notes, 'feature', 'featureOther');
 
+    if (order.business_description) document.getElementById('businessDescription').value = order.business_description;
+    if (order.site_goal) document.getElementById('siteGoal').value = order.site_goal;
+    if (order.competitors) document.getElementById('competitors').value = order.competitors;
+    if (order.is_legal_entity) document.getElementById('isLegalEntity').value = order.is_legal_entity;
+    if (order.legal_entity_name) document.getElementById('legalEntityName').value = order.legal_entity_name;
+    if (order.legal_mailing_address) document.getElementById('legalMailingAddress').value = order.legal_mailing_address;
+    if (order.ein) document.getElementById('ein').value = order.ein;
+    if (order.relationship_to_business) document.getElementById('relationshipToBusiness').value = order.relationship_to_business;
+    if (order.has_domain) document.getElementById('hasDomainSelect').value = order.has_domain;
+    if (order.domain_name) document.getElementById('domainNameInput').value = order.domain_name;
+    if (order.wants_domain_help === 'yes') document.getElementById('wantsDomainHelp').checked = true;
+    if (order.terms_privacy_choice) document.getElementById('termsPrivacyChoice').value = order.terms_privacy_choice;
+    if (order.terms_privacy_content) document.getElementById('termsPrivacyContent').value = order.terms_privacy_content;
+    if (order.timeline_preference) document.getElementById('timelinePreference').value = order.timeline_preference;
+    if (order.preferred_contact_method) document.getElementById('preferredContactMethod').value = order.preferred_contact_method;
+
     if (order.logo_url) document.getElementById('logoThumb').innerHTML = `<img src="${order.logo_url}">`;
     if (order.photo_urls && order.photo_urls.length) {
       document.getElementById('photosThumb').innerHTML = order.photo_urls.map(u => `<img src="${u}">`).join('');
@@ -402,6 +658,9 @@ async function init() {
     if (order.builder_completed_at) document.getElementById('alreadyBanner').style.display = 'block';
     document.getElementById('form-area').style.display = 'block';
     document.getElementById('doneBar').style.display = 'block';
+    buildNav();
+    personalize(order);
+    showStep(0);
   } catch (err) {
     document.getElementById('error').style.display = 'block';
     document.getElementById('error').textContent = err.message;

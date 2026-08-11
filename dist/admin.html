@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — StoneBridge Solutions</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0d1526;--navy-2:#111b30;--navy-3:#16233d;--gold:#d9b23d;--gold-soft:#e5c766;--white:#f7f7f5;--grey:#c6cbd6;--red:#e2564f}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--navy);color:var(--grey);font-family:'Poppins',sans-serif;font-weight:300;line-height:1.6;min-height:100vh}
+.wrap{max-width:960px;margin:0 auto;padding:48px 24px 100px}
+.eyebrow{font-size:.78rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:14px}
+h1{font-family:'Playfair Display',serif;color:var(--white);font-size:1.9rem;margin-bottom:8px}
+.sub{font-size:.98rem;margin-bottom:36px}
+.section{background:var(--navy-2);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:26px;margin-bottom:22px}
+.section h2{font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;font-weight:600}
+.section p.hint{font-size:.9rem;color:var(--grey);margin-bottom:16px}
+input[type=text],input[type=email],input[type=password]{width:100%;background:var(--navy-3);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px 14px;color:var(--white);font-family:'Poppins',sans-serif;font-size:.95rem;margin-bottom:12px}
+input:focus{outline:2px solid var(--gold);outline-offset:1px;border-color:transparent}
+button{font-family:'Poppins',sans-serif;font-weight:600;font-size:.92rem;padding:13px 24px;border-radius:10px;cursor:pointer;border:none;background:var(--gold);color:var(--navy)}
+button:hover{background:var(--gold-soft)}
+button:disabled{opacity:.5;cursor:not-allowed}
+.field-status{font-size:.82rem;color:var(--gold);margin-top:8px;min-height:16px}
+.field-status.err{color:var(--red)}
+.link-box{background:var(--navy-3);border:1px solid rgba(217,178,61,.3);border-radius:10px;padding:14px;margin-top:14px;font-size:.88rem;word-break:break-all;display:none}
+.link-box a{color:var(--gold-soft)}
+table{width:100%;border-collapse:collapse;font-size:.86rem}
+th{text-align:left;padding:10px 8px;color:var(--gold);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.1)}
+td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,.06);color:var(--white)}
+tr:last-child td{border-bottom:none}
+.badge{display:inline-block;padding:3px 9px;border-radius:12px;font-size:.72rem;font-weight:500}
+.badge.yes{background:rgba(99,153,34,.18);color:#a3d968}
+.badge.no{background:rgba(226,86,79,.15);color:#f0938e}
+.badge.progress{background:rgba(217,178,61,.15);color:var(--gold-soft)}
+.copy-btn{background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--grey);padding:5px 10px;font-size:.76rem;border-radius:6px}
+.copy-btn:hover{background:transparent;border-color:rgba(255,255,255,.35);color:var(--white)}
+#gateScreen,#dashboard{display:none}
+#loading{text-align:center;padding:60px 0;color:var(--grey)}
+.refresh-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.refresh-row button{padding:8px 16px;font-size:.82rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">StoneBridge Admin</div>
+  <h1>Client Intake</h1>
+  <p class="sub">Generate builder links and check on client progress.</p>
+
+  <div id="loading">Loading...</div>
+
+  <div id="gateScreen">
+    <div class="section">
+      <h2>Enter Passcode</h2>
+      <p class="hint">This page is not indexed and not linked from the site — keep this URL to yourself.</p>
+      <input type="password" id="passcodeInput" placeholder="Admin passcode">
+      <button id="unlockBtn" onclick="unlock()">Unlock</button>
+      <div class="field-status" id="gateStatus"></div>
+    </div>
+  </div>
+
+  <div id="dashboard">
+    <div class="section">
+      <h2>Create Builder Link</h2>
+      <p class="hint">For clients you're handling directly, off the normal order pipeline. This marks the deposit as paid immediately so the link works right away.</p>
+      <input type="text" id="newFirstName" placeholder="Client's first name">
+      <input type="text" id="newBusinessName" placeholder="Business name (optional)">
+      <input type="email" id="newEmail" placeholder="Client's email">
+      <button id="createBtn" onclick="createLink()">Generate Link</button>
+      <div class="field-status" id="createStatus"></div>
+      <div class="link-box" id="linkBox"></div>
+    </div>
+
+    <div class="section">
+      <div class="refresh-row">
+        <h2 style="margin-bottom:0">All Sessions</h2>
+        <button onclick="loadOrders()">Refresh</button>
+      </div>
+      <div id="ordersTableWrap">Loading sessions...</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'https://api.stonebridgesolutions.io';
+let secret = sessionStorage.getItem('sb_admin_secret') || '';
+
+async function checkSecret(s) {
+  const res = await fetch(`${API}/admin/orders`, { headers: { 'x-admin-secret': s } });
+  return res.status === 200;
+}
+
+async function unlock() {
+  const val = document.getElementById('passcodeInput').value.trim();
+  const btn = document.getElementById('unlockBtn');
+  const status = document.getElementById('gateStatus');
+  if (!val) return;
+  btn.disabled = true;
+  status.textContent = 'Checking...';
+  status.className = 'field-status';
+  const ok = await checkSecret(val);
+  if (ok) {
+    secret = val;
+    sessionStorage.setItem('sb_admin_secret', val);
+    document.getElementById('gateScreen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    loadOrders();
+  } else {
+    status.textContent = 'Wrong passcode.';
+    status.className = 'field-status err';
+    btn.disabled = false;
+  }
+}
+
+async function createLink() {
+  const firstName = document.getElementById('newFirstName').value.trim();
+  const businessName = document.getElementById('newBusinessName').value.trim();
+  const email = document.getElementById('newEmail').value.trim();
+  const btn = document.getElementById('createBtn');
+  const status = document.getElementById('createStatus');
+  const box = document.getElementById('linkBox');
+  if (!firstName || !email) {
+    status.textContent = 'First name and email are required.';
+    status.className = 'field-status err';
+    return;
+  }
+  btn.disabled = true;
+  status.textContent = 'Creating...';
+  status.className = 'field-status';
+  try {
+    const res = await fetch(`${API}/admin/create-link`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-secret': secret },
+      body: JSON.stringify({ first_name: firstName, business_name: businessName, email: email })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Something went wrong.');
+    status.textContent = 'Link created.';
+    status.className = 'field-status';
+    box.innerHTML = `<a href="${data.link}" target="_blank">${data.link}</a> <button class="copy-btn" onclick="navigator.clipboard.writeText('${data.link}')">Copy</button>`;
+    box.style.display = 'block';
+    document.getElementById('newFirstName').value = '';
+    document.getElementById('newBusinessName').value = '';
+    document.getElementById('newEmail').value = '';
+    loadOrders();
+  } catch (err) {
+    status.textContent = err.message;
+    status.className = 'field-status err';
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function progressLabel(o) {
+  if (o.builder_completed_at) return '<span class="badge yes">Submitted</span>';
+  if (o.builder_last_saved_at) return '<span class="badge progress">In progress</span>';
+  return '<span class="badge no">Not started</span>';
+}
+
+async function loadOrders() {
+  const wrap = document.getElementById('ordersTableWrap');
+  try {
+    const res = await fetch(`${API}/admin/orders`, { headers: { 'x-admin-secret': secret } });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Failed to load.');
+    if (!data.orders.length) { wrap.innerHTML = '<p class="hint">No sessions yet.</p>'; return; }
+    let html = '<table><thead><tr><th>Business</th><th>Contact</th><th>Email</th><th>Deposit</th><th>Progress</th><th>Created</th><th>Link</th></tr></thead><tbody>';
+    data.orders.forEach(o => {
+      const link = `https://stonebridgesolutions.io/builder.html?token=${o.builder_link_token}`;
+      const created = new Date(o.created_at).toLocaleDateString();
+      html += `<tr><td>${o.business_name || ''}</td><td>${o.contact_name || ''}</td><td>${o.email || ''}</td><td>${o.deposit_paid ? '<span class="badge yes">Paid</span>' : '<span class="badge no">Unpaid</span>'}</td><td>${progressLabel(o)}</td><td>${created}</td><td><button class="copy-btn" onclick="navigator.clipboard.writeText('${link}')">Copy link</button></td></tr>`;
+    });
+    html += '</tbody></table>';
+    wrap.innerHTML = html;
+  } catch (err) {
+    wrap.innerHTML = `<p class="field-status err">${err.message}</p>`;
+  }
+}
+
+async function init() {
+  if (secret) {
+    const ok = await checkSecret(secret);
+    if (ok) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      loadOrders();
+      return;
+    }
+    sessionStorage.removeItem('sb_admin_secret');
+  }
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('gateScreen').style.display = 'block';
+}
+init();
+</script>
+</body>
+</html>
