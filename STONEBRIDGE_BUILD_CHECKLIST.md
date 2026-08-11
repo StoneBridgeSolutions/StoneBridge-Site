@@ -490,54 +490,122 @@ Mark all content gaps as [CONTENT NEEDED].
 
 ## STAGE 6 — CONTRACT GENERATION
 
-MAJOR DISCOVERY (Aug 10, 2026): this stage is much further along than the
-checklist below suggested. A full, real implementation already exists in
-/root/stonebridge-orders/docusign-service.js (356 lines) and is ACTIVELY
-FIRING on every order right now (sendAgreement() is called from
-/website-order in server.js, on every form submission). Investigated but
-did NOT modify anything below without Carl's input first — see urgent
-items.
+MAJOR DISCOVERY (Aug 10, 2026): this stage was much further along than the
+checklist previously showed. A full, real implementation exists in
+/root/stonebridge-orders/docusign-service.js and fires on every order
+(sendAgreement() called from /website-order in server.js, on every form
+submission). Investigated fully, then extended with Carl's direct sign-off
+on Aug 10, 2026: "Carl Loser" confirmed as his real name (not a bug), auto-
+sign approved, dynamic accuracy requested, and a completion webhook
+requested.
 
-CONFIRMED ALREADY WORKING (not credited before):
+CONFIRMED ALREADY WORKING (found, not built today):
 - [x] DocuSign fires immediately on form submit — sendAgreement() called
       directly inside the /website-order handler.
-- [x] Dynamic agreement text — buildAgreementText(order, tierInfo) builds
-      a real "STONEBRIDGE SOLUTIONS INC. STANDARD SERVICE AGREEMENT" with
-      agreement number, effective date, both parties, Schedule A (product/
-      price/deposit/final payment/turnaround/revision allowance), and a
-      set of client-initial clauses (scope, payment/chargeback, deemed
-      acceptance, no guaranteed results, liability cap, NC law/Forsyth
-      County venue).
-- [x] Routing order — client (recipientId 1, routingOrder 1) signs first,
-      then StoneBridge/Carl (recipientId 2, routingOrder 2) signs second.
-      Matches the spec's intended order.
+- [x] Base dynamic agreement text — buildAgreementText(order, tierInfo)
+      builds a real "STONEBRIDGE SOLUTIONS INC. STANDARD SERVICE
+      AGREEMENT" with agreement number, effective date, both parties,
+      Schedule A (product/price/deposit/final payment/turnaround/revision
+      allowance), and the original 7 client-initial clauses.
 
-URGENT -- FOUND, NOT FIXED, NEEDS CARL'S INPUT:
-- [ ] BUG: Carl's DocuSign signer name is hardcoded as "Carl Loser"
-      (docusign-service.js, sbSigner.name). This is going out on REAL
-      legal agreements to real clients right now, every time someone
-      submits the order form. Did not guess a replacement -- need the
-      correct name from Carl before touching this.
-- [ ] Auto-sign for Carl -- NOT implemented. Despite routingOrder placing
-      him second, he's a completely normal DocuSign signer who has to
-      manually open the email and click through to sign, same as any
-      client. No embedded/API signing flow exists. This is the opposite
-      of "server-side, no manual click" from the original spec.
-- [ ] ID verification on client signer -- NOT implemented. No
-      identityVerification / recipientAuthentication config anywhere in
-      docusign-service.js.
-- [ ] DocuSign Connect webhook -- does NOT exist. Only /docusign/auth,
-      /docusign/callback (OAuth), and /docusign/status exist -- nothing
-      listens for envelope-completed events at all.
-      CONSEQUENCE (important): because there's no completion webhook, and
-      because the /website-order redirect to cart.html (payment) fires
-      immediately on form SUBMIT rather than after signing completes, a
-      client can currently pay their deposit before their contract is
-      confirmed signed, or even without ever finishing signing at all.
-      This is the opposite of the "correct legal order" Stage 7 describes.
-      Not fixed -- this needs a real decision from Carl on the intended
-      behavior (block cart.html until signed? just track it for now?)
-      before building anything here.
+BUILT TODAY (Aug 10, 2026), all changes verified with node -c syntax
+checks after each step:
+- [x] "Carl Loser" — confirmed correct by Carl, not a bug. No fix needed.
+- [x] Auto-sign for Carl — REBUILT (not just "enabled" — the original
+      two-signer/shared-anchor design couldn't support this cleanly, so
+      this was a real restructure, not a toggle):
+        - Removed Carl (sbSigner/sbSigTab/sbDateTab) as a DocuSign
+          recipient entirely. envelopeDef.recipients.signers is now
+          [clientSigner] only — a single-signer envelope.
+        - Rewrote the SIGNATURES section from a fragile two-column shared-
+          anchor layout to sequential blocks. StoneBridge's signature is
+          now pre-filled directly in the generated document text ("By: /s/
+          Carl Loser", today's date) at generation time — a standard
+          conformed-signature approach, no DocuSign action needed on
+          Carl's side at all.
+        - Simplified clientSigTab/clientDateTab anchors to match the now-
+          unique remaining blank line (no more X-offset trick needed).
+        - Practical effect: the envelope now completes as soon as the
+          CLIENT signs, since Carl's part is already done before sending.
+- [x] Dynamic accuracy fixes:
+        - TIER_INFO was missing friend_family, friend_exclusive, and
+          not_sure entirely — any order on those tiers would have produced
+          a broken/undefined agreement. Added all three.
+        - Added Schedule B (Legal Entity) — pulls is_legal_entity,
+          legal_entity_name, legal_mailing_address, ein,
+          relationship_to_business, with "to be confirmed with StoneBridge"
+          fallback text since these fields aren't collected until the
+          builder step, well after the agreement is generated at order-
+          submission time (see sequencing note below — did not restructure
+          this, just made the gap honest instead of silently blank).
+        - Added Schedule C (Add-ons & Ongoing Services) — dynamically
+          reflects copywriting_provided and care_plan_selected/
+          care_plan_early_commit, with appropriate fallback text.
+        - Added Schedule D (Additional Available Services, not contracted)
+          — the disclaimer text from the original spec.
+        - Added the exact CHANGES CLAUSE text from the original spec.
+        - Added a NON-PAYMENT & CANCELLATION clause (deposit non-
+          refundable, site offline, IP/domain reverted) with its own
+          client-initial line — 8th initial now, tabs array updated to
+          match.
+        - Added a PAYMENT PLAN clause explaining that monthly plan
+          specifics get confirmed separately once selected, plus the
+          cancellation-due-in-full rule from the Stripe portal work
+          earlier this session — with its own client-initial line, 9th
+          initial.
+      HONEST LIMIT: the payment plan clause is necessarily generic ("will
+      be confirmed separately") because there's still no server-side flow
+      or DB field tracking which plan (3/6/12mo) a client picks — that
+      selection flow doesn't exist yet at all (confirmed via search, zero
+      matches for payment-plan-related code in server.js). Real monthly
+      terms can't be dynamically inserted until that's built.
+- [x] Completion webhook — POST /docusign/webhook added to server.js.
+      Parses DocuSign Connect's envelope-completed notification, matches
+      the envelope back to an order via a new docusign_envelope_id column
+      (also newly added — captured now when sendAgreement() succeeds, via
+      .then() rather than the old fire-and-forget-only .catch()), sets a
+      new agreement_signed_at timestamp, and emails Carl that the
+      agreement is fully executed. No new nginx route needed — already
+      covered by the existing /docusign/ location block.
+      NOT YET DONE: registering the actual DocuSign Connect subscription
+      (the API call that tells DocuSign to POST to this URL) — blocked by
+      the auth issue below, since I couldn't get a working authenticated
+      session to register it with. Endpoint is built and ready; just needs
+      the subscription created once auth is working again.
+
+URGENT, FOUND WHILE TESTING (Aug 10, 2026) — DocuSign auth is currently
+failing with a 401 on real API calls (createEnvelope), even though the
+locally cached token's expiry timestamp claims it's still valid for ~8
+more hours. The refresh flow appears to run without erroring and rewrites
+the token file, but the resulting token is STILL rejected by DocuSign's
+server on the actual request. This means:
+  - I could not fully end-to-end test the auto-sign/dynamic-content work
+    above against a real DocuSign envelope — all changes are verified for
+    correct JavaScript syntax and logic, but not confirmed against a live
+    envelope render.
+  - Since /website-order calls sendAgreement() as fire-and-forget with
+    only a console.error on failure (no alert email, nothing visible
+    anywhere else), it's possible real orders have been failing to get
+    their agreement sent for some unknown period with nobody aware of it.
+    This predates anything from this session.
+Carl needs to visit /docusign/auth to fully re-consent, and separately
+check the DocuSign account dashboard for any revoked integration/consent.
+Once auth is confirmed working: (1) the Connect subscription still needs
+registering, and (2) a real test envelope should be sent to confirm the
+new signature block and Schedule B/C/D render correctly on an actual
+DocuSign document (I designed and syntax-checked everything carefully but
+have not visually confirmed the rendered PDF layout).
+
+NOT ADDRESSED (Carl's decision needed, unrelated to today's fixes):
+- [ ] Redirect-before-signing sequencing — /website-order still redirects
+      the client straight to cart.html (payment) immediately on form
+      submit, before their agreement is even sent, let alone signed. Since
+      auto-sign now means only the client's signature is needed to
+      complete the envelope, this is a smaller gap than before, but a
+      client could still technically pay before signing. Not changed —
+      needs Carl's call on whether to gate cart.html behind
+      agreement_signed_at.
+- [ ] ID verification on client signer — still not implemented.
 
 PRE-DOCUSIGN COLLECTION (confirm before generating)
 - [ ] Legal entity name
