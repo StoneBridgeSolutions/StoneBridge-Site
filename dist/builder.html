@@ -69,10 +69,15 @@ input[type=text]::placeholder,textarea::placeholder{color:#9199a8;opacity:1}
 .already-banner{background:rgba(217,178,61,.12);border:1px solid rgba(217,178,61,.4);border-radius:10px;padding:14px 18px;font-size:.88rem;margin-bottom:28px;color:var(--gold)}
 
 .stepper-nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:22px}
-.nav-pill{background:var(--navy-3);border:1px solid rgba(255,255,255,.1);color:var(--grey);font-family:'Poppins',sans-serif;font-size:.72rem;font-weight:500;padding:7px 12px;border-radius:20px;cursor:pointer;transition:all .15s}
-.nav-pill:hover{border-color:rgba(217,178,61,.4)}
-.nav-pill.visited{color:var(--gold-soft);border-color:rgba(217,178,61,.3)}
-.nav-pill.active{background:var(--gold);color:var(--navy);border-color:var(--gold);font-weight:600}
+.stepper-nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
+.nav-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.1);color:var(--grey);font-family:'Poppins',sans-serif;font-size:.75rem;font-weight:500;padding:8px 13px;border-radius:22px;cursor:pointer;transition:background .15s,border-color .15s,color .15s,transform .1s;white-space:nowrap}
+.nav-pill:hover{background:rgba(217,178,61,.08);border-color:rgba(217,178,61,.5);color:rgba(217,178,61,.85);transform:translateY(-1px)}
+.nav-pill.visited{background:rgba(217,178,61,.07);border-color:rgba(217,178,61,.35);color:var(--gold-soft)}
+.nav-pill.visited .np-icon::after{content:'✓';font-size:.7rem;margin-left:2px;color:#7dbe4a;font-style:normal}
+.nav-pill.active{background:var(--gold);color:var(--navy);border-color:var(--gold);font-weight:700;box-shadow:0 3px 14px rgba(217,178,61,.35);transform:translateY(-1px)}
+.nav-pill.active .np-icon::after{content:''}
+.np-icon{font-size:.95rem;line-height:1;display:inline-flex;align-items:center}
+.np-label{letter-spacing:.01em}
 .card{display:none}
 .card.active{display:block}
 select{width:100%;background:var(--navy-3);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px 36px 12px 14px;color:var(--white);font-family:'Poppins',sans-serif;font-size:.95rem;appearance:none;-webkit-appearance:none;-moz-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'><path d='M1 1l6 6 6-6' stroke='%23d9b23d' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");background-repeat:no-repeat;background-position:right 14px center;margin-bottom:12px;cursor:pointer}
@@ -109,18 +114,18 @@ input[type=text]{margin-bottom:12px}
     <div class="autosave-note">Everything here saves automatically as you go. Close this tab anytime and come back to this same link — nothing gets lost.</div>
     <div id="alreadyBanner" class="already-banner" style="display:none">You already hit "I'm Done" on this brief — your 48-hour clock is running. You can still make edits below; just let us know if anything major changed.</div>
 
-    <nav class="stepper-nav" id="stepperNav">
-  <button type="button" class="nav-pill" id="navPill0" onclick="showStep(0)">Colors</button>
-  <button type="button" class="nav-pill" id="navPill1" onclick="showStep(1)">Tone</button>
-  <button type="button" class="nav-pill" id="navPill2" onclick="showStep(2)">Audience</button>
-  <button type="button" class="nav-pill" id="navPill3" onclick="showStep(3)">Features</button>
-  <button type="button" class="nav-pill" id="navPill4" onclick="showStep(4)">Business</button>
-  <button type="button" class="nav-pill" id="navPill5" onclick="showStep(5)">Legal</button>
-  <button type="button" class="nav-pill" id="navPill6" onclick="showStep(6)">Domain</button>
-  <button type="button" class="nav-pill" id="navPill7" onclick="showStep(7)">Terms</button>
-  <button type="button" class="nav-pill" id="navPill8" onclick="showStep(8)">Timeline</button>
-  <button type="button" class="nav-pill" id="navPill9" onclick="showStep(9)">Logo</button>
-  <button type="button" class="nav-pill" id="navPill10" onclick="showStep(10)">Photos</button>
+    <nav class="stepper-nav" role="tablist" aria-label="Builder steps" id="stepperNav">
+  <button type="button" class="nav-pill" id="navPill0" onclick="showStep(0)" title="Colors"><span class="np-icon">🎨</span><span class="np-label">Colors</span></button>
+  <button type="button" class="nav-pill" id="navPill1" onclick="showStep(1)" title="Tone"><span class="np-icon">✍️</span><span class="np-label">Tone</span></button>
+  <button type="button" class="nav-pill" id="navPill2" onclick="showStep(2)" title="Audience"><span class="np-icon">🎯</span><span class="np-label">Audience</span></button>
+  <button type="button" class="nav-pill" id="navPill3" onclick="showStep(3)" title="Features"><span class="np-icon">⚡</span><span class="np-label">Features</span></button>
+  <button type="button" class="nav-pill" id="navPill4" onclick="showStep(4)" title="Business"><span class="np-icon">🏢</span><span class="np-label">Business</span></button>
+  <button type="button" class="nav-pill" id="navPill5" onclick="showStep(5)" title="Legal"><span class="np-icon">📋</span><span class="np-label">Legal</span></button>
+  <button type="button" class="nav-pill" id="navPill6" onclick="showStep(6)" title="Domain"><span class="np-icon">🌐</span><span class="np-label">Domain</span></button>
+  <button type="button" class="nav-pill" id="navPill7" onclick="showStep(7)" title="Terms"><span class="np-icon">📝</span><span class="np-label">Terms</span></button>
+  <button type="button" class="nav-pill" id="navPill8" onclick="showStep(8)" title="Timeline"><span class="np-icon">📅</span><span class="np-label">Timeline</span></button>
+  <button type="button" class="nav-pill" id="navPill9" onclick="showStep(9)" title="Logo"><span class="np-icon">✨</span><span class="np-label">Logo</span></button>
+  <button type="button" class="nav-pill" id="navPill10" onclick="showStep(10)" title="Photos"><span class="np-icon">📷</span><span class="np-label">Photos</span></button>
 </nav>
 
 <div id="cardsWrap">
