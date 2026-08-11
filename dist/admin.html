@@ -153,9 +153,29 @@ async function createLink() {
 }
 
 function progressLabel(o) {
-  if (o.builder_completed_at) return '<span class="badge yes">Submitted</span>';
+  if (o.building_started_at) return '<span class="badge yes">Building</span>';
+  if (o.builder_completed_at) return '<span class="badge progress">Waiting to start</span>';
   if (o.builder_last_saved_at) return '<span class="badge progress">In progress</span>';
   return '<span class="badge no">Not started</span>';
+}
+
+async function startClock(orderId, btn) {
+  btn.disabled = true;
+  btn.textContent = 'Starting...';
+  try {
+    const res = await fetch(`${API}/admin/start-clock`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-secret': secret },
+      body: JSON.stringify({ order_id: orderId })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Failed to start clock.');
+    loadOrders();
+  } catch (err) {
+    alert(err.message);
+    btn.disabled = false;
+    btn.textContent = 'Start Clock';
+  }
 }
 
 async function loadOrders() {
@@ -165,11 +185,14 @@ async function loadOrders() {
     const data = await res.json();
     if (!data.ok) throw new Error(data.error || 'Failed to load.');
     if (!data.orders.length) { wrap.innerHTML = '<p class="hint">No sessions yet.</p>'; return; }
-    let html = '<table><thead><tr><th>Business</th><th>Contact</th><th>Email</th><th>Deposit</th><th>Progress</th><th>Created</th><th>Link</th></tr></thead><tbody>';
+    let html = '<table><thead><tr><th>Business</th><th>Contact</th><th>Email</th><th>Deposit</th><th>Progress</th><th>Created</th><th>Link</th><th>Clock</th></tr></thead><tbody>';
     data.orders.forEach(o => {
       const link = `https://stonebridgesolutions.io/builder.html?token=${o.builder_link_token}`;
       const created = new Date(o.created_at).toLocaleDateString();
-      html += `<tr><td>${o.business_name || ''}</td><td>${o.contact_name || ''}</td><td>${o.email || ''}</td><td>${o.deposit_paid ? '<span class="badge yes">Paid</span>' : '<span class="badge no">Unpaid</span>'}</td><td>${progressLabel(o)}</td><td>${created}</td><td><button class="copy-btn" onclick="navigator.clipboard.writeText('${link}')">Copy link</button></td></tr>`;
+      const clockCell = o.building_started_at
+      ? 'Started'
+      : (o.builder_completed_at ? `<button class="copy-btn" onclick="startClock('${o.id}', this)">Start Clock</button>` : '-');
+    html += `<tr><td>${o.business_name || ''}</td><td>${o.contact_name || ''}</td><td>${o.email || ''}</td><td>${o.deposit_paid ? '<span class="badge yes">Paid</span>' : '<span class="badge no">Unpaid</span>'}</td><td>${progressLabel(o)}</td><td>${created}</td><td><button class="copy-btn" onclick="navigator.clipboard.writeText('${link}')">Copy link</button></td><td>${clockCell}</td></tr>`;
     });
     html += '</tbody></table>';
     wrap.innerHTML = html;
