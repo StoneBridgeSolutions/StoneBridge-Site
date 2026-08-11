@@ -345,7 +345,17 @@ input[type=text]{margin-bottom:12px}
   <label class="title" style="margin-top:24px">Third-Party Integrations</label>
   <p class="hint">Check any you need. These are custom quoted — you’ll provide credentials when we get started.</p>
   <div class="check-grid">
-    <label><input type="checkbox" id="integStripe"> Stripe / payment processing</label>
+    <div class="form-group" style="margin-top:24px">
+  <label class="field-label">Add-ons</label>
+  <div style="display:flex;align-items:flex-start;gap:10px;margin-top:8px;padding:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px">
+    <input type="checkbox" id="ga4Addon" style="margin-top:3px;accent-color:var(--gold)">
+    <label for="ga4Addon" style="cursor:pointer;line-height:1.4">
+      <strong>Google Analytics 4 Setup</strong> <span style="color:var(--gold);font-weight:600">+$100</span>
+      <div style="color:var(--grey);font-size:.82rem;margin-top:3px">We embed GA4 on your site and configure basic goal tracking. You'll need to provide a Google account or Measurement ID after launch.</div>
+    </label>
+  </div>
+</div>
+<label><input type="checkbox" id="integStripe"> Stripe / payment processing</label>
     <label><input type="checkbox" id="integEmail"> Email marketing (Mailchimp, Klaviyo, etc.)</label>
     <label><input type="checkbox" id="integBooking"> Booking / scheduling</label>
     <label><input type="checkbox" id="integSocial"> Social media feed</label>
@@ -617,6 +627,7 @@ async function saveAll() {
   fd.append('integrations', JSON.stringify(getIntegrations()));
   fd.append('payment_plan_selected', getPaymentPlan ? getPaymentPlan() : 'full');
   fd.append('logo_choice', (document.querySelector('input[name=logoChoice]:checked')||{}).value||'none');
+  fd.append('ga4_addon', document.getElementById('ga4Addon')?.checked ? '1' : '0');
   fd.append('favicon_choice', (document.querySelector('input[name=faviconChoice]:checked')||{}).value||'logo');
 
   fd.append('font_preference', (document.querySelector('input[name=fontPref]:checked') || {}).value || 'no-preference');
@@ -748,7 +759,8 @@ document.getElementById('integOther')?.addEventListener('change', function() {
 
 
 // ---- Review & Submit JS ----
-const TIER_PRICES = { simple: 349, friend_family: 199, friend_exclusive: 0, standard: 699, not_sure: 699, premium: 1199 };
+const TIER_PRICES = { simple: 350, friend_family: 199, friend_exclusive: 0, standard: 500, premium: 650 };
+const TIER_ORIG_PRICES = { simple: 500, standard: 650, premium: 800 };
 
 function calcCost() {
   const tier = window._ORDER_TIER || 'standard';
@@ -763,9 +775,11 @@ function calcCost() {
   const sbPages = pages.filter(p => p.copy === 'sb').length; const copyExtra = sbPages * 25;
   const logoChoice = (document.querySelector('input[name=logoChoice]:checked')||{}).value||'none';
   const logoAddOn = logoChoice === 'create' ? 35 : 0;
-  const total = base + extraPageCost + copyExtra + logoAddOn;
+  const ga4Choice = document.getElementById('ga4Addon')?.checked || false;
+  const ga4AddOn = ga4Choice ? 100 : 0;
+  const total = base + extraPageCost + copyExtra + logoAddOn + ga4AddOn;
   const deposit = Math.round(total * 0.5); const remaining = total - deposit;
-  return { base, extraPageCost, sbPages, copyExtra, logoAddOn, total, deposit, remaining };
+  return { base, extraPageCost, sbPages, copyExtra, logoAddOn, ga4AddOn, total, deposit, remaining };
 }
 
 function buildSummary() {
@@ -780,6 +794,7 @@ function buildSummary() {
   if (extraPageCost) html += row('Extra pages (' + pages.length + ' pages)', '+$' + extraPageCost);
   if (sbPages) html += row('Copywriting (' + sbPages + ' pages x $25)', '+$' + copyExtra);
   if (logoAddOn) html += row('Logo design', '+$35');
+  if (ga4AddOn) html += row('Google Analytics 4 setup', '+$100');
   html += row('Total', '$' + total, true);
   html += row('Deposit due now (50%)', '$' + deposit, true);
   html += row('Remaining balance', '$' + remaining);
