@@ -255,6 +255,34 @@ Built a clearly-named dist/admin.html instead.
 ---
 
 ## BUILDER UX REBUILT (Aug 10, 2026)
+
+CRITICAL INCIDENT + FIX (Aug 10, 2026, discovered while doing something
+unrelated): the deploy-server webhook runs `git reset --hard origin/main`
+in /root/stonebridge-marketing on EVERY push to the GitHub repo — including
+every push of this checklist file, since the checklist lives in the same
+repo as the live site. builder.html was being edited directly on the VPS
+filesystem all session and was NEVER committed to git, so every single
+checklist push was silently wiping the day's stepper wizard, payment gate,
+and business/legal/domain/terms field work back to git's stale pre-session
+version. This had been happening quietly in the background all day; it was
+only caught when a routine live check turned up zero matches for content
+that should have been there.
+FIXED: restored the most complete version from my own session backups
+(/root/claude-work/builder.html.backup-before-gate-screen, then re-applied
+the gate-screen script on top), verified live in the browser, then
+committed BOTH dist/builder.html and dist/admin.html directly to the git
+repo (commit f849a54) so they now ARE the target state `git reset --hard`
+resets to -- future checklist pushes can no longer touch them. admin.html
+itself was never at risk (untracked file, `git reset --hard` only affects
+tracked files) -- only builder.html, which is pre-existing and tracked.
+server.js / docusign-service.js / output-generator.js in
+/root/stonebridge-orders were also never at risk -- the deploy script only
+touches /root/stonebridge-marketing, a separate directory.
+LESSON: any future direct edits to files inside /root/stonebridge-marketing
+need to be git add/commit/pushed (not just left as uncommitted local
+changes) or they will get silently reverted on the next push to this repo,
+checklist or otherwise.
+
 Before working through the Stage 4 spec below (which describes the original
 8-step design), note that builder.html was rebuilt into a real one-card-
 per-screen wizard on the LIVE system (not the spec below, which predates
