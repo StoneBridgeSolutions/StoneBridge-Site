@@ -139,6 +139,7 @@ input[type=text]{margin-bottom:12px}
   <button type="button" class="nav-pill" id="navPill9" onclick="showStep(9)" title="Pages"><span class="np-icon">📄</span><span class="np-label">Pages</span></button>
   <button type="button" class="nav-pill" id="navPill10" onclick="showStep(10)" title="Logo"><span class="np-icon">✨</span><span class="np-label">Logo</span></button>
   <button type="button" class="nav-pill" id="navPill11" onclick="showStep(11)" title="Photos"><span class="np-icon">📷</span><span class="np-label">Photos</span></button>
+  <button type="button" class="nav-pill" id="navPill12" onclick="showStep(12)" title="Review"><span class="np-icon">✅</span><span class="np-label">Review</span></button>
 </nav>
 
 <div id="cardsWrap">
@@ -377,6 +378,27 @@ input[type=text]{margin-bottom:12px}
     </div>
   </div>
 </div>
+<div class="card" id="card12" data-step="12">
+<div class="section">
+  <label class="title">Review &amp; Submit</label>
+  <p class="hint">Here’s a summary of your project. Review everything below, then submit when you’re ready.</p>
+
+  <div id="pricingSummary" style="background:var(--navy-3);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:18px 20px;margin-bottom:20px;font-size:.88rem">
+    <div style="color:var(--grey)">Loading summary...</div>
+  </div>
+
+  <div id="paymentPlanSection" style="display:none;margin-bottom:20px">
+    <label class="title" style="margin-top:0">Payment Plan</label>
+    <p class="hint">Your remaining balance qualifies for a payment plan. Choose how you’d like to pay after your deposit.</p>
+    <div class="check-grid" id="paymentPlanOptions"></div>
+  </div>
+
+  <button type="button" id="submitBriefBtn" style="width:100%;padding:16px;background:var(--gold);color:#0b1220;font-family:inherit;font-weight:700;font-size:1rem;border:none;border-radius:12px;cursor:pointer;margin-top:8px">Submit My Brief →</button>
+  <p style="font-size:.78rem;color:var(--grey);text-align:center;margin-top:10px">By submitting you confirm the information above is accurate.</p>
+  <div class="field-status" id="reviewStatus"></div>
+</div>
+</div>
+
 
 </div>
 
@@ -400,7 +422,7 @@ const params = new URLSearchParams(window.location.search);
 const token = params.get('token');
 let saveTimer = null;
 
-const STEP_LABELS = ['Colors','Tone','Audience','Features','Business','Legal','Domain','Terms','Timeline','Pages','Logo','Photos'];
+const STEP_LABELS = ['Colors','Tone','Audience','Features','Business','Legal','Domain','Terms','Timeline','Pages','Logo','Photos','Review'];
 const TOTAL_STEPS = STEP_LABELS.length;
 let currentStep = 0;
 const visitedSteps = new Set();
@@ -413,6 +435,7 @@ function showStep(i) {
   const card = document.getElementById('card' + i);
   if (card) card.classList.add('active');
   currentStep = i;
+  if (typeof buildSummary === 'function' && i === 12) buildSummary();
   visitedSteps.add(i);
   STEP_LABELS.forEach((label, idx) => {
     const pill = document.getElementById('navPill' + idx);
@@ -572,6 +595,7 @@ async function saveAll() {
   fd.append('terms_source', (document.querySelector('input[name=termsSource]:checked')||{}).value||'generate');
   fd.append('terms_content', document.getElementById('termsContent')?.value.trim()||'');
   fd.append('integrations', JSON.stringify(getIntegrations()));
+  fd.append('payment_plan_selected', getPaymentPlan ? getPaymentPlan() : 'full');
   fd.append('font_preference', (document.querySelector('input[name=fontPref]:checked') || {}).value || 'no-preference');
   const inspirRows = document.querySelectorAll('#inspirationRows .inspiration-row');
   const insps = [];
@@ -698,6 +722,99 @@ document.getElementById('integOther')?.addEventListener('change', function() {
   document.getElementById(id)?.addEventListener('input', debouncedSave);
 });
 // ---- End Pages card JS ----
+
+
+// ---- Review & Submit JS ----
+const TIER_PRICES = { simple: 349, friend_family: 199, friend_exclusive: 0, standard: 699, not_sure: 699, premium: 1199 };
+
+function calcCost() {
+  const tier = window._ORDER_TIER || 'standard';
+  let base = TIER_PRICES[tier] || 699;
+  const pages = getPagesData();
+  const sbPages = pages.filter(p => p.copy === 'sb').length;
+  const deposit = Math.round(base * 0.5);
+  const remaining = base - deposit;
+  return { base, sbPages, copyExtra: sbPages * 25, deposit, remaining };
+}
+
+function buildSummary() {
+  const box = document.getElementById('pricingSummary');
+  if (!box) return;
+  const { base, sbPages, copyExtra, deposit, remaining } = calcCost();
+  const pages = getPagesData();
+  const row = (l, v, bold) => `<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.06);${bold?'font-weight:600;color:#e4e9f2':''}"><span>${l}</span><span>${v}</span></div>`;
+  let html = '<div style="font-weight:600;color:var(--gold);margin-bottom:10px">Project Summary</div>';
+  html += row('Base package', '$' + base);
+  if (sbPages) html += row('Copywriting (' + sbPages + ' pages)', '+$' + copyExtra);
+  html += row('Total', '$' + (base + copyExtra), true);
+  html += row('Deposit due now (50%)', '$' + deposit, true);
+  html += row('Remaining balance', '$' + remaining);
+  if (pages.length) {
+    html += '<div style="margin-top:12px;font-weight:600;color:var(--gold)">Pages</div>';
+    pages.forEach(p => {
+      const copyLabel = {own:'Your copy',url:'From URL',sb:'StoneBridge writes',notes:'Notes provided'}[p.copy]||'Notes';
+      html += `<div style="padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between"><span>${p.name||'(unnamed)'}</span><span style="color:var(--grey);font-size:.8rem">${copyLabel}</span></div>`;
+    });
+  }
+  box.innerHTML = html;
+
+  // Payment plan section
+  const pps = document.getElementById('paymentPlanSection');
+  const ppo = document.getElementById('paymentPlanOptions');
+  if (remaining >= 500 && pps && ppo) {
+    pps.style.display = 'block';
+    const plans = [
+      { id: 'plan_full', label: 'Pay in full', detail: '$' + remaining + ' one payment', value: 'full' },
+      { id: 'plan_3', label: '3 months', detail: '$' + Math.ceil((remaining * 1.05) / 3) + '/mo (5% fee)', value: '3mo' },
+      { id: 'plan_6', label: '6 months', detail: '$' + Math.ceil((remaining * 1.07) / 6) + '/mo (7% fee)', value: '6mo' },
+      { id: 'plan_12', label: '12 months', detail: '$' + Math.ceil((remaining * 1.12) / 12) + '/mo (12% fee)', value: '12mo' },
+    ];
+    ppo.innerHTML = plans.map(p => `<label style="flex-direction:column;align-items:flex-start"><span style="display:flex;align-items:center;gap:6px"><input type="radio" name="payPlan" value="${p.value}" ${p.value==='full'?'checked':''}> ${p.label}</span><span style="color:var(--grey);font-size:.78rem;margin-left:18px">${p.detail}</span></label>`).join('');
+    ppo.querySelectorAll('input').forEach(r => r.addEventListener('change', debouncedSave));
+  } else if (pps) {
+    pps.style.display = 'none';
+  }
+}
+
+// Payment plan selection save
+function getPaymentPlan() {
+  const r = document.querySelector('input[name=payPlan]:checked');
+  return r ? r.value : 'full';
+}
+
+// Override save to include payment_plan + hook submitBriefBtn
+document.getElementById('submitBriefBtn')?.addEventListener('click', async () => {
+  const btn = document.getElementById('submitBriefBtn');
+  const status = document.getElementById('reviewStatus');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+  if (status) status.textContent = '';
+  // Trigger a save first, then submit
+  const fd = new FormData();
+  fd.append('token', new URLSearchParams(location.search).get('token') || '');
+  fd.append('payment_plan_selected', getPaymentPlan());
+  try {
+    await fetch(`${API}/builder/save`, { method: 'POST', body: fd });
+  } catch(e) {}
+  // Now submit
+  const fd2 = new FormData();
+  fd2.append('token', new URLSearchParams(location.search).get('token') || '');
+  try {
+    const res = await fetch(`${API}/builder/complete`, { method: 'POST', body: fd2 });
+    const data = await res.json();
+    if (data.ok) {
+      document.getElementById('builderWrap').style.display = 'none';
+      document.getElementById('doneState').style.display = 'block';
+    } else {
+      throw new Error(data.error || 'Submission failed.');
+    }
+  } catch(err) {
+    if (status) { status.textContent = err.message; status.className = 'field-status err'; }
+    btn.disabled = false;
+    btn.textContent = 'Submit My Brief →';
+  }
+});
+// ---- End Review & Submit JS ----
 
 function debouncedSave() {
   clearTimeout(saveTimer);
