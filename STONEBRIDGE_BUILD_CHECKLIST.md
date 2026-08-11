@@ -538,7 +538,7 @@ Inspired by [URLs] — [comments].
 Avoid [list].
 Mark all content gaps as [CONTENT NEEDED].
 
-- [ ] Privacy/Terms file: client content preserved exactly OR template generated
+- [x] Privacy/Terms file: client content preserved OR template generated — DONE (Aug 11, 2026): output-generator.js now generates a full Terms of Use + Privacy Policy template from business info when terms_source=generate, with legal disclaimer. Client-provided content preserved exactly when terms_source=provide.
       with disclaimer: "Generated as general template. Consult an attorney."
 
 ---
@@ -807,7 +807,7 @@ Correct legal order:
       robust fix would be Stripe Payment Links with a `client_reference_id`
       or per-order Checkout Sessions instead of static links — bigger
       change, not done here.
-- [ ] "Remaining balance due in full on cancellation" for payment plans —
+- [x] "Remaining balance due in full on cancellation" for payment plans — DONE (Aug 11, 2026): webhook-handler.js now handles customer.subscription.deleted events, matches subscription to order via care_plan_stripe_subscription_id, and emails Carl an alert with full details and a direct Stripe link to invoice the remaining balance manually.
       STILL NOT BUILT. Disabling the cancel button (done above) stops
       self-serve cancellation but doesn't create this behavior — that has
       no Stripe dashboard setting. Needs a webhook handler
@@ -872,3 +872,13 @@ Correct legal order:
 - Smart upsell tip when copywriting > $175 (Full Site Package at $175)
 - Supabase columns: logo_choice, favicon_choice
 - Contract audit: Package+price, deposit+remaining, legal entity info, add-ons, Schedule B/C/D all already wired. Payment plan monthly terms deferred (requires addendum after builder submit).
+
+
+
+### Aug 11, 2026 (continued pass 3)
+- output-generator.js: added font, logo/favicon choice, avoid text, inspiration URLs to brief
+- output-generator.js: added page structure (per-page name + copy choice) to brief
+- output-generator.js: added integrations, payment plan selected to brief
+- output-generator.js: added site_name, domain registrar to brief
+- output-generator.js: Terms/Privacy template generation when client picks "StoneBridge generates"
+- webhook-handler.js: customer.subscription.deleted -> Carl email alert with order details + Stripe link
