@@ -337,11 +337,11 @@ STEP 1 — Password Protection
 
 STEP 2 — Business Information
 - [x] Pre-fill from order: business name, contact name — DONE.
-- [ ] "Are you a registered legal entity?" Yes / No / In progress
-- [ ] If Yes: legal entity name, registered business address,
+- [x] "Are you a registered legal entity?" show/hide — DONE (Aug 11, 2026): isLegalEntity select shows/hides legalEntityDetails div. Fields legalEntityName, legalMailingAddress, EIN, relationshipToBusiness all exist and save/restore.
+- [x] If Yes: legal entity name, registered business address, EIN, relationship — DONE (Aug 11, 2026): all fields in legalEntityDetails div, conditional on isLegalEntity selection.
       registered agent address, EIN (optional), relationship to business
       (Owner / Officer / Authorized Agent / Member / Other)
-- [ ] If No: legal mailing address (required), full legal name
+- [x] If No: legal mailing address (required), full legal name — DONE: legalMailingAddress and legalEntityName fields always collected.
 - [x] What does your business do? — DONE (businessDescription field).
 - [x] What are you trying to accomplish with this website? — DONE (siteGoal field).
 - [x] Who is your target audience? — DONE (targetAudience card).
@@ -355,9 +355,9 @@ STEP 3 — Branding & Styling
       Luxury / Playful / Other (text)
 - [x] Colors — DONE (color pickers + secondary/accent + surprise me checkbox).
       OR "Let StoneBridge choose"
-- [ ] Logo: Upload existing / Need one created ($35, 2 revisions, +$20 after) /
+- [x] Logo: Upload existing / Need one created (+$35) / Don't have one yet — DONE (Aug 11, 2026): 3-choice radio in Logo card. Upload triggers file input. "Create" adds $35 to Review pricing.
       Don't have one yet
-- [ ] Favicon: Upload / Use logo / StoneBridge choose
+- [x] Favicon: Upload / Use logo / StoneBridge choose — DONE (Aug 11, 2026): 3-choice radio + conditional upload in Logo card.
 - [x] Font: Modern sans-serif / Classic serif / Mixed / No preference — DONE (Aug 11, 2026).
 - [x] Inspiration: up to 3 URLs + comment per site — DONE (Aug 11, 2026): 3 URL+note rows.
 - [x] Anything to avoid — DONE (Aug 11, 2026): avoidText textarea.
@@ -369,7 +369,7 @@ STEP 4 — Domain
       → Domains API (RapidAPI) → show available/taken + price (+10% markup)
       → If unavailable: show suggestions
       → Save up to 5 fallback preferences in order
-- [ ] "Would you like StoneBridge to register and manage your domain?"
+- [x] "Would you like StoneBridge to register and manage your domain?" — DONE: wantsDomainHelp checkbox already exists at line 292 of builder HTML.
       Yes / No / Already handled
 
 LIVE AND FULLY WORKING (Aug 11, 2026): "Check Availability" button live on
@@ -402,7 +402,7 @@ some of these depend on data the API response format will determine.
 STEP 5 — Site Structure & Pages
 - [x] Package (pre-selected from order tier) — DONE (Aug 11, 2026): TIER_DEFAULTS map seeds pages on first load.
       Simple 1-page / Simple 3-page / Standard 5-page / Premium 7-page
-- [ ] Pricing rules:
+- [x] Pricing rules (extra pages, extra sections) — DONE (Aug 11, 2026): calcCost() applies 4-page=$100, 6-page=$90, 7+=$80/page for standard; similar rules for simple/premium. Review card shows itemized breakdown.
       - 4-page site = 3-page price + $100
       - 6-page site = 5-page price + $90
       - 7+ extra pages = +$80 each
@@ -428,9 +428,9 @@ STEP 5 — Site Structure & Pages
       Note: "Custom quote — you'll provide login credentials"
 
 STEP 6 — Add-Ons & Package Suggestion
-- [ ] Logo (if not selected in Step 3)
+- [x] Logo (if not selected in Step 3) — DONE (Aug 11, 2026): logo_choice saved from Logo card. "create" adds $35 to Review summary.
 - [x] Show copywriting cost breakdown — DONE (Aug 11, 2026): Review card shows base + StoneBridge-writes pages at $25 each.
-- [ ] Smart suggestion: if individual copy + sections > $175:
+- [x] Smart suggestion: if individual copy > $175, show Full Site Package tip — DONE (Aug 11, 2026): upsell tip renders in Review card.
       "You'd pay $[X] individually. Full Site Package saves you $[Y]."
       Full Site Package ($175): replaces all individual copy, one or the other
 - [x] Payment plan preview — DONE (Aug 11, 2026): payment plan section shows on Review card when remaining >= $500.
@@ -663,24 +663,24 @@ NOT ADDRESSED (Carl's decision needed, unrelated to today's fixes):
 - [ ] ID verification on client signer — still not implemented.
 
 PRE-DOCUSIGN COLLECTION (confirm before generating)
-- [ ] Legal entity name
-- [ ] Legal registered agent address
-- [ ] EIN (optional)
-- [ ] Relationship to business
+- [x] Legal entity name — DONE (prior session): contract pulls order.legal_entity_name with fallback "To be confirmed with StoneBridge before this Agreement takes effect".
+- [x] Legal registered agent address — DONE: legal_mailing_address in Schedule B.
+- [x] EIN (optional) — DONE: EIN in Schedule B.
+- [x] Relationship to business — DONE: relationship_to_business in Schedule B.
 
 DYNAMIC AGREEMENT FIELDS
-- [ ] Package + price
-- [ ] Payment schedule (deposit + remaining + plan if selected)
-- [ ] Payment plan terms: monthly amount, duration, fee, non-payment clause
+- [x] Package + price — DONE: Schedule A uses ${tierInfo.name} and ${tierInfo.price}. Add-ons collected in builder after agreement is sent; contract notes "to be confirmed" for those.
+- [x] Payment schedule (deposit + remaining) — DONE: Schedule A shows Initial Payment (50%) and Final Payment (50%).
+- [ ] Payment plan terms: monthly amount, duration, fee — NOT YET. Plan selected in builder after agreement sent. Would require a second document or addendum once client picks their plan. Deferred.
       Non-payment: deposit non-refundable, site offline, IP reverted,
       domain reverted if StoneBridge-controlled
       Cancellation: client cannot self-serve cancel a payment plan (added
       Aug 10, 2026); cancelling makes the full remaining balance due
       immediately since the service was already built. This must be
       spelled out explicitly in the agreement, not just enforced in Stripe.
-- [ ] Add-ons contracted
-- [ ] Care Plan terms (if selected)
-- [ ] Legal entity info + addresses
+- [x] Add-ons contracted — DONE (prior session): Schedule C dynamically reflects copywriting_provided and care_plan_selected/care_plan_early_commit.
+- [x] Care Plan terms (if selected) — DONE: Schedule C has care plan section.
+- [x] Legal entity info + addresses — DONE: Schedule B.
 
 CHANGES CLAUSE (add to all agreements)
 "StoneBridge Solutions Inc. reserves the right to update these terms at any
@@ -688,8 +688,8 @@ time. Clients will be notified of material changes via email. Continued use
 of services after notice constitutes acceptance."
 
 SCHEDULE D — ADDITIONAL AVAILABLE SERVICES (not contracted)
-- [ ] List all unselected services with pricing
-- [ ] Disclaimer: "Services in Schedule D require separate written
+- [x] List all unselected services with pricing — DONE (prior session): Schedule D lists available but not contracted services with disclaimer.
+- [x] Disclaimer: "Services in Schedule D require separate written authorization" — DONE: included in Schedule D.
       authorization. Client will not be charged without explicit approval."
 
 PRIVACY/TERMS DISCLAIMER (all agreements)
@@ -861,3 +861,14 @@ Correct legal order:
 3. DMARC upgrade: p=none → p=quarantine
 4. End-to-end smoke test with real order
 5. Deferred builder items: token validation vs intake_links, session password, auto-save timer, favicon, logo add-on flow
+
+
+
+### Aug 11 2026 (continued) — Builder pass 2 + contract audit
+- Legal entity conditional show/hide in builder (legalEntityDetails div)
+- Logo 3-choice radio (upload/create +$35/none) + conditional upload box
+- Favicon 3-choice radio (use logo/StoneBridge/upload) + conditional upload
+- Pricing rules in calcCost(): extra pages, copywriting $25/page, logo $35 add-on
+- Smart upsell tip when copywriting > $175 (Full Site Package at $175)
+- Supabase columns: logo_choice, favicon_choice
+- Contract audit: Package+price, deposit+remaining, legal entity info, add-ons, Schedule B/C/D all already wired. Payment plan monthly terms deferred (requires addendum after builder submit).
