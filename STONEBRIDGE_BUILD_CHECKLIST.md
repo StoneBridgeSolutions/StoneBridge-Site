@@ -372,7 +372,7 @@ STEP 4 — Domain
 - [ ] "Would you like StoneBridge to register and manage your domain?"
       Yes / No / Already handled
 
-LIVE STATUS (Aug 10, 2026): "Check Availability" button built and live on
+LIVE AND FULLY WORKING (Aug 11, 2026): "Check Availability" button live on
 the Domain card. Per Carl's direction, chose "try several based on what
 they typed" over relying on the API's own suggestion feature -- more
 predictable, more controllable, and works with any single-domain-check
@@ -385,19 +385,16 @@ typed just a name, checks it against 5 common TLDs (.com/.net/.co/.org/
 /domain-check backend route, new nginx location block (this was missing
 at first and caused a real "Failed to fetch" -- caught and fixed during
 live testing, not shipped broken).
-BLOCKED on one piece: the actual RapidAPI call. checkDomainAvailability()
-in server.js is a clearly isolated stub -- tried roughly 18 different
-endpoint path/method guesses against the live domains-api.p.rapidapi.com
-API (GET and POST, various path conventions) and none matched; stopped
-guessing rather than keep hammering a live third-party API on a possibly-
-metered key. Until the real endpoint is confirmed (logged on the Google
-Drive to-do list -- needs Carl to check the RapidAPI dashboard Endpoints
-tab), the feature degrades gracefully: every check shows "Couldn't check"
-with a "Domain checking is being connected -- check back soon" note,
-verified this looks intentional rather than broken. Once the real
-endpoint is known, filling in checkDomainAvailability() is the only
-remaining work -- everything else (parsing, batching, UI, error handling)
-is done.
+DOMAIN CHECK FULLY WORKING (Aug 11, 2026): The .env RAPIDAPI_DOMAIN_HOST
+was set to the wrong host (domains-api.p.rapidapi.com) when it should be
+domainradar.p.rapidapi.com -- Carl clarified this is the DomainRadar API,
+not "Domains API". Corrected the .env host, confirmed the real endpoint is
+GET /v1/availability?domain=X (returns {domain, available:bool, confidence,
+method, checked_at}), wired it into checkDomainAvailability(), switched
+from parallel Promise.allSettled to sequential 300ms-spaced calls to avoid
+rate limiting, and tested live in browser -- real results confirmed (e.g.
+mybusiness.com/.net/.co/.org/.biz all returned "Taken", a random unique
+name returned "Available"). Feature is 100% functional end-to-end.
 NOT DONE: price display (+10% markup), suggestions-on-unavailable, saving
 up to 5 fallback preferences -- deferred until the base check works, and
 some of these depend on data the API response format will determine.
