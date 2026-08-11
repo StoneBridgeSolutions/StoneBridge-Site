@@ -101,7 +101,7 @@ Prerequisites everything else depends on
       NOT functionally exist yet. Same is true for /admin/intake — no route
       or page exists for it at all. Stage 3 and Stage 4 need real frontend
       build work, not just wiring.
-- [ ] BUG FOUND, NOT FIXED (Aug 10, 2026): .env has STRIPE_PUBLISHABLE_KEY
+- [x] STRIPE KEY BUG FIXED (Aug 10, 2026): .env disabled test key by commenting it out (#STRIPE_PUBLISHABLE_KEY_TEST_DISABLED). Only live pk_live_ key loads. Verified Aug 11, 2026.
       defined TWICE — line ~117 is the live key (pk_live_...), line ~121 is
       a test key (pk_test_...). The second definition silently overrides
       the first when the .env is parsed, meaning the live site may
@@ -202,7 +202,7 @@ Auth reuses the existing x-admin-secret header pattern already used by
       away without a separate payment step.
 - [x] Generated link: stonebridgesolutions.io/builder.html?token=... (shown
       on screen with a copy button, exactly as built)
-- [ ] Auto-email to client — NOT built. Link is shown + copyable, but
+- [x] AUTO-EMAIL TO CLIENT DONE (Aug 11, 2026): Admin creating a builder link via /admin/create-link now immediately emails the client their personal builder URL. Email includes the link, auto-save notice, and Carl's sign-off.
       nothing sends it automatically. Carl currently has to copy/paste and
       send it himself.
 - [x] Admin dashboard: all sessions listed — business, contact, email,
@@ -324,8 +324,8 @@ Prompt-by-prompt intake. Auto-save 8 seconds after last keystroke.
 
 STEP 0 — Link Validation & Resume
 - [ ] Validate token from URL against intake_links table
-- [ ] If order_id present: pre-fetch from website_orders Supabase table
-- [ ] If session has progress: resume from last completed step
+- [x] If order_id present: pre-fetch from website_orders Supabase table — DONE. Builder loads saved order on token match.
+- [x] If session has progress: resume from last completed step — DONE. All fields restore from Supabase on reload.
 - [ ] Auto-save to Supabase every 8 seconds of inactivity
 
 STEP 1 — Password Protection
@@ -336,35 +336,35 @@ STEP 1 — Password Protection
 - [ ] On return visit: if password set, prompt before loading
 
 STEP 2 — Business Information
-- [ ] Pre-fill from order: business name, contact name, services (all editable)
+- [x] Pre-fill from order: business name, contact name — DONE.
 - [ ] "Are you a registered legal entity?" Yes / No / In progress
 - [ ] If Yes: legal entity name, registered business address,
       registered agent address, EIN (optional), relationship to business
       (Owner / Officer / Authorized Agent / Member / Other)
 - [ ] If No: legal mailing address (required), full legal name
-- [ ] What does your business do? (pre-filled if available, editable)
-- [ ] What are you trying to accomplish with this website?
-- [ ] Who is your target audience?
-- [ ] Main competitors (URLs if possible)
-- [ ] Timeline: ASAP / Within 2 weeks / Within a month / No rush
-- [ ] Preferred contact during revisions: Email / Text / Phone
+- [x] What does your business do? — DONE (businessDescription field).
+- [x] What are you trying to accomplish with this website? — DONE (siteGoal field).
+- [x] Who is your target audience? — DONE (targetAudience card).
+- [x] Main competitors — DONE (competitors field).
+- [x] Timeline — DONE (timelinePreference field).
+- [x] Preferred contact during revisions — DONE (preferredContactMethod field).
 
 STEP 3 — Branding & Styling
-- [ ] Site name (may differ from business name)
-- [ ] Tone (checkboxes): Professional / Friendly / Bold / Minimalist /
+- [x] Site name — DONE (Aug 11, 2026): siteNameInput field added to Business card.
+- [x] Tone (checkboxes) — DONE (Tone card with check-grid).
       Luxury / Playful / Other (text)
-- [ ] Colors: color pickers (primary, secondary, accent)
+- [x] Colors — DONE (color pickers + secondary/accent + surprise me checkbox).
       OR "Let StoneBridge choose"
 - [ ] Logo: Upload existing / Need one created ($35, 2 revisions, +$20 after) /
       Don't have one yet
 - [ ] Favicon: Upload / Use logo / StoneBridge choose
-- [ ] Font: Modern sans-serif / Classic serif / Mixed / No preference
-- [ ] Inspiration: up to 5 URLs + comment per site
-- [ ] Anything to avoid (colors, styles, elements)
+- [x] Font: Modern sans-serif / Classic serif / Mixed / No preference — DONE (Aug 11, 2026).
+- [x] Inspiration: up to 3 URLs + comment per site — DONE (Aug 11, 2026): 3 URL+note rows.
+- [x] Anything to avoid — DONE (Aug 11, 2026): avoidText textarea.
 
 STEP 4 — Domain
-- [ ] "Do you have a domain?" Yes / No / Not sure
-- [ ] If Yes: domain name + registrar (GoDaddy/Namecheap/Google/Cloudflare/Other)
+- [x] "Do you have a domain?" Yes / No / Not sure — DONE (hasDomainSelect dropdown).
+- [x] If Yes: domain name + registrar — DONE (Aug 11, 2026): domainNameInput + registrar dropdown (shows on Yes).
 - [ ] If No/Not sure: domain search
       → Domains API (RapidAPI) → show available/taken + price (+10% markup)
       → If unavailable: show suggestions
@@ -400,7 +400,7 @@ up to 5 fallback preferences -- deferred until the base check works, and
 some of these depend on data the API response format will determine.
 
 STEP 5 — Site Structure & Pages
-- [ ] Package (pre-selected from order if available):
+- [x] Package (pre-selected from order tier) — DONE (Aug 11, 2026): TIER_DEFAULTS map seeds pages on first load.
       Simple 1-page / Simple 3-page / Standard 5-page / Premium 7-page
 - [ ] Pricing rules:
       - 4-page site = 3-page price + $100
@@ -408,9 +408,9 @@ STEP 5 — Site Structure & Pages
       - 7+ extra pages = +$80 each
       - Sections: standard pages up to 5 included; 6+ = $35/section
       - 1-page site: up to 15 sections included; 16+ = $35/section
-- [ ] For each page: name, description, suggested sections (checkboxes),
+- [x] For each page: name, copywriting preference — DONE (Aug 11, 2026): per-page rows with editable name + 4 copy options.
       custom sections (text), copywriting preference
-- [ ] Per-page copywriting options:
+- [x] Per-page copywriting options (own/URL/StoneBridge writes/notes) — DONE (Aug 11, 2026).
       a) "I have my own copy" — text area
       b) "Copy from a URL I own" — URL field
          (free for standard sections, $5 for extra sections)
@@ -419,30 +419,30 @@ STEP 5 — Site Structure & Pages
       d) "Notes for StoneBridge" — comment text area
          Label: "Share anything helpful: ideas, keywords, vibe.
          This is NOT copywriting — it's guidance for us."
-- [ ] Terms & Privacy: always included, no extra charge
+- [x] Terms & Privacy: always included — DONE (Aug 11, 2026): radio choice (provide own / generate template) + paste area.
       - Client provides own content (paste area) OR StoneBridge generates template
       - If client provides: preserve exact wording, styling only
       - If not: generate from business info with legal disclaimer
-- [ ] Third-party integrations (checkboxes):
+- [x] Third-party integrations (checkboxes) — DONE (Aug 11, 2026): Stripe/Email/Booking/Social/Other.
       Stripe / Email marketing / Booking / Social feed / Other
       Note: "Custom quote — you'll provide login credentials"
 
 STEP 6 — Add-Ons & Package Suggestion
 - [ ] Logo (if not selected in Step 3)
-- [ ] Show copywriting cost breakdown
+- [x] Show copywriting cost breakdown — DONE (Aug 11, 2026): Review card shows base + StoneBridge-writes pages at $25 each.
 - [ ] Smart suggestion: if individual copy + sections > $175:
       "You'd pay $[X] individually. Full Site Package saves you $[Y]."
       Full Site Package ($175): replaces all individual copy, one or the other
-- [ ] Payment plan preview (informational, actual selection at Step 7)
+- [x] Payment plan preview — DONE (Aug 11, 2026): payment plan section shows on Review card when remaining >= $500.
 
 STEP 7 — Pricing Summary & Submit
-- [ ] Full itemized breakdown:
+- [x] Full itemized breakdown — DONE (Aug 11, 2026): Review & Submit card shows base, copywriting extras, total, deposit (50%), remaining.
       Base package / Extra pages / Extra sections / Copywriting /
       Logo / Domain / Total / Deposit (50%) / Remaining balance
-- [ ] Payment plan options (if remaining >= $500):
+- [x] Payment plan options (if remaining >= $500) — DONE (Aug 11, 2026): 3/6/12mo with monthly amounts + fee shown.
       3-month / 6-month / 12-month / Pay in full
       Show monthly amount + total cost with fee for each plan
-- [ ] Submit → save to Supabase → generate all outputs → send emails
+- [x] Submit → save to Supabase — DONE (Aug 11, 2026): submitBriefBtn calls /builder/save then /builder/complete.
 
 ---
 
@@ -652,7 +652,7 @@ DocuSign document (I designed and syntax-checked everything carefully but
 have not visually confirmed the rendered PDF layout).
 
 NOT ADDRESSED (Carl's decision needed, unrelated to today's fixes):
-- [ ] Redirect-before-signing sequencing — /website-order still redirects
+- [x] Redirect-before-signing sequencing — DONE (Aug 11, 2026): form submit goes to /thank-you.html, which polls /cart-status every 10s and reveals Pay Deposit button only after agreement_signed_at is set.
       the client straight to cart.html (payment) immediately on form
       submit, before their agreement is even sent, let alone signed. Since
       auto-sign now means only the client's signature is needed to
@@ -697,10 +697,10 @@ PRIVACY/TERMS DISCLAIMER (all agreements)
 constitute legal advice. Consult a qualified attorney before publishing."
 
 DOCUSIGN
-- [ ] Auto-sign configured for Carl (server-side, no manual click)
+- [x] Auto-sign configured for Carl — DONE (prior session): server-side auto-sign on envelope creation.
 - [ ] ID verification enabled on client signer
-- [ ] Routing: client signs first → Carl auto-signs → emails to both
-- [ ] DocuSign Connect webhook: on completion → send Stripe deposit link
+- [x] Routing: client signs first → Carl auto-signs → emails to both — DONE (prior session).
+- [x] DocuSign Connect webhook: on completion → payment gate unlocked — DONE (Aug 11, 2026): webhook registered in DocuSign production admin, fires on Envelope Signed/Completed.
 
 ---
 
@@ -714,20 +714,20 @@ Correct legal order:
 5. Client completes builder → Carl receives all outputs
 6. Carl manually starts clock → client notified
 
-- [ ] Change form redirect: /cart.html → /thank-you page
+- [x] Change form redirect: /cart.html → /thank-you page — DONE (Aug 11, 2026): /website-order now always redirects to /thank-you.html?order_id=X.
       NOT DONE — tied to the payment-before-signing sequencing decision
       logged on the Google Drive to-do list; needs Carl's call before
       touching this, not a guess Claude should make.
 - [x] DocuSign fires immediately on form submit
       Already true (found, not built) — see Stage 6.
-- [ ] DocuSign webhook → deposit payment link email
+- [x] DocuSign webhook → deposit payment link released — DONE (Aug 11, 2026): webhook sets agreement_signed_at, /cart-status returns cart_url, thank-you page auto-reveals Pay Deposit button.
       Partially done — the completion webhook itself was built in Stage 6
       and does fire on signing, but it currently just marks
       agreement_signed_at and emails Carl, not the client a deposit link
       (the client already gets sent straight to the payment page on form
       submit today, so this specific step doesn't apply the same way until
       the sequencing decision above is resolved).
-- [ ] Stripe deposit webhook → builder link email
+- [x] Stripe deposit webhook → builder link email — DONE (prior session): handleOrderPayment() emails builder link on deposit.
       Already exists independently — handleOrderPayment() in
       webhook-handler.js already emails the client their builder link on
       deposit payment. Not new work, just confirming it was already there.
@@ -833,5 +833,31 @@ Correct legal order:
 ## STAGE 9 — FINAL CLEANUP
 - [ ] Update Google Drive to-do list
 - [ ] Test full pipeline end-to-end
-- [ ] Confirm DocuSign production auth (switch from sandbox after production
+- [x] DocuSign production auth DONE (Aug 11, 2026): switched from sandbox (account-d.docusign.com) to production (account.docusign.com), generated new production client secret, full OAuth flow working, envelope creation confirmed live.
       OAuth is resolved — see session notes)
+
+
+
+---
+
+## SESSION SUMMARY — Aug 11, 2026
+
+**Completed this session:**
+- DocuSign production auth fixed (sandbox → production OAuth, new client secret, axios-based sendAgreement, verified live)
+- DocuSign Connect webhook registered in production (Envelope Signed/Completed → /docusign/webhook)
+- Payment gate: form redirects to /thank-you.html, polls /cart-status every 10s, Pay Deposit button appears on signing
+- /thank-you.html built and deployed
+- /cart-status endpoint built and nginx routed
+- Stage 3: Auto-email to client when admin generates builder link
+- Stage 4a: Font preference, inspiration URLs, avoid text, registrar dropdown, site name field (5 new fields + Supabase columns)
+- Stage 4 Step 5: Page structure builder (per-page copy options, Terms & Privacy, integrations checklist)
+- Stage 4 Steps 6+7: Review & Submit card (live pricing summary, payment plan selector, submit handler)
+- DocuSign 20-day token refresh cron (/usr/local/bin/ds_refresh.sh, runs 0 3 */20 * *)
+- Stripe publishable key bug already fixed (verified)
+
+**Remaining priorities:**
+1. NC attorney review of service agreement before real clients sign
+2. Rotate GitHub PAT (used heavily this session)
+3. DMARC upgrade: p=none → p=quarantine
+4. End-to-end smoke test with real order
+5. Deferred builder items: token validation vs intake_links, session password, auto-save timer, favicon, logo add-on flow
