@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agreement Sent — StoneBridge Solutions</title>
+<style>
+:root{--navy:#0b1220;--navy-2:#0f1929;--navy-3:#14223a;--gold:#d9b23d;--grey:#8a9ab5;--green:#7dbe4a}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--navy);color:#e4e9f2;font-family:'Poppins',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.card{background:var(--navy-2);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:48px 40px;max-width:520px;width:100%;text-align:center}
+.icon{font-size:3.5rem;margin-bottom:20px}
+h1{font-size:1.55rem;font-weight:700;color:#fff;margin-bottom:12px}
+p{font-size:.95rem;color:var(--grey);line-height:1.65;margin-bottom:16px}
+.status-bar{background:var(--navy-3);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:16px 20px;margin:24px 0;font-size:.88rem}
+.status-label{color:var(--grey);margin-bottom:6px;font-size:.78rem;letter-spacing:.04em;text-transform:uppercase}
+.status-val{color:var(--gold);font-weight:600}
+.status-val.signed{color:var(--green)}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(217,178,61,.3);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.cta-btn{display:inline-block;background:var(--gold);color:#0b1220;font-weight:700;font-family:inherit;padding:14px 32px;border-radius:10px;text-decoration:none;font-size:1rem;margin-top:8px;transition:opacity .15s}
+.cta-btn:hover{opacity:.88}
+.hidden{display:none}
+.note{font-size:.8rem;color:var(--grey);margin-top:20px;opacity:.7}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="icon">📧</div>
+  <h1>Check your email to sign your agreement</h1>
+  <p>We've sent your service agreement to your email via DocuSign. Please open it and sign — then your deposit payment link will appear here automatically.</p>
+
+  <div class="status-bar">
+    <div class="status-label">Agreement status</div>
+    <div class="status-val" id="statusVal"><span class="spinner"></span> Waiting for signature…</div>
+  </div>
+
+  <div id="payBtn" class="hidden">
+    <p style="color:#7dbe4a;font-weight:600;margin-bottom:16px">✅ Agreement signed! You're all set to pay your deposit.</p>
+    <a id="cartLink" href="#" class="cta-btn">Pay Deposit →</a>
+  </div>
+
+  <p class="note">This page refreshes automatically every 10 seconds. You can also close it and return later — your agreement link is in your email.</p>
+</div>
+<script>
+const API = 'https://api.stonebridgesolutions.io';
+const params = new URLSearchParams(location.search);
+const orderId = params.get('order_id');
+
+async function poll() {
+  if (!orderId) return;
+  try {
+    const res = await fetch(`${API}/cart-status?order_id=${orderId}`);
+    const data = await res.json();
+    if (!data.ok) return;
+    if (data.signed) {
+      document.getElementById('statusVal').innerHTML = '<span style="color:var(--green)">✅ Signed</span>';
+      if (data.cart_url) {
+        document.getElementById('cartLink').href = data.cart_url;
+        document.getElementById('payBtn').classList.remove('hidden');
+      }
+      clearInterval(timer);
+    }
+  } catch(e) {}
+}
+
+const timer = setInterval(poll, 10000);
+poll();
+</script>
+</body>
+</html>
