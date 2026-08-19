@@ -1487,12 +1487,8 @@ function calcCost() {
   const tier = window._ORDER_TIER || 'standard';
   let base = TIER_PRICES[tier] || 699;
   const pages = getPagesData(); const pageCount = pages.length;
-  let extraPageCost = 0;
-  if (tier === 'simple' || tier === 'friend_family' || tier === 'friend_exclusive') {
-    if (pageCount === 2) extraPageCost = 100; else if (pageCount > 3) extraPageCost = (pageCount - 3) * 80;
-  } else if (tier === 'standard' || tier === 'not_sure') {
-    if (pageCount === 4) extraPageCost = 100; else if (pageCount === 6) extraPageCost = 90; else if (pageCount > 6) extraPageCost = 90 + (pageCount - 6) * 80;
-  } else if (tier === 'premium') { if (pageCount > 7) extraPageCost = (pageCount - 7) * 80; }
+  const basePages = { simple: 3, friend_family: 3, friend_exclusive: 5, standard: 5, not_sure: 5, premium: 7 };
+  let extraPageCost = Math.max(0, pageCount - (basePages[tier] || 5)) * 100;
   const sbPages = 0; // section-based calc removed; keep copy-package pricing
   const copyPkgActive = (document.getElementById('copyPkgToggle')||{}).checked || false;
   const copyPerPage = 25; const copyPkgPrice = 175;
