@@ -448,6 +448,13 @@ input[type=text]{margin-bottom:12px}
       <div style="color:var(--grey);font-size:.82rem;margin-top:3px">We embed GA4 on your site and configure basic goal tracking. You'll need to provide a Google account or Measurement ID after launch.</div>
     </label>
   </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;margin-top:8px;padding:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px">
+              <input type="checkbox" id="clarityAddon" style="margin-top:3px;accent-color:var(--gold)">
+              <label for="clarityAddon" style="cursor:pointer;line-height:1.4">
+                <strong>Microsoft Clarity Setup</strong> <span style="color:var(--gold);font-weight:600">+$125</span> <span style="color:var(--grey);font-size:.8rem">(or +$85 if committed early)</span>
+                <div style="color:var(--grey);font-size:.82rem;margin-top:3px">Free heatmaps and session recordings so you can see exactly how visitors use your site. Add GA4 as well and both come bundled at a discount.</div>
+              </label>
+            </div>
 </div>
 <label class="subgroup-label" style="font-weight:600;margin-top:4px">Social media icons + links <span class="hint" style="font-weight:400">(free)</span></label>
     <p class="hint" style="margin-top:2px">Add each platform and its link. If you don&rsquo;t have the link handy, leave it blank and we&rsquo;ll use a placeholder icon for now.</p>
@@ -720,7 +727,7 @@ function showTab(i) {
   hideAllCards();
   const active = document.getElementById(tab.cardId);
   if (active) active.style.display = 'block';
-  try { if (active && active.querySelector && active.querySelector('#socialRows') && !window.__socialRestored && window.__sbOrder) { restoreSocial(window.__sbOrder.social_links); if(document.getElementById('blogCustomQuote')) document.getElementById('blogCustomQuote').checked=(window.__sbOrder.blog_custom_quote==='1'||window.__sbOrder.blog_custom_quote===1||window.__sbOrder.blog_custom_quote===true); if(document.getElementById('ga4Addon') && window.__sbOrder.ga4_addon===true) document.getElementById('ga4Addon').checked=true; window.__socialRestored = true; } } catch(e){}
+  try { if (active && active.querySelector && active.querySelector('#socialRows') && !window.__socialRestored && window.__sbOrder) { restoreSocial(window.__sbOrder.social_links); if(document.getElementById('blogCustomQuote')) document.getElementById('blogCustomQuote').checked=(window.__sbOrder.blog_custom_quote==='1'||window.__sbOrder.blog_custom_quote===1||window.__sbOrder.blog_custom_quote===true); if(document.getElementById('ga4Addon') && window.__sbOrder.ga4_addon===true) document.getElementById('ga4Addon').checked=true; if(document.getElementById('clarityAddon') && window.__sbOrder.clarity_selected===true) document.getElementById('clarityAddon').checked=true; window.__socialRestored = true; } } catch(e){}
   if (tab.role === 'page') { currentPageId = tab.pageId; renderPageCard(tab.pageId); }
   if (tab.isReview && typeof buildSummary === 'function') buildSummary();
   visitedTabs.add(i);
@@ -1170,6 +1177,7 @@ async function saveAll() {
   fd.append('payment_plan_selected', getPaymentPlan ? getPaymentPlan() : 'full');
   fd.append('logo_choice', (document.querySelector('input[name=logoChoice]:checked')||{}).value||'none');
   fd.append('ga4_addon', document.getElementById('ga4Addon')?.checked ? '1' : '0');
+    fd.append('clarity_selected', document.getElementById('clarityAddon')?.checked ? '1' : '0');
   fd.append('social_links', JSON.stringify(collectSocial()));
   fd.append('blog_custom_quote', document.getElementById('blogCustomQuote')?.checked ? '1' : '0');
   fd.append('copy_pkg_active', document.getElementById('copyPkgToggle')?.checked ? '1' : '0');
@@ -1499,16 +1507,20 @@ function calcCost() {
   const logoChoice = (document.querySelector('input[name=logoChoice]:checked')||{}).value||'none';
   const logoAddOn = logoChoice === 'create' ? 35 : 0;
   const ga4Choice = document.getElementById('ga4Addon')?.checked || false;
-  const ga4AddOn = ga4Choice ? 125 : 0;
-  const total = base + extraPageCost + copyExtra + beCreativeCost + logoAddOn + ga4AddOn;
+  let ga4AddOn = ga4Choice ? 125 : 0;
+  const clarityChoice = document.getElementById('clarityAddon')?.checked || false;
+  let clarityAddOn = clarityChoice ? 125 : 0;
+  let bundleAddOn = 0;
+  if (ga4Choice && clarityChoice) { ga4AddOn = 0; clarityAddOn = 0; bundleAddOn = 225; }
+  const total = base + extraPageCost + copyExtra + beCreativeCost + logoAddOn + ga4AddOn + clarityAddOn + bundleAddOn;
   const deposit = Math.round(total * 0.5); const remaining = total - deposit;
-  return { base, extraPageCost, sbPages, copyRaw, copyExtra, copyPkgActive, copySaving, beCreativeCost, beCreativePages, logoAddOn, ga4AddOn, total, deposit, remaining };
+  return { base, extraPageCost, sbPages, copyRaw, copyExtra, copyPkgActive, copySaving, beCreativeCost, beCreativePages, logoAddOn, ga4AddOn, clarityAddOn, bundleAddOn, total, deposit, remaining };
 }
 
 function buildSummary() {
   const box = document.getElementById('pricingSummary');
   if (!box) return;
-  const { base, extraPageCost, sbPages, copyRaw, copyExtra, copyPkgActive, copySaving, beCreativeCost, beCreativePages, logoAddOn, ga4AddOn, total, deposit, remaining } = calcCost();
+  const { base, extraPageCost, sbPages, copyRaw, copyExtra, copyPkgActive, copySaving, beCreativeCost, beCreativePages, logoAddOn, ga4AddOn, clarityAddOn, bundleAddOn, total, deposit, remaining } = calcCost();
   const pages = getPagesData();
   const row = (l, v, bold) => `<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.06);${bold?'font-weight:600;color:#e4e9f2':''}"><span>${l}</span><span>${v}</span></div>`;
   let html = '<div style="font-weight:600;color:var(--gold);margin-bottom:10px">Project Summary</div>';
@@ -1524,6 +1536,8 @@ function buildSummary() {
   }
   if (logoAddOn) html += row('Logo design', '+$35');
   if (ga4AddOn) html += row('Google Analytics 4 setup', '+$125');
+  if (clarityAddOn) html += row('Microsoft Clarity setup', '+$125');
+  if (bundleAddOn) html += row('Analytics Bundle (GA4 + Clarity)', '+$225');
   html += row('Total', '$' + total, true);
   html += row('Deposit due now (50%)', '$' + deposit, true);
   html += row('Remaining balance', '$' + remaining);
@@ -1675,6 +1689,7 @@ var _drn=document.getElementById('domainReuseNotes'); if(_drn) _drn.addEventList
 ['termsFileInput','privacyFileInput'].forEach(function(id){ var e=document.getElementById(id); if(e) e.addEventListener('change', debouncedSave); });
 var _bcq=document.getElementById('blogCustomQuote'); if(_bcq) _bcq.addEventListener('change', debouncedSave);
 var _ga4=document.getElementById('ga4Addon'); if(_ga4) _ga4.addEventListener('change', debouncedSave);
+  var _clarity=document.getElementById('clarityAddon'); if(_clarity) _clarity.addEventListener('change', debouncedSave);
 
 
 ['avoidText','siteNameInput'].forEach(id => {
@@ -2049,7 +2064,7 @@ async function init() {
     /* restore builder_pages */ try { window.__orderTier = order.tier || 'standard'; } catch(e){} try { if (order.builder_pages && Array.isArray(order.builder_pages) && order.builder_pages.length) { builderPages = order.builder_pages.map(function(p){return {id:p.id,name:p.name||'',menuTitle:p.menuTitle||'',description:p.description||'',isHome:!!p.isHome, beCreative:!!p.beCreative, pageType:(p.pageType||'standard'), integration:(p.integration||{}), passwordProtect:!!p.passwordProtect, pagePassword:(p.pagePassword||''), sections:(Array.isArray(p.sections)?p.sections:[])};}); if(!builderPages.some(function(p){return p.isHome;})) builderPages[0].isHome=true; rebuildTabModel(); buildNav(); } } catch(e){ console.error('restore builder_pages', e); }
       personalize(order);
     showStep(0);
-    try { restoreSocial(order.social_links); if(document.getElementById('blogCustomQuote')) document.getElementById('blogCustomQuote').checked=(order.blog_custom_quote==='1'||order.blog_custom_quote===1||order.blog_custom_quote===true); if(document.getElementById('ga4Addon') && (order.ga4_addon===true)) document.getElementById('ga4Addon').checked=true; } catch(e){ console.log('social restore err', e.message); }
+    try { restoreSocial(order.social_links); if(document.getElementById('blogCustomQuote')) document.getElementById('blogCustomQuote').checked=(order.blog_custom_quote==='1'||order.blog_custom_quote===1||order.blog_custom_quote===true); if(document.getElementById('ga4Addon') && (order.ga4_addon===true)) document.getElementById('ga4Addon').checked=true; if(document.getElementById('clarityAddon') && (order.clarity_selected===true)) document.getElementById('clarityAddon').checked=true; } catch(e){ console.log('social restore err', e.message); }
     if (typeof resumeAfterAddendum==="function") resumeAfterAddendum();
   } catch (err) {
     document.getElementById('error').style.display = 'block';
