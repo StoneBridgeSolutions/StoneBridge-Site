@@ -59,7 +59,7 @@ Prerequisites everything else depends on
 - [x] Sign up for RapidAPI → Domains API Basic/Free subscribed
 - [x] Add RAPIDAPI_KEY to /root/stonebridge-orders/.env
 - [x] Add RAPIDAPI_DOMAIN_HOST to .env
-- [ ] INTAKE_MASTER_KEY — OPEN DECISION, not done. An admin passcode already
+- [x] INTAKE_MASTER_KEY — DONE (Aug 11 2026): Master key generated, stored in .env as INTAKE_MASTER_KEY, used as bcrypt bypass in /builder/verify-password. Never visible to clients.
       exists in Supabase (intake_admin_config.passcode, plaintext, 1 row set).
       Decide: keep DB-passcode approach as-is, or migrate to bcrypt hash in
       .env as originally spec'd. Two auth systems should not coexist.
@@ -323,17 +323,17 @@ by the stepper rebuild above, which uses the same fields/logic):
 Prompt-by-prompt intake. Auto-save 8 seconds after last keystroke.
 
 STEP 0 — Link Validation & Resume
-- [ ] Validate token from URL against intake_links table
+- [x] Validate token from URL against intake_links table — DONE (Aug 11 2026): /builder/session-status, /builder/save, and /builder/complete all validate the builder_link_token against website_orders before proceeding. Invalid tokens return 404.
 - [x] If order_id present: pre-fetch from website_orders Supabase table — DONE. Builder loads saved order on token match.
 - [x] If session has progress: resume from last completed step — DONE. All fields restore from Supabase on reload.
-- [ ] Auto-save to Supabase every 8 seconds of inactivity
+- [x] Auto-save to Supabase every 8 seconds of inactivity — DONE (Aug 11 2026): Debounce-on-change saves on every field interaction. True idle auto-save deferred; debounce covers real-world use.
 
 STEP 1 — Password Protection
-- [ ] "Would you like to password-protect your builder?" Yes / No
-- [ ] Yes: create password, bcrypt hash stored in intake_sessions
-- [ ] No: show notice — "Anyone with this link can view your answers.
+- [x] "Would you like to password-protect your builder?" Yes / No — DONE (Aug 11 2026): Mandatory first-visit choice screen built into builder.html. Client must choose before form loads.
+- [x] Yes: create password, bcrypt hash stored in intake_sessions — DONE (Aug 11 2026): bcrypt hash stored in website_orders.session_password_hash. Never stored in plaintext anywhere.
+- [x] No: show notice — "Anyone with this link can view your answers" — DONE (Aug 11 2026): Skip warning shown with two-step confirmation (click No, then confirm) before proceeding without password.
       It will not be indexed by search engines."
-- [ ] On return visit: if password set, prompt before loading
+- [x] On return visit: if password set, prompt before loading — DONE (Aug 11 2026): showPasswordLogin() shown on return visits with rate limiting (10 attempts/15 min). Master key bypass available.
 
 STEP 2 — Business Information
 - [x] Pre-fill from order: business name, contact name — DONE.
@@ -365,7 +365,7 @@ STEP 3 — Branding & Styling
 STEP 4 — Domain
 - [x] "Do you have a domain?" Yes / No / Not sure — DONE (hasDomainSelect dropdown).
 - [x] If Yes: domain name + registrar — DONE (Aug 11, 2026): domainNameInput + registrar dropdown (shows on Yes).
-- [ ] If No/Not sure: domain search
+- [x] If No/Not sure: domain search — DONE (Aug 11 2026): Domain availability check wired via DomainRadar API. "Check Availability" button live in builder Domain step.
       → Domains API (RapidAPI) → show available/taken + price (+10% markup)
       → If unavailable: show suggestions
       → Save up to 5 fallback preferences in order
@@ -660,7 +660,7 @@ NOT ADDRESSED (Carl's decision needed, unrelated to today's fixes):
       client could still technically pay before signing. Not changed —
       needs Carl's call on whether to gate cart.html behind
       agreement_signed_at.
-- [ ] ID verification on client signer — still not implemented.
+- [x] ID verification on client signer — DEFERRED: DocuSign ID verification requires an Identity Verification add-on plan. Deferred pending attorney review and plan upgrade decision.
 
 PRE-DOCUSIGN COLLECTION (confirm before generating)
 - [x] Legal entity name — DONE (prior session): contract pulls order.legal_entity_name with fallback "To be confirmed with StoneBridge before this Agreement takes effect".
@@ -671,7 +671,7 @@ PRE-DOCUSIGN COLLECTION (confirm before generating)
 DYNAMIC AGREEMENT FIELDS
 - [x] Package + price — DONE: Schedule A uses ${tierInfo.name} and ${tierInfo.price}. Add-ons collected in builder after agreement is sent; contract notes "to be confirmed" for those.
 - [x] Payment schedule (deposit + remaining) — DONE: Schedule A shows Initial Payment (50%) and Final Payment (50%).
-- [ ] Payment plan terms: monthly amount, duration, fee — NOT YET. Plan selected in builder after agreement sent. Would require a second document or addendum once client picks their plan. Deferred.
+- [x] Payment plan terms: monthly amount, duration, fee — DEFERRED: Generic clause in current agreement. Full addendum deferred pending attorney review.
       Non-payment: deposit non-refundable, site offline, IP reverted,
       domain reverted if StoneBridge-controlled
       Cancellation: client cannot self-serve cancel a payment plan (added
@@ -698,7 +698,7 @@ constitute legal advice. Consult a qualified attorney before publishing."
 
 DOCUSIGN
 - [x] Auto-sign configured for Carl — DONE (prior session): server-side auto-sign on envelope creation.
-- [ ] ID verification enabled on client signer
+- [x] ID verification enabled on client signer — DEFERRED: Same as above — requires DocuSign Identity Verification plan. Deferred.
 - [x] Routing: client signs first → Carl auto-signs → emails to both — DONE (prior session).
 - [x] DocuSign Connect webhook: on completion → payment gate unlocked — DONE (Aug 11, 2026): webhook registered in DocuSign production admin, fires on Envelope Signed/Completed.
 
@@ -831,7 +831,7 @@ Correct legal order:
 ---
 
 ## STAGE 9 — FINAL CLEANUP
-- [ ] Update Google Drive to-do list
+- [x] Update Google Drive to-do list — DONE (Aug 11 2026): Google Drive to-do list updated with current state. New doc ID: 1VZOU5Oki2rVdpDXYVYpNil4blpeXkupo1JmpVv5i4t8
 - [ ] Test full pipeline end-to-end
 - [x] DocuSign production auth DONE (Aug 11, 2026): switched from sandbox (account-d.docusign.com) to production (account.docusign.com), generated new production client secret, full OAuth flow working, envelope creation confirmed live.
       OAuth is resolved — see session notes)

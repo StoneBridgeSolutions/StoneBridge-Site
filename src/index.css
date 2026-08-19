@@ -1,0 +1,206 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --blue-950: #0a0f1a;
+  --blue-900: #0c1525;
+  --blue-800: #1a2744;
+  --blue-700: #243554;
+  --blue-600: #2e4464;
+  --blue-500: #3a5a7a;
+  --blue-400: #4a7090;
+  --blue-300: #6a90b0;
+  --blue-200: #8ab0d0;
+  --blue-100: #aac0e0;
+  --navy: #0c1525;
+  --charcoal: #0a111f;
+  --gold: #d4af37;
+  --light: #f4f3f0;
+  --body: #e8e0cc;
+  --navy-mid: #0f1c30;
+  --navy-raised: #141f35;
+  --gold-divider: rgba(212,175,55,0.15);
+  --footer-text: #c8c0aa;
+}
+
+.bg-blue-950 { background-color: var(--blue-950) !important; }
+.bg-blue-900 { background-color: var(--blue-900) !important; }
+.bg-blue-800 { background-color: var(--blue-800) !important; }
+.bg-blue-700 { background-color: var(--blue-700) !important; }
+.bg-blue-600 { background-color: var(--blue-600) !important; }
+.bg-blue-500 { background-color: var(--blue-500) !important; }
+.bg-blue-400 { background-color: var(--blue-400) !important; }
+.bg-blue-300 { background-color: var(--blue-300) !important; }
+.bg-blue-200 { background-color: var(--blue-200) !important; }
+.bg-blue-100 { background-color: var(--blue-100) !important; }
+.text-blue-950 { color: var(--blue-950) !important; }
+.text-blue-900 { color: var(--blue-900) !important; }
+.text-blue-800 { color: var(--blue-800) !important; }
+.text-blue-700 { color: var(--blue-700) !important; }
+.text-blue-600 { color: var(--blue-600) !important; }
+.text-blue-500 { color: var(--blue-500) !important; }
+.text-blue-400 { color: var(--blue-400) !important; }
+.text-blue-300 { color: var(--blue-300) !important; }
+.text-blue-200 { color: var(--blue-200) !important; }
+.text-blue-100 { color: var(--blue-100) !important; }
+.border-blue-950 { border-color: var(--blue-950) !important; }
+.border-blue-900 { border-color: var(--blue-900) !important; }
+.border-blue-800 { border-color: var(--blue-800) !important; }
+.border-blue-700 { border-color: var(--blue-700) !important; }
+.border-blue-600 { border-color: var(--blue-600) !important; }
+.border-blue-500 { border-color: var(--blue-500) !important; }
+.border-blue-400 { border-color: var(--blue-400) !important; }
+.border-blue-300 { border-color: var(--blue-300) !important; }
+.border-blue-200 { border-color: var(--blue-200) !important; }
+.border-blue-100 { border-color: var(--blue-100) !important; }
+/*  Section depth system  */
+.bg-navy-mid { background-color: var(--navy-mid); }
+.bg-navy-raised { background-color: var(--navy-raised); }
+
+/* Gold hairline section divider */
+.section-divide {
+  border-top: 1px solid var(--gold-divider);
+}
+
+/* Body text warm parchment */
+.text-body { color: var(--body); }
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1rem;
+  line-height: 1.7;
+  font-weight: 400;
+  color: rgba(255,255,255,0.85);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  background-color: #0f1a2e;
+  color: #f4f3f0;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'DM Serif Display', serif;
+}
+/*  Global type system  */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'DM Serif Display', serif;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+}
+
+p {
+  line-height: 1.75;
+  margin-bottom: 0;
+}
+
+/* Smooth all transitions globally */
+*, *::before, *::after {
+  transition-property: color, background-color, border-color, opacity, box-shadow, transform;
+  transition-duration: 150ms;
+  transition-timing-function: ease;
+}
+
+/* Override for no-transition elements */
+.no-transition, .no-transition *, nav, nav * {
+  transition-property: background-color, box-shadow;
+}
+
+/* Font rendering smoothness */
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Consistent paragraph sizing */
+.prose-body {
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+/* Section subheadlines */
+.section-sub {
+  font-size: 1.125rem;
+  line-height: 1.7;
+  font-weight: 300;
+  letter-spacing: 0.005em;
+}
+
+
+.grain-overlay {
+  position: relative;
+}
+
+.grain-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
+}
+
+.gold-shimmer {
+  background: linear-gradient(90deg, #d4af37, #f0d060, #d4af37);
+  background-size: 200% auto;
+  animation: shimmer 2.5s linear infinite;
+}
+
+@keyframes shimmer {
+  to { background-position: 200% center; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.reveal {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+.gold-line {
+  position: absolute;
+  width: 200px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #d4af37, transparent);
+}
+
+.nav-solid {
+  background-color: #0f1a2e !important;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+}
+
+/*  Mobile responsive base  */
+* { box-sizing: border-box; }
+img, video { max-width: 100%; height: auto; }
+
+/* Prevent horizontal overflow */
+html, body { overflow-x: hidden; max-width: 100vw; }
+
+/* Responsive section padding */
+.section-px { padding-left: 1rem; padding-right: 1rem; }
+@media (min-width: 640px) { .section-px { padding-left: 1.5rem; padding-right: 1.5rem; } }
+@media (min-width: 1024px) { .section-px { padding-left: 3rem; padding-right: 3rem; } }
+
+/* Responsive hero text */
+@media (max-width: 640px) {
+  .hero-text { font-size: 2.5rem !important; line-height: 1.15 !important; }
+  .hero-sub { font-size: 1rem !important; }
+}

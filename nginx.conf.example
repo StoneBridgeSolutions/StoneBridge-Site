@@ -1,0 +1,44 @@
+# StoneBridge Marketing Site - nginx config
+# File: /etc/nginx/sites-available/stonebridge-marketing
+
+# Redirect www to non-www
+server {
+    listen 80;
+    listen [::]:80;
+    server_name www.stonebridgesolutions.io;
+    return 301 http://stonebridgesolutions.io$request_uri;
+}
+
+# Main site (port 80) - ready for SSL via Let's Encrypt
+server {
+    listen 80;
+    listen [::]:80;
+    server_name stonebridgesolutions.io;
+
+    root /root/stonebridge-marketing/dist;
+    index index.html;
+
+    # Gzip compression
+    gzip on;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+    gzip_min_length 1024;
+
+    # React SPA - all routes serve index.html
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Cache static assets aggressively
+    location /assets/ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+
+    # Security headers
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-Content-Type-Options "nosniff";
+    add_header Referrer-Policy "strict-origin-when-cross-origin";
+}
+
+# After running: certbot --nginx -d stonebridgesolutions.io -d www.stonebridgesolutions.io
+# Certbot will automatically add SSL blocks above and redirect port 80 to 443

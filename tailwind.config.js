@@ -1,0 +1,60 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        blue: {
+          950: '#0a0f1a',
+          900: '#0c1525',
+          800: '#1a2744',
+          700: '#243554',
+          600: '#2e4464',
+          500: '#3a5a7a',
+          400: '#4a7090',
+          300: '#6a90b0',
+          200: '#8ab0d0',
+          100: '#aac0e0',
+        },
+        navy: '#0c1525',
+    'navy-raised': '#111d2e',
+    'navy-mid': '#0e1828',
+        charcoal: '#0a111f',
+        gold: '#d4af37',
+        light: '#f4f3f0',
+      },
+      fontFamily: {
+        serif: ['"DM Serif Display"', 'Georgia', 'serif'],
+        sans: ['Outfit', 'system-ui', 'sans-serif'],
+        brand: ['Cinzel', 'serif'],
+        mono: ['"JetBrains Mono"', 'monospace'],
+      },
+      fontSize: {
+        'xs':   ['0.75rem',   { lineHeight: '1.5' }],
+        'sm':   ['0.875rem',  { lineHeight: '1.6' }],
+        'base': ['1rem',      { lineHeight: '1.75' }],
+        'lg':   ['1.125rem',  { lineHeight: '1.75' }],
+        'xl':   ['1.25rem',   { lineHeight: '1.7'  }],
+        '2xl':  ['1.5rem',    { lineHeight: '1.4'  }],
+        '3xl':  ['1.875rem',  { lineHeight: '1.3'  }],
+        '4xl':  ['2.25rem',   { lineHeight: '1.2'  }],
+        '5xl':  ['3rem',      { lineHeight: '1.15' }],
+        '6xl':  ['3.75rem',   { lineHeight: '1.1'  }],
+        '7xl':  ['4.5rem',    { lineHeight: '1.05' }],
+        '8xl':  ['6rem',      { lineHeight: '1.0'  }],
+      },
+      letterSpacing: {
+        tighter: '-0.03em',
+        tight:   '-0.015em',
+        normal:  '0em',
+        wide:    '0.02em',
+        wider:   '0.08em',
+        widest:  '0.18em',
+      },
+    },
+  },
+  plugins: [],
+}

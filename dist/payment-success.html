@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Microsoft Clarity -->
+  <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "y3w1519z5a");
+  </script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-BR8N7PQ1KG"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-BR8N7PQ1KG');
+  </script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment Confirmed — StoneBridge Solutions</title>
+<style>
+  :root { --navy:#0d1b2a; --navy-soft:#132639; --gold:#d9b23d; --gold-soft:#e6c766; --grey:#8a97ab; --ink:#e4e9f2; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--navy); color:var(--ink); font-family:'Poppins',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; }
+  .card { max-width:520px; width:100%; background:var(--navy-soft); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:40px 32px; text-align:center; }
+  .eyebrow { color:var(--gold); letter-spacing:3px; font-size:.72rem; font-weight:600; text-transform:uppercase; margin-bottom:14px; }
+  h1 { font-size:1.5rem; margin-bottom:14px; font-weight:600; }
+  p { color:var(--grey); line-height:1.6; margin-bottom:12px; font-size:.98rem; }
+  .spinner { width:38px; height:38px; margin:8px auto 20px; border:3px solid rgba(217,178,61,.2); border-top-color:var(--gold); border-radius:50%; animation:spin .8s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .btn { display:inline-block; margin-top:18px; background:var(--gold); color:var(--navy); text-decoration:none; padding:14px 26px; border-radius:10px; font-weight:600; }
+  .btn:hover { background:var(--gold-soft); }
+  .muted { font-size:.85rem; color:var(--grey); margin-top:18px; }
+  .hide { display:none; }
+</style>
+  <link rel="canonical" href="https://stonebridgesolutions.io/payment-success.html">
+  <meta name="robots" content="noindex,follow">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="StoneBridge Solutions">
+  <meta property="og:title" content="Payment Confirmed — StoneBridge Solutions">
+  <meta property="og:description" content="StoneBridge Solutions builds fast, professional static websites for small businesses in the Triad area of NC. Flat pricing for selected bundles, live within days.">
+  <meta property="og:url" content="https://stonebridgesolutions.io/payment-success.html">
+  <meta property="og:image" content="https://stonebridgesolutions.io/assets/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Payment Confirmed — StoneBridge Solutions">
+  <meta name="twitter:description" content="StoneBridge Solutions builds fast, professional static websites for small businesses in the Triad area of NC. Flat pricing for selected bundles, live within days.">
+  <meta name="twitter:image" content="https://stonebridgesolutions.io/assets/og-image.jpg">
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+</head>
+<body>
+  <div class="card">
+    <!-- Verifying -->
+    <div id="verifying">
+      <div class="eyebrow">Almost There</div>
+      <div class="spinner"></div>
+      <h1 id="verifyHeading">Confirming your payment…</h1>
+      <p>Hang tight for just a moment while we confirm everything with our payment processor.</p>
+    </div>
+
+    <!-- Success: redirecting -->
+    <div id="success" class="hide">
+      <div class="eyebrow">Payment Confirmed</div>
+      <h1 id="successHeading">You're all set!</h1>
+      <p id="successText">Taking you to your website builder now…</p>
+      <a id="builderLink" class="btn hide" href="#">Open my builder →</a>
+    </div>
+
+    <!-- Still processing -->
+    <div id="processing" class="hide">
+      <div class="eyebrow">Payment Received</div>
+      <h1>Thanks — we're processing your payment</h1>
+      <p>Your payment is going through. As soon as it clears, we'll email your private builder link. This usually happens within a few minutes.</p>
+      <p class="muted">You can close this page — nothing is lost.</p>
+    </div>
+
+    <!-- Error -->
+    <div id="error" class="hide">
+      <div class="eyebrow">One Moment</div>
+      <h1>We couldn't confirm that automatically</h1>
+      <p id="errorText">No problem — check your email for your private builder link, which we send the moment your payment clears. If you don't see it shortly, just reply to your order email or contact us and we'll sort it out right away.</p>
+    </div>
+  </div>
+
+<script>
+  const API = 'https://api.stonebridgesolutions.io';
+  const params = new URLSearchParams(location.search);
+  const sessionId = params.get('session_id');
+
+  function show(id){ ['verifying','success','processing','error'].forEach(x => { document.getElementById(x).classList.toggle('hide', x !== id); }); }
+
+  async function verify(){
+    if (!sessionId){ show('error'); return; }
+    try {
+      const res = await fetch(`${API}/payment/verify?session_id=${encodeURIComponent(sessionId)}`);
+      const data = await res.json();
+      if (data.ok && data.paid && data.builder_token){
+        if (typeof gtag==='function' && data.amount) { gtag('event','purchase',{ transaction_id: data.order_id || sessionId, value: data.amount, currency: data.currency || 'USD', tier: data.tier }); }
+        const url = `/builder.html?token=${encodeURIComponent(data.builder_token)}`;
+        const heading = document.getElementById('successHeading');
+        if (data.business_name) heading.textContent = `${data.business_name}, you're all set!`;
+        const link = document.getElementById('builderLink');
+        link.href = url;
+        show('success');
+        setTimeout(() => { link.classList.remove('hide'); }, 2500);
+        setTimeout(() => { window.location.href = url; }, 2800);
+      } else if (data.ok && data.paid === false){
+        show('processing');
+      } else {
+        show('error');
+        if (data.error) document.getElementById('errorText').textContent = data.error;
+      }
+    } catch (e){
+      show('error');
+    }
+  }
+  verify();
+</script>
+</body>
+</html>

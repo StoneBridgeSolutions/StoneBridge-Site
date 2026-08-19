@@ -25,6 +25,24 @@ h1{font-family:'Playfair Display',serif;color:var(--white);font-size:1.9rem;marg
 .page-row-header input{flex:1;font-size:.9rem}
 .page-row-header .del-page{background:none;border:none;color:var(--grey);cursor:pointer;font-size:1.1rem;padding:2px 6px;border-radius:6px}
 .page-row-header .del-page:hover{color:#f0938e;background:rgba(226,86,79,.1)}
+.page-section{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:12px 14px;margin-top:8px}
+.page-section-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.page-section-header select{flex:1;background:#0b1220;border:1px solid rgba(255,255,255,.15);border-radius:8px;color:#e4e9f2;padding:7px 10px;font-size:.85rem}
+.section-fields{display:grid;gap:8px}
+.section-field input,.section-field textarea{width:100%;box-sizing:border-box;background:#0b1220;border:1px solid rgba(255,255,255,.12);border-radius:7px;color:#e4e9f2;padding:8px 11px;font-size:.83rem;resize:vertical}
+.section-field label{display:block;font-size:.75rem;color:#8a97ab;margin-bottom:3px}
+.copy-check-row{display:flex;align-items:center;gap:7px;padding:8px 10px;background:rgba(217,178,61,.07);border:1px solid rgba(217,178,61,.18);border-radius:7px;margin-top:6px;cursor:pointer}
+.copy-check-row input[type=checkbox]{accent-color:var(--gold)}
+.copy-check-row .copy-label{font-size:.82rem;color:#d9b23d;font-weight:600}
+.be-creative-btn{background:linear-gradient(135deg,rgba(139,90,200,.2),rgba(100,60,180,.3));border:1px solid rgba(139,90,200,.4);color:#c9a8f0;border-radius:9px;padding:10px 16px;cursor:pointer;font-size:.85rem;font-weight:600;width:100%;margin-top:8px;transition:all .2s}
+.be-creative-btn:hover{background:rgba(139,90,200,.3);border-color:rgba(139,90,200,.6)}
+.be-creative-active{background:rgba(139,90,200,.25);border:1px solid rgba(139,90,200,.5);border-radius:9px;padding:10px 14px;margin-top:8px;display:flex;align-items:center;justify-content:space-between}
+.hero-locked-badge{background:rgba(217,178,61,.15);border:1px solid rgba(217,178,61,.3);border-radius:6px;padding:3px 8px;font-size:.72rem;color:#d9b23d;font-weight:600;white-space:nowrap}
+.del-section{background:none;border:none;color:#8a97ab;cursor:pointer;font-size:1rem;padding:2px 5px;border-radius:5px;flex-shrink:0}
+.del-section:hover{color:#f0938e;background:rgba(226,86,79,.1)}
+.add-section-btn{background:rgba(255,255,255,.04);border:1px dashed rgba(255,255,255,.15);color:#8a97ab;border-radius:8px;padding:8px;cursor:pointer;font-size:.82rem;width:100%;margin-top:6px;transition:all .15s}
+.add-section-btn:hover{background:rgba(255,255,255,.07);color:#e4e9f2}
+.page-desc-input{width:100%;box-sizing:border-box;background:#0b1220;border:1px solid rgba(255,255,255,.12);border-radius:7px;color:#e4e9f2;padding:8px 11px;font-size:.83rem;margin-top:6px;resize:vertical}
 .copy-options{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:.83rem}
 .copy-options label{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:8px 10px;cursor:pointer}
 .copy-options label:hover{border-color:rgba(217,178,61,.3)}
@@ -121,26 +139,41 @@ input[type=text]{margin-bottom:12px}
       <p class="gate-fallback" id="gateFallback" style="display:none">Contact us to complete your payment and we’ll get this unlocked right away.</p>
     </div>
   </div>
+  <div id="pwSetupScreen" style="display:none;flex-direction:column;align-items:center;text-align:center">
+    <div class="gate-wrap" style="max-width:460px">
+      <h2>Want to password-protect your builder?</h2>
+      <p id="pwSetupMsg">Your link is unique to you. You can add a password so only you can open this builder &mdash; or skip it and use just the link.</p>
+      <input type="password" id="pwSetupInput" placeholder="Choose a password (min 6 characters)" style="width:100%;padding:12px;margin-top:14px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);color:#fff">
+      <input type="password" id="pwSetupConfirm" placeholder="Confirm password" style="width:100%;padding:12px;margin-top:10px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);color:#fff">
+      <div id="pwSetupError" style="color:#ff8080;margin-top:8px;min-height:18px;font-size:.9rem"></div>
+      <button type="button" id="pwSetBtn" class="gate-pay-btn" style="border:none;cursor:pointer;margin-top:6px">Set Password & Continue</button>
+      <div style="margin-top:16px">
+        <button type="button" id="pwSkipBtn" style="background:none;border:none;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:.92rem">Skip &mdash; I&rsquo;ll just use my link</button>
+      </div>
+      <div id="pwSkipWarning" style="display:none;margin-top:14px;padding:14px 16px;border:1px solid rgba(255,180,80,.5);border-radius:10px;text-align:left;font-size:.9rem;color:var(--muted)">
+        <strong style="color:#ffb450">Heads up:</strong> your builder link is unique to you, but if you skip the password, <strong>anyone who has this link can open it and see everything you enter</strong> &mdash; your business details, content, and settings. Only skip if you&rsquo;re the only one with the link and you&rsquo;re okay with that.
+        <div style="margin-top:12px">
+          <button type="button" id="pwSkipConfirmBtn" style="display:none;background:rgba(255,180,80,.15);border:1px solid rgba(255,180,80,.5);color:#ffb450;border-radius:10px;padding:10px 16px;cursor:pointer;font-weight:600">Continue without a password</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="pwLoginScreen" style="display:none;flex-direction:column;align-items:center;text-align:center">
+    <div class="gate-wrap" style="max-width:420px">
+      <h2>Enter your password</h2>
+      <p>This builder is password-protected. Enter your password to continue.</p>
+      <input type="password" id="pwLoginInput" placeholder="Your password" style="width:100%;padding:12px;margin-top:14px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);color:#fff">
+      <div id="pwLoginError" style="color:#ff8080;margin-top:8px;min-height:18px;font-size:.9rem"></div>
+      <button type="button" id="pwLoginBtn" class="gate-pay-btn" style="border:none;cursor:pointer;margin-top:6px">Unlock</button>
+    </div>
+  </div>
+
 
   <div id="form-area">
     <div class="autosave-note">Everything here saves automatically as you go. Close this tab anytime and come back to this same link — nothing gets lost.</div>
     <div id="alreadyBanner" class="already-banner" style="display:none">You already hit "I'm Done" on this brief — your 48-hour clock is running. You can still make edits below; just let us know if anything major changed.</div>
 
-    <nav class="stepper-nav" role="tablist" aria-label="Builder steps" id="stepperNav">
-  <button type="button" class="nav-pill" id="navPill0" onclick="showStep(0)" title="Colors"><span class="np-icon">🎨</span><span class="np-label">Colors</span></button>
-  <button type="button" class="nav-pill" id="navPill1" onclick="showStep(1)" title="Tone"><span class="np-icon">✍️</span><span class="np-label">Tone</span></button>
-  <button type="button" class="nav-pill" id="navPill2" onclick="showStep(2)" title="Audience"><span class="np-icon">🎯</span><span class="np-label">Audience</span></button>
-  <button type="button" class="nav-pill" id="navPill3" onclick="showStep(3)" title="Features"><span class="np-icon">⚡</span><span class="np-label">Features</span></button>
-  <button type="button" class="nav-pill" id="navPill4" onclick="showStep(4)" title="Business"><span class="np-icon">🏢</span><span class="np-label">Business</span></button>
-  <button type="button" class="nav-pill" id="navPill5" onclick="showStep(5)" title="Legal"><span class="np-icon">📋</span><span class="np-label">Legal</span></button>
-  <button type="button" class="nav-pill" id="navPill6" onclick="showStep(6)" title="Domain"><span class="np-icon">🌐</span><span class="np-label">Domain</span></button>
-  <button type="button" class="nav-pill" id="navPill7" onclick="showStep(7)" title="Terms"><span class="np-icon">📝</span><span class="np-label">Terms</span></button>
-  <button type="button" class="nav-pill" id="navPill8" onclick="showStep(8)" title="Timeline"><span class="np-icon">📅</span><span class="np-label">Timeline</span></button>
-  <button type="button" class="nav-pill" id="navPill9" onclick="showStep(9)" title="Pages"><span class="np-icon">📄</span><span class="np-label">Pages</span></button>
-  <button type="button" class="nav-pill" id="navPill10" onclick="showStep(10)" title="Logo"><span class="np-icon">✨</span><span class="np-label">Logo</span></button>
-  <button type="button" class="nav-pill" id="navPill11" onclick="showStep(11)" title="Photos"><span class="np-icon">📷</span><span class="np-label">Photos</span></button>
-  <button type="button" class="nav-pill" id="navPill12" onclick="showStep(12)" title="Review"><span class="np-icon">✅</span><span class="np-label">Review</span></button>
-</nav>
+    <div class="stepper-wrap" style="display:flex;align-items:center;gap:6px;"><button type="button" id="pillPrev" class="pill-arrow" aria-label="Previous sections" onclick="slidePills(-1)" style="flex:0 0 auto;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:var(--grey);border-radius:999px;width:30px;height:30px;cursor:pointer;font-size:1rem;line-height:1;display:none;">‹</button><nav class="stepper-nav" role="tablist" aria-label="Builder steps" id="stepperNav"></nav><button type="button" id="pillNext" class="pill-arrow" aria-label="More sections" onclick="slidePills(1)" style="flex:0 0 auto;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:var(--grey);border-radius:999px;width:30px;height:30px;cursor:pointer;font-size:1rem;line-height:1;display:none;">›</button></div>
 
 <div id="cardsWrap">
 <div class="card" id="card0" data-step="0">
@@ -170,18 +203,51 @@ input[type=text]{margin-bottom:12px}
   <label class="title" style="margin-top:20px">Font Style</label>
   <p class="hint">Pick the feel that fits your brand best.</p>
   <div class="check-grid">
-    <label><input type="radio" name="fontPref" id="fontModern" value="modern-sans"> Modern sans-serif</label>
-    <label><input type="radio" name="fontPref" id="fontSerif" value="classic-serif"> Classic serif</label>
-    <label><input type="radio" name="fontPref" id="fontMixed" value="mixed"> Mixed (heading + body)</label>
-    <label><input type="radio" name="fontPref" id="fontNoPref" value="no-preference" checked> No preference &mdash; StoneBridge chooses</label>
+    <label class="field-label">Font</label>
+    <select id="fontSelect" onchange="onFontSelectChange()" style="width:100%;padding:12px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);color:#fff;margin-bottom:10px">
+        <option value="no-preference">No preference &mdash; StoneBridge chooses</option>
+        <option value="Montserrat">Montserrat</option>
+        <option value="Poppins">Poppins</option>
+        <option value="Inter">Inter</option>
+        <option value="Roboto">Roboto</option>
+        <option value="Open Sans">Open Sans</option>
+        <option value="Lato">Lato</option>
+        <option value="Raleway">Raleway</option>
+        <option value="Playfair Display">Playfair Display</option>
+        <option value="Merriweather">Merriweather</option>
+        <option value="Georgia">Georgia</option>
+        <option value="Lora">Lora</option>
+        <option value="Oswald">Oswald</option>
+        <option value="Nunito">Nunito</option>
+        <option value="Work Sans">Work Sans</option>
+        <option value="__other__">Other (type below)</option>
+    </select>
+    <input type="text" id="fontOther" placeholder="Name the font you want" style="display:none;width:100%;padding:12px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);color:#fff;margin-bottom:10px" oninput="debouncedSave()">
+    <label class="field-label">Font style / treatment <span class="hint" style="font-weight:400">(optional)</span></label>
+    <select id="fontStyleSelect" onchange="onFontStyleChange()" style="width:100%;padding:12px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);color:#fff;margin-bottom:10px">
+        <option value="">No preference</option>
+        <option value="Bold">Bold</option>
+        <option value="Italic">Italic</option>
+        <option value="Underline">Underline</option>
+        <option value="Shadow">Shadow</option>
+        <option value="Glow">Glow</option>
+        <option value="3D">3D</option>
+        <option value="Outline">Outline</option>
+        <option value="All caps">All caps</option>
+        <option value="__other__">Other (type below)</option>
+    </select>
+    <input type="text" id="fontStyleOther" placeholder="Describe the style you want" style="display:none;width:100%;padding:12px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);color:#fff;margin-bottom:10px" oninput="debouncedSave()">
   </div>
 
   <label class="title" style="margin-top:20px">Inspiration Sites</label>
-  <p class="hint">Paste up to 3 URLs of sites whose look you love. A quick note on what appeals to you about each helps a lot.</p>
+  <p class="hint">Paste up to 5 URLs of sites whose look you love. A quick note on what appeals to you about each helps a lot.</p>
   <div id="inspirationRows">
     <div class="inspiration-row"><input type="url" class="insp-url" placeholder="https://example.com"><input type="text" class="insp-note" placeholder="What do you like about it?"></div>
     <div class="inspiration-row"><input type="url" class="insp-url" placeholder="https://example.com"><input type="text" class="insp-note" placeholder="What do you like about it?"></div>
     <div class="inspiration-row"><input type="url" class="insp-url" placeholder="https://example.com"><input type="text" class="insp-note" placeholder="What do you like about it?"></div>
+    <div class="inspiration-row" style="display:none"><input type="url" class="insp-url" placeholder="https://example.com"><input type="text" class="insp-note" placeholder="What do you like about it?"></div>
+    <div class="inspiration-row" style="display:none"><input type="url" class="insp-url" placeholder="https://example.com"><input type="text" class="insp-note" placeholder="What do you like about it?"></div>
+    <button type="button" id="inspAddBtn" onclick="revealInspRow()" style="margin-top:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:var(--gold);border-radius:10px;padding:9px 15px;cursor:pointer;font-weight:600">+ Add another</button>
   </div>
 
   <label class="title" style="margin-top:20px">Anything to Avoid</label>
@@ -244,23 +310,12 @@ input[type=text]{margin-bottom:12px}
 </div>
 </div>
 
-<div class="card" id="card5" data-step="5">
+<div class="card" id="card5" data-step="5" style="display:none">
 <div class="section">
-  <label class="title">Legal Entity</label>
-  <p class="hint" id="hint5">For your service agreement -- not shown on your website.</p>
-  <select id="isLegalEntity">
-    <option value="">Are you a registered legal entity?</option>
-    <option value="yes">Yes</option>
-    <option value="no">No / not yet</option>
-  </select>
-  <div id="legalEntityDetails" style="display:none;margin-top:10px">
-  <input type="text" id="legalEntityName" placeholder="Legal entity name (or your full legal name if not yet registered)">
-  <input type="text" id="legalMailingAddress" placeholder="Registered / mailing address">
-  <input type="text" id="ein" placeholder="EIN (optional)">
-  <select id="relationshipToBusiness">
-    <option value="">Your relationship to the business</option>
-    <option>Owner</option><option>Officer</option><option>Authorized Agent</option><option>Member</option><option>Other</option>
-  </select>
+  <label class="title">Legal &amp; Business Details</label>
+  <p class="hint" id="hint5">Collected on your intake form. Shown here for reference — contact us to make corrections.</p>
+  <div id="legalEntityReadout" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px;font-size:.85rem;color:#8a97ab">
+    <div id="legalEntityDisplay">Loading...</div>
   </div>
   <div class="field-status" id="legalStatus"></div>
 </div>
@@ -289,6 +344,30 @@ input[type=text]{margin-bottom:12px}
       <option value="other">Other</option>
     </select>
   </div>
+  <div id="domainYesFollowups" style="display:none">
+    <label class="subgroup-label" style="margin-top:14px">Is your site up &amp; running, or do you just own the domain?</label>
+    <select id="domainSiteStatus" style="width:100%;padding:12px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);color:#fff;margin-top:6px">
+      <option value="">Select one</option>
+      <option value="up_running">It's up &amp; running</option>
+      <option value="domain_only">I just own the domain</option>
+    </select>
+    <div id="domainUpRunningSub" style="display:none">
+      <label class="subgroup-label" style="margin-top:12px">Is this a remodel of your current site?</label>
+      <select id="domainIsRemodel" style="width:100%;padding:12px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);color:#fff;margin-top:6px">
+        <option value="">Select one</option>
+        <option value="yes">Yes, remodel it</option>
+        <option value="no">No, fresh build</option>
+      </select>
+      <label class="subgroup-label" style="margin-top:12px">Anything from your current site to copy or re-use?</label>
+      <textarea id="domainReuseNotes" placeholder="e.g. keep the About text, reuse the logo and photos, match the color scheme" style="width:100%;padding:12px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);color:#fff;margin-top:6px;min-height:70px"></textarea>
+    </div>
+    <label class="subgroup-label" style="margin-top:12px">Use that domain, but point it at your new site?</label>
+    <select id="domainPointToNew" style="width:100%;padding:12px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);color:#fff;margin-top:6px">
+      <option value="">Select one</option>
+      <option value="yes">Yes, point it at the new site</option>
+      <option value="no">No / not sure yet</option>
+    </select>
+  </div>
   <button type="button" class="check-avail-btn" id="checkDomainBtn">Check Availability</button>
   <div class="domain-results" id="domainResults"></div>
   <div class="toggle-row"><input type="checkbox" id="wantsDomainHelp"><label for="wantsDomainHelp">I would like StoneBridge to help register/manage my domain</label></div>
@@ -299,13 +378,28 @@ input[type=text]{margin-bottom:12px}
 <div class="card" id="card7" data-step="7">
 <div class="section">
   <label class="title">Terms &amp; Privacy Pages</label>
-  <p class="hint" id="hint7">These are included with every site.</p>
-  <select id="termsPrivacyChoice">
-    <option value="">Select one</option>
-    <option value="provide">I will provide my own content</option>
-    <option value="generate">Generate a standard template for me</option>
-  </select>
-  <textarea id="termsPrivacyContent" placeholder="Paste your Terms/Privacy content here if providing your own"></textarea>
+  <p class="hint" id="hint7">Every site includes a Terms of Use and a Privacy Policy page. Upload or paste your own for either one &mdash; anything you leave blank, we&rsquo;ll auto-generate a standard placeholder version (not written by a lawyer, meant to be replaced later).</p>
+  <div class="section" style="border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:16px;margin-top:8px">
+    <label class="subgroup-label" style="font-weight:600">Part 1 &mdash; Terms of Use</label>
+    <label class="subgroup-label" style="margin-top:10px">Upload a file (.pdf, .docx, .doc, .txt)</label>
+    <input type="file" id="termsFileInput" accept=".pdf,.docx,.doc,.txt" style="margin-top:6px">
+    <div id="termsFileCurrent" style="display:none;font-size:.85rem;opacity:.7;margin-top:4px"></div>
+    <label class="subgroup-label" style="margin-top:12px">Or paste your Terms of Use</label>
+    <textarea id="termsPaste" placeholder="Paste your Terms of Use text here" style="width:100%;padding:12px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);color:#fff;margin-top:8px;min-height:90px"></textarea>
+    <label class="subgroup-label" style="margin-top:12px">Comments / notes (optional)</label>
+    <textarea id="termsComment" placeholder="Anything we should know about your Terms of Use" style="width:100%;padding:12px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);color:#fff;margin-top:8px;min-height:90px"></textarea>
+  </div>
+  <hr style="border:none;border-top:1px solid rgba(255,255,255,.14);margin:18px 0">
+  <div class="section" style="border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:16px">
+    <label class="subgroup-label" style="font-weight:600">Part 2 &mdash; Privacy Policy</label>
+    <label class="subgroup-label" style="margin-top:10px">Upload a file (.pdf, .docx, .doc, .txt)</label>
+    <input type="file" id="privacyFileInput" accept=".pdf,.docx,.doc,.txt" style="margin-top:6px">
+    <div id="privacyFileCurrent" style="display:none;font-size:.85rem;opacity:.7;margin-top:4px"></div>
+    <label class="subgroup-label" style="margin-top:12px">Or paste your Privacy Policy</label>
+    <textarea id="privacyPaste" placeholder="Paste your Privacy Policy text here" style="width:100%;padding:12px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);color:#fff;margin-top:8px;min-height:90px"></textarea>
+    <label class="subgroup-label" style="margin-top:12px">Comments / notes (optional)</label>
+    <textarea id="privacyComment" placeholder="Anything we should know about your Privacy Policy" style="width:100%;padding:12px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);color:#fff;margin-top:8px;min-height:90px"></textarea>
+  </div>
   <div class="field-status" id="termsStatus"></div>
 </div>
 </div>
@@ -328,7 +422,7 @@ input[type=text]{margin-bottom:12px}
 <div class="card" id="card9" data-step="9">
 <div class="section">
   <label class="title">Pages &amp; Site Structure</label>
-  <p class="hint" id="hint9">Tell us what pages you need. We’ve added defaults based on your package — rename, remove, or add pages as you like. For each page, let us know how you’d like to handle the copy.</p>
+  <p class="hint" id="hint9">Build out each page of your site. The Home page always starts with a Hero section. For each additional page, name it, describe it, and add sections — or let us handle the whole page creatively.</p>
 
   <div id="pagesContainer"></div>
 
@@ -350,18 +444,22 @@ input[type=text]{margin-bottom:12px}
   <div style="display:flex;align-items:flex-start;gap:10px;margin-top:8px;padding:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px">
     <input type="checkbox" id="ga4Addon" style="margin-top:3px;accent-color:var(--gold)">
     <label for="ga4Addon" style="cursor:pointer;line-height:1.4">
-      <strong>Google Analytics 4 Setup</strong> <span style="color:var(--gold);font-weight:600">+$100</span>
+      <strong>Google Analytics 4 Setup</strong> <span style="color:var(--gold);font-weight:600">+$125</span> <span style="color:var(--grey);font-size:.8rem">(or +$85 if committed early)</span>
       <div style="color:var(--grey);font-size:.82rem;margin-top:3px">We embed GA4 on your site and configure basic goal tracking. You'll need to provide a Google account or Measurement ID after launch.</div>
     </label>
   </div>
 </div>
-<label><input type="checkbox" id="integStripe"> Stripe / payment processing</label>
-    <label><input type="checkbox" id="integEmail"> Email marketing (Mailchimp, Klaviyo, etc.)</label>
-    <label><input type="checkbox" id="integBooking"> Booking / scheduling</label>
-    <label><input type="checkbox" id="integSocial"> Social media feed</label>
-    <label><input type="checkbox" id="integOther"> Other</label>
-  </div>
-  <input type="text" id="integOtherText" placeholder="Describe the integration" style="display:none;margin-top:8px">
+<label class="subgroup-label" style="font-weight:600;margin-top:4px">Social media icons + links <span class="hint" style="font-weight:400">(free)</span></label>
+    <p class="hint" style="margin-top:2px">Add each platform and its link. If you don&rsquo;t have the link handy, leave it blank and we&rsquo;ll use a placeholder icon for now.</p>
+    <div id="socialRows"></div>
+    <button type="button" id="socialAddBtn" onclick="addSocialRow()" style="margin-top:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:var(--gold);border-radius:10px;padding:9px 15px;cursor:pointer;font-weight:600">+ Add a platform</button>
+
+    <label class="subgroup-label" style="font-weight:600;margin-top:18px">Dynamic blog area <span class="hint" style="font-weight:400">(custom quote)</span></label>
+    <label style="display:flex;align-items:flex-start;gap:8px;margin-top:6px;cursor:pointer;line-height:1.4"><input type="checkbox" id="blogCustomQuote" style="margin-top:3px;accent-color:var(--gold)"><span>Yes, I want an ongoing blog I can post to myself. <span style="color:var(--grey);font-size:.82rem">(A one-off article page is included free as a page type &mdash; this is for a self-managed blog, which we&rsquo;ll quote separately. Checking this sends us a note to follow up.)</span></span></label>
+
+    <label class="subgroup-label" style="font-weight:600;margin-top:18px">Other 3rd-party integration?</label>
+    <p class="hint" style="margin-top:2px">Anything else (payments, booking, CRM, etc.) is custom quoted based on the work &mdash; you&rsquo;ll provide credentials once we start. Describe it and we&rsquo;ll follow up with a quote.</p>
+    <textarea id="integOtherText" placeholder="Describe any other integration you need" style="width:100%;padding:10px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);color:#fff;min-height:60px;margin-top:4px"></textarea>
 
   <div class="field-status" id="pagesStatus"></div>
 </div>
@@ -398,7 +496,7 @@ input[type=text]{margin-bottom:12px}
 
 <div class="card" id="card11" data-step="11">
 <div class="section">
-      <label class="title">Photos</label>
+      <label class="title">Graphics/Pics</label>
       <p class="hint" id="hint10">Up to 10. You can add more later too.</p>
       <div class="upload-box">
         <input type="file" id="photosInput" accept="image/*" multiple>
@@ -428,6 +526,67 @@ input[type=text]{margin-bottom:12px}
   <div class="field-status" id="reviewStatus"></div>
 </div>
 </div>
+<div class="card" id="pageCard" data-role="page" style="display:none">
+  <label class="title" id="pageCardTitle">Homepage</label>
+  <p class="hint">Each page on your site gets its own tab. Name it, and the tab updates to match. You'll add sections to each page next.</p>
+  <div class="form-group" id="pageNameWrap" style="margin-top:16px">
+    <label class="field-label">Page name</label>
+    <input type="text" id="pageName" placeholder="e.g. About, Services, Contact" oninput="onPageNameInput(this.value)">
+  </div>
+  <div class="form-group" style="margin-top:16px">
+    <label class="field-label">Menu title <span class="hint" style="font-weight:400">(optional — only if different from the page name)</span></label>
+    <input type="text" id="pageMenuTitle" placeholder="Leave blank to use the page name" oninput="onPageFieldInput()">
+  </div>
+  <div class="form-group" style="margin-top:16px">
+    <label class="field-label">Description</label>
+    <textarea id="pageDesc" placeholder="What is this page for? What should it say?" oninput="onPageFieldInput()"></textarea>
+  </div>
+    <div class="form-group" id="pageTypeWrap" style="margin-top:18px">
+    <label class="field-label">Page type</label>
+    <select id="pageTypeSelect" onchange="onPageTypeChange()" style="width:100%;padding:12px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);color:#fff">
+      <option value="standard">Standard content page (add your own sections)</option>
+      <option value="integration">Integration page (checkout, booking, etc.)</option>
+    </select>
+    <div id="integrationPanel" style="display:none;margin-top:14px;padding:14px 16px;border:1px solid rgba(255,255,255,.12);border-radius:10px">
+      <div class="field-label">Which integration?</div>
+      <select id="integrationKind" onchange="onIntegrationFieldInput()" style="width:100%;padding:12px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);color:#fff;margin-bottom:12px">
+        <option value="">Select one...</option>
+        <option value="checkout">Online checkout / store</option>
+        <option value="booking">Booking / appointments</option>
+        <option value="other">Something else</option>
+      </select>
+      <div class="field-label">Tell us what this page needs to do</div>
+      <textarea id="integrationDetail" oninput="onIntegrationFieldInput()" placeholder="e.g. sell 3 products with Stripe, or let clients book 30-min slots"></textarea>
+      <div class="hint" style="margin-top:8px">Integration pages are priced per project &mdash; we&rsquo;ll review what you need and send a quote. Nothing is charged automatically.</div>
+    </div>
+  <div class="form-group" id="passwordProtectWrap" style="margin-top:18px">
+    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:600">
+      <input type="checkbox" id="passwordProtectToggle" onchange="onPasswordProtectToggle()" style="width:18px;height:18px;cursor:pointer">
+      <span>Password-protect this page</span>
+    </label>
+    <div class="hint" style="margin-top:5px;margin-left:28px">Visitors enter one shared password to view this page &mdash; no logins or accounts. We set it up on the host.</div>
+    <div id="passwordFieldWrap" style="display:none;margin-top:10px">
+      <input type="text" id="pagePassword" oninput="onPasswordProtectInput()" placeholder="Choose a password for this page">
+    </div>
+  </div>
+  <div class="form-group" id="beCreativeWrap" style="margin-top:18px">
+    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:600">
+      <input type="checkbox" id="beCreativeToggle" onchange="onBeCreativeToggle()" style="width:18px;height:18px;cursor:pointer">
+      <span>Let StoneBridge design this page for me <strong style="color:var(--gold)">(+$50)</strong></span>
+    </label>
+    <div class="hint" style="margin-top:5px;margin-left:28px">Skip the sections below - we design this page around your brand and goals.</div>
+  </div>
+  <div class="form-group" id="sectionsWrap" style="margin-top:22px">
+    <label class="field-label">Sections <span class="hint" id="sectionPoolInfo" style="font-weight:400"></span></label>
+    <div id="pageSections"></div>
+    <button type="button" id="addSectionBtn" onclick="addSectionToPage()" style="margin-top:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:var(--gold);border-radius:10px;padding:9px 15px;cursor:pointer;font-weight:600">+ Add section</button>
+  </div>
+  <div style="display:flex;gap:10px;margin-top:24px;flex-wrap:wrap">
+    <button type="button" id="addPageBtn" class="ghost-btn" onclick="addPage()" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:var(--gold);border-radius:10px;padding:10px 16px;cursor:pointer;font-weight:600">+ Add a page</button>
+    <button type="button" id="removePageBtn" onclick="removeCurrentPage()" style="display:none;background:rgba(255,80,80,.08);border:1px solid rgba(255,80,80,.25);color:#ff8080;border-radius:10px;padding:10px 16px;cursor:pointer;font-weight:600">Remove this page</button>
+  </div>
+</div>
+
 
 
 </div>
@@ -452,59 +611,441 @@ const params = new URLSearchParams(window.location.search);
 const token = params.get('token');
 let saveTimer = null;
 
-const STEP_LABELS = ['Colors','Tone','Audience','Features','Business','Legal','Domain','Terms','Timeline','Pages','Logo','Photos','Review'];
-const TOTAL_STEPS = STEP_LABELS.length;
-let currentStep = 0;
-const visitedSteps = new Set();
+// ── DYNAMIC TAB MODEL (Stage A: same tabs/order as before, data-driven) ──
+// Each tab maps to an existing content card by cardId. Order here IS the nav
+// order. Legal is intentionally excluded (collected on intake). Reordering,
+// removing, or adding tabs later = just editing this array.
+// ── ZONE-BASED TAB MODEL (Stage C: dynamic page zone) ──
+// SETUP tabs (fixed) + PAGE tabs (dynamic, from builderPages) + END tabs (fixed).
+const SETUP_TABS = [
+  { id:'business', cardId:'card4',  label:'Business' },
+  { id:'domain',   cardId:'card6',  label:'Domain' },
+  { id:'tone',     cardId:'card1',  label:'Tone' },
+  { id:'audience', cardId:'card2',  label:'Audience' },
+  { id:'colors',   cardId:'card0',  label:'Style' },
+  { id:'logo',     cardId:'card10', label:'Logo' },
+  { id:'terms',    cardId:'card7',  label:'Terms & Privacy' },
+  { id:'features', cardId:'card3',  label:'Features' },
+];
+const END_TABS = [
+  { id:'photos',   cardId:'card11', label:'Graphics/Pics' },
+  { id:'review',   cardId:'card12', label:'Review', isReview:true },
+];
+// Pages state. Homepage always exists and is first + non-deletable.
+let builderPages = [ { id:'home', name:'Home', menuTitle:'', description:'', isHome:true } ];
+let currentPageId = null;
+function uid(){ return 'p'+Math.random().toString(36).slice(2,8); }
 
-function buildNav() { /* nav pills are server-rendered with onclick handlers already */ }
+// Page tabs derived from builderPages. All share the single #pageCard, carrying pageId.
+function pageTabs(){
+  return builderPages.map(p => ({
+    id:'page_'+p.id, cardId:'pageCard', label:(p.isHome ? 'Homepage' : (p.name||'Untitled')),
+    role:'page', pageId:p.id, isHome:!!p.isHome
+  }));
+}
+// The live tab list. Rebuilt whenever pages change.
+let TAB_MODEL = [];
+function rebuildTabModel(){ TAB_MODEL = [...SETUP_TABS, ...pageTabs(), ...END_TABS]; }
+rebuildTabModel();
 
-function showStep(i) {
-  if (i < 0 || i >= TOTAL_STEPS) return;
-  document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
-  const card = document.getElementById('card' + i);
-  if (card) card.classList.add('active');
-  currentStep = i;
-  if (typeof buildSummary === 'function' && i === 12) buildSummary();
-  visitedSteps.add(i);
-  STEP_LABELS.forEach((label, idx) => {
-    const pill = document.getElementById('navPill' + idx);
+const TAB_ICONS = {
+  business:'🏢', domain:'🌐', tone:'🎙️', audience:'🎯', colors:'🎨',
+  logo:'✨', terms:'📃', features:'⚡', photos:'📷', review:'✅'
+};
+function iconFor(tab){
+  if (tab.role === 'page') return tab.isHome ? '🏠' : '📄';
+  return TAB_ICONS[tab.id] || '•';
+}
+
+let currentTab = 0;
+const visitedTabs = new Set();
+const WINDOW_SIZE = 3;
+let pillWindowStart = 0;
+
+function buildPills() {
+  const row = document.getElementById('stepperNav');
+  if (!row) return;
+  row.innerHTML = '';
+  TAB_MODEL.forEach((tab, idx) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'nav-pill';
+    btn.id = 'navPill_' + tab.id;
+    btn.setAttribute('data-idx', idx);
+    btn.title = tab.label;
+    btn.onclick = () => showTab(idx);
+    btn.innerHTML = '<span class="np-icon">' + iconFor(tab) + '</span>' +
+                    '<span class="np-label">' + tab.label + '</span>';
+    row.appendChild(btn);
+  });
+}
+function pillEl(idx){ const t = TAB_MODEL[idx]; return t ? document.getElementById('navPill_' + t.id) : null; }
+
+function renderPillWindow(){
+  const n = TAB_MODEL.length;
+  if (pillWindowStart > n - WINDOW_SIZE) pillWindowStart = Math.max(0, n - WINDOW_SIZE);
+  if (pillWindowStart < 0) pillWindowStart = 0;
+  TAB_MODEL.forEach((tab, idx) => {
+    const pill = pillEl(idx);
+    if (!pill) return;
+    const visible = idx >= pillWindowStart && idx < pillWindowStart + WINDOW_SIZE;
+    pill.style.display = visible ? '' : 'none';
+  });
+  const prev = document.getElementById('pillPrev');
+  const next = document.getElementById('pillNext');
+  if (prev) prev.style.display = (pillWindowStart > 0) ? '' : 'none';
+  if (next) next.style.display = (pillWindowStart + WINDOW_SIZE < n) ? '' : 'none';
+}
+function slidePills(dir){ pillWindowStart += dir; renderPillWindow(); }
+function followPillWindow(){
+  const pos = currentTab;
+  if (pos < pillWindowStart || pos >= pillWindowStart + WINDOW_SIZE) {
+    pillWindowStart = Math.max(0, Math.min(pos - 1, TAB_MODEL.length - WINDOW_SIZE));
+  }
+  renderPillWindow();
+}
+function buildNav() { buildPills(); renderPillWindow(); }
+
+// Hide every known card, then show only the active one. Handles the shared #pageCard.
+function hideAllCards(){
+  const ids = new Set(TAB_MODEL.map(t => t.cardId));
+  ids.forEach(cid => { const c = document.getElementById(cid); if (c) c.style.display = 'none'; });
+}
+
+function showTab(i) {
+  if (i < 0 || i >= TAB_MODEL.length) return;
+  if (typeof syncSectionsFromDOM==='function') syncSectionsFromDOM();
+  currentTab = i;
+  const tab = TAB_MODEL[i];
+  hideAllCards();
+  const active = document.getElementById(tab.cardId);
+  if (active) active.style.display = 'block';
+  try { if (active && active.querySelector && active.querySelector('#socialRows') && !window.__socialRestored && window.__sbOrder) { restoreSocial(window.__sbOrder.social_links); if(document.getElementById('blogCustomQuote')) document.getElementById('blogCustomQuote').checked=(window.__sbOrder.blog_custom_quote==='1'||window.__sbOrder.blog_custom_quote===1||window.__sbOrder.blog_custom_quote===true); if(document.getElementById('ga4Addon') && window.__sbOrder.ga4_addon===true) document.getElementById('ga4Addon').checked=true; window.__socialRestored = true; } } catch(e){}
+  if (tab.role === 'page') { currentPageId = tab.pageId; renderPageCard(tab.pageId); }
+  if (tab.isReview && typeof buildSummary === 'function') buildSummary();
+  visitedTabs.add(i);
+  if (typeof followPillWindow === 'function') followPillWindow();
+  TAB_MODEL.forEach((t, idx) => {
+    const pill = pillEl(idx);
     if (!pill) return;
     pill.classList.toggle('active', idx === i);
-    pill.classList.toggle('visited', visitedSteps.has(idx) && idx !== i);
+    pill.classList.toggle('visited', visitedTabs.has(idx) && idx !== i);
   });
   updateBottomBar();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+function showStep(i){ showTab(i); }
 
+// ── PAGE CARD RENDER + PAGE MANAGEMENT ──
+function currentPage(){ return builderPages.find(p => p.id === currentPageId) || builderPages[0]; }
+// -- STAGE D1: section-by-section per page (bridges builderPages -> existing section engine) --
+// Reuses: SECTION_LABELS, SECTION_ORDER, SECTION_FIELDS, buildSectionTypeSelect(type),
+//         buildSectionFieldsHTML(type,data,copyMe), getSectionData(secDiv).
+// Each section in a page: { id, type, copyMe, data:{} }.
+
+function _uidSec(){ return 's'+Math.random().toString(36).slice(2,8); }
+
+// Ensure every page has a sections array; give the homepage a locked hero first.
+function ensureSections(p){
+  if (!Array.isArray(p.sections)) p.sections = [];
+  if (p.isHome && !p.beCreative && !p.sections.some(s => s.type === 'hero')) {
+    p.sections.unshift({ id:_uidSec(), type:'hero', copyMe:false, data:{}, locked:true });
+  }
+  return p.sections;
+}
+
+// Read the currently-rendered section DOM back into the active page's model.
+function syncSectionsFromDOM(){
+  const p = (typeof currentPage==='function') ? currentPage() : null;
+  if (!p) return;
+  const host = document.getElementById('pageSections');
+  if (!host) return;
+  const secDivs = host.querySelectorAll('.page-section');
+  const out = [];
+  secDivs.forEach(div => {
+    const got = (typeof getSectionData==='function') ? getSectionData(div) : {type:'custom',copyMe:false,data:{}};
+    out.push({ id: div.getAttribute('data-sec-id') || _uidSec(), type: got.type, copyMe: got.copyMe, data: got.data, locked: div.getAttribute('data-locked')==='1' });
+  });
+  if (out.length) p.sections = out;
+}
+
+// Build one section's DOM (classes match getSectionData's expectations).
+function buildSectionDiv(sec){
+  const div = document.createElement('div');
+  div.className = 'page-section';
+  div.setAttribute('data-sec-id', sec.id);
+  if (sec.locked) div.setAttribute('data-locked','1');
+  const label = (typeof SECTION_LABELS!=='undefined' && SECTION_LABELS[sec.type]) ? SECTION_LABELS[sec.type] : sec.type;
+  const header = document.createElement('div');
+  header.className = 'page-section-header';
+  header.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:8px';
+  if (sec.locked) {
+    header.innerHTML = '<strong style="font-size:.87rem;flex:1">'+label+'</strong>'+
+                       '<span class="hero-locked-badge" style="font-size:.7rem;color:var(--gold)">Required</span>';
+  } else {
+    header.innerHTML = (typeof buildSectionTypeSelect==='function' ? buildSectionTypeSelect(sec.type) : '')+
+                       '<button type="button" class="del-section" title="Remove" style="background:none;border:none;color:#ff8080;cursor:pointer;font-size:1rem">&#x2715;</button>';
+  }
+  div.appendChild(header);
+  const wrap = document.createElement('div');
+  wrap.className = 'section-field-wrap';
+  wrap.innerHTML = (typeof buildSectionFieldsHTML==='function') ? buildSectionFieldsHTML(sec.type, sec.data, sec.copyMe) : '';
+  div.appendChild(wrap);
+
+  // wire type change (non-locked): update model + re-render this section's fields
+  const sel = header.querySelector('.section-type-select');
+  if (sel && typeof currentPage==='function' && currentPage() && currentPage().isHome) {
+    var _hopt = sel.querySelector('option[value="hero"]');
+    if (_hopt && sel.value !== 'hero') _hopt.remove();
+  }
+  if (sel) sel.addEventListener('change', function(){
+    sec.type = this.value;
+    wrap.innerHTML = buildSectionFieldsHTML(sec.type, {}, sec.copyMe);
+    sec.data = {};
+    if (typeof scheduleSave==='function') scheduleSave();
+  });
+  // wire remove
+  const del = header.querySelector('.del-section');
+  if (del) del.addEventListener('click', function(){
+    syncSectionsFromDOM();
+    const p = currentPage();
+    p.sections = p.sections.filter(s => s.id !== sec.id);
+    renderPageSections(p);
+    if (typeof scheduleSave==='function') scheduleSave();
+  });
+  // wire field inputs -> persist (debounced)
+  wrap.querySelectorAll('input,textarea').forEach(el => {
+    el.addEventListener('input', function(){ if (typeof scheduleSave==='function') scheduleSave(); });
+  });
+  return div;
+}
+
+// Render all sections for a page into #pageSections.
+function renderPageSections(p){
+  const host = document.getElementById('pageSections');
+  if (!host) return;
+  var _addBtn = document.getElementById('addSectionBtn');
+  if (p.beCreative) {
+    host.innerHTML = '<div style="padding:14px 16px;border:1px dashed rgba(212,175,55,.45);border-radius:10px;color:var(--muted);font-size:.9rem">StoneBridge will design this page for you based on your brand and goals. No sections to fill out here. <strong style="color:var(--gold)">(+$50)</strong></div>';
+    if (_addBtn) _addBtn.style.display = 'none';
+    var _cc = document.getElementById('sectionPoolInfo'); if (_cc) _cc.textContent = '';
+    return;
+  }
+  if (_addBtn) _addBtn.style.display = '';
+  ensureSections(p);
+  host.innerHTML = '';
+  p.sections.forEach(sec => host.appendChild(buildSectionDiv(sec)));
+  const counter = document.getElementById('sectionPoolInfo');
+  if (counter) counter.textContent = sectionsUsedTotal() + ' of ' + sectionCap() + ' sections used' + (atSectionCap()?' (pool full)':'');
+  var _asb = document.getElementById('addSectionBtn');
+  if (_asb) { var _full = atSectionCap(); _asb.disabled = _full; _asb.style.opacity = _full ? '0.45' : '1'; _asb.style.cursor = _full ? 'not-allowed' : 'pointer'; _asb.title = _full ? 'Section pool full - add a page for 5 more' : ''; }
+}
+
+// Total sections across all pages (foundation for the D2 pool cap).
+function sectionsUsedTotal(){
+  let n = 0;
+  builderPages.forEach(p => { var _t = (p.isHome ? 'standard' : (p.pageType || 'standard')); if (_t === 'standard' && !p.beCreative && Array.isArray(p.sections)) n += p.sections.length; });
+  return n;
+}
+
+// Add a section to the current page.
+function addSectionToPage(){
+  syncSectionsFromDOM();
+  if (typeof atSectionCap==='function' && atSectionCap()) { alert('You have used all ' + sectionCap() + ' sections in your plan. Add a page for 5 more.'); return; }
+  const p = currentPage();
+  ensureSections(p);
+  p.sections.push({ id:_uidSec(), type:'about', copyMe:false, data:{} });
+  renderPageSections(p);
+  if (typeof scheduleSave==='function') scheduleSave();
+}
+
+// -- STAGE D2: section pool cap (5 x pages) --
+var TIER_BASE_PAGES = { simple:3, standard:5, premium:7, friend_family:3, friend_exclusive:5 };
+function basePagesForTier(){
+  var t = (typeof window!=='undefined' && window.__orderTier) ? window.__orderTier : 'standard';
+  return TIER_BASE_PAGES[t] || 5;
+}
+function poolPages(){
+  var base = basePagesForTier();
+  var tabs = (typeof builderPages!=='undefined') ? builderPages.length : base;
+  return Math.max(base, tabs);
+}
+function sectionCap(){ return 5 * poolPages(); }
+function atSectionCap(){ return (typeof sectionsUsedTotal==='function') && sectionsUsedTotal() >= sectionCap(); }
+
+function onBeCreativeToggle(){
+  var cb = document.getElementById('beCreativeToggle');
+  var p = (typeof currentPage==='function') ? currentPage() : null;
+  if (!p || !cb) return;
+  p.beCreative = cb.checked;
+  renderPageSections(p);
+  if (typeof scheduleSave==='function') scheduleSave();
+}
+// -- STAGE D5: page types (standard / integration / membership) --
+function onPageTypeChange(){
+  var sel = document.getElementById('pageTypeSelect');
+  var p = (typeof currentPage==='function') ? currentPage() : null;
+  if (!p || !sel) return;
+  p.pageType = sel.value || 'standard';
+  renderPageTypeUI(p);
+  if (typeof scheduleSave==='function') scheduleSave();
+}
+function onIntegrationFieldInput(){
+  var p = (typeof currentPage==='function') ? currentPage() : null;
+  if (!p) return;
+  p.integration = p.integration || {};
+  var k = document.getElementById('integrationKind');
+  var d = document.getElementById('integrationDetail');
+  if (k) p.integration.kind = k.value || '';
+  if (d) p.integration.detail = d.value || '';
+  if (typeof scheduleSave==='function') scheduleSave();
+}
+function onMembershipConfirm(){
+  var p = (typeof currentPage==='function') ? currentPage() : null;
+  if (!p) return;
+  var cb = document.getElementById('membershipConfirm');
+  p.membershipConfirmed = !!(cb && cb.checked);
+  if (typeof scheduleSave==='function') scheduleSave();
+}
+function renderPageTypeUI(p){
+  var wrap = document.getElementById('pageTypeWrap');
+  var integ = document.getElementById('integrationPanel');
+  var mem = document.getElementById('membershipPanel');
+  var bc = document.getElementById('beCreativeWrap');
+  var secWrap = document.getElementById('sectionsWrap');
+  var addBtn = document.getElementById('addSectionBtn');
+  var type = (p.isHome ? 'standard' : (p.pageType || 'standard'));
+  if (wrap) wrap.style.display = p.isHome ? 'none' : '';
+  var isStd = (type !== 'integration');
+  if (integ) integ.style.display = (type === 'integration') ? '' : 'none';
+  if (mem) mem.style.display = (type === 'membership') ? '' : 'none';
+  if (bc) bc.style.display = isStd ? '' : 'none';
+  if (secWrap) secWrap.style.display = isStd ? '' : 'none';
+  if (addBtn) addBtn.style.display = (isStd && !p.beCreative) ? '' : 'none';
+  if (isStd) { renderPageSections(p); }
+  else {
+    if (type === 'integration') {
+      var k = document.getElementById('integrationKind');
+      var d = document.getElementById('integrationDetail');
+      var idata = p.integration || {};
+      if (k) k.value = idata.kind || '';
+      if (d) d.value = idata.detail || '';
+    }
+    if (type === 'membership') {
+      var cb = document.getElementById('membershipConfirm');
+      if (cb) cb.checked = !!p.membershipConfirmed;
+    }
+    var counter = document.getElementById('sectionPoolInfo');
+    if (counter) counter.textContent = '';
+  }
+}
+
+function onPasswordProtectToggle(){
+  var cb = document.getElementById('passwordProtectToggle');
+  var p = (typeof currentPage==='function') ? currentPage() : null;
+  if (!p || !cb) return;
+  p.passwordProtect = cb.checked;
+  var fw = document.getElementById('passwordFieldWrap');
+  if (fw) fw.style.display = cb.checked ? '' : 'none';
+  if (typeof scheduleSave==='function') scheduleSave();
+}
+function onPasswordProtectInput(){
+  var p = (typeof currentPage==='function') ? currentPage() : null;
+  var inp = document.getElementById('pagePassword');
+  if (!p || !inp) return;
+  p.pagePassword = inp.value || '';
+  if (typeof scheduleSave==='function') scheduleSave();
+}
+function renderPageCard(pageId){
+  const p = builderPages.find(x => x.id === pageId) || builderPages[0];
+  const titleEl = document.getElementById('pageCardTitle');
+  if (titleEl) titleEl.textContent = p.isHome ? 'Homepage' : (p.name || 'Page');
+  const nameEl = document.getElementById('pageName');
+  const menuEl = document.getElementById('pageMenuTitle');
+  const descEl = document.getElementById('pageDesc');
+  if (nameEl) { nameEl.value = p.name || ''; nameEl.disabled = !!p.isHome; }
+  if (menuEl) menuEl.value = p.menuTitle || '';
+  if (descEl) descEl.value = p.description || '';
+  const nameWrap = document.getElementById('pageNameWrap');
+  if (nameWrap) nameWrap.style.display = p.isHome ? 'none' : '';
+  const removeBtn = document.getElementById('removePageBtn');
+  if (removeBtn) removeBtn.style.display = p.isHome ? 'none' : '';
+  var _bc = document.getElementById('beCreativeToggle'); if (_bc) _bc.checked = !!p.beCreative;
+  var _pt = document.getElementById('pageTypeSelect'); if (_pt) _pt.value = (p.isHome ? 'standard' : (p.pageType || 'standard'));
+  if (typeof renderPageTypeUI==='function') { renderPageTypeUI(p); }
+  var _pp = document.getElementById('passwordProtectToggle'); if (_pp) _pp.checked = !!p.passwordProtect;
+  var _ppw = document.getElementById('passwordFieldWrap'); if (_ppw) _ppw.style.display = p.passwordProtect ? '' : 'none';
+  var _ppf = document.getElementById('pagePassword'); if (_ppf) _ppf.value = p.pagePassword || '';
+}
+function onPageNameInput(v){
+  const p = currentPage(); if (!p || p.isHome) return;
+  p.name = v;
+  rebuildTabModel();
+  buildPills();
+  const idx = TAB_MODEL.findIndex(t => t.role==='page' && t.pageId===p.id);
+  if (idx >= 0) { currentTab = idx; }
+  renderPillWindow();
+  TAB_MODEL.forEach((t, k) => { const pill = pillEl(k); if (pill) pill.classList.toggle('active', k===currentTab); });
+  if (typeof scheduleSave === 'function') scheduleSave();
+}
+function onPageFieldInput(){
+  const p = currentPage(); if (!p) return;
+  const menuEl = document.getElementById('pageMenuTitle');
+  const descEl = document.getElementById('pageDesc');
+  if (menuEl) p.menuTitle = menuEl.value;
+  if (descEl) p.description = descEl.value;
+  if (typeof scheduleSave === 'function') scheduleSave();
+}
+function addPage(){
+  const p = { id: uid(), name: 'New Page', menuTitle:'', description:'', isHome:false };
+  builderPages.push(p);
+  rebuildTabModel();
+  buildNav();
+  const idx = TAB_MODEL.findIndex(t => t.role==='page' && t.pageId===p.id);
+  showTab(idx >= 0 ? idx : 0);
+  if (typeof scheduleSave === 'function') scheduleSave();
+}
+function removeCurrentPage(){
+  const p = currentPage(); if (!p || p.isHome) return;
+  if (!confirm('Remove this page?')) return;
+  builderPages = builderPages.filter(x => x.id !== p.id);
+  rebuildTabModel();
+  buildNav();
+  const homeIdx = TAB_MODEL.findIndex(t => t.role==='page' && t.isHome);
+  showTab(homeIdx >= 0 ? homeIdx : 0);
+  if (typeof scheduleSave === 'function') scheduleSave();
+}
+
+function allTabsVisited(){
+  for (let i=0;i<TAB_MODEL.length;i++){ if(!visitedTabs.has(i)) return false; }
+  return true;
+}
 function updateBottomBar() {
   const backBtn = document.getElementById('backBtn');
   const nextBtn = document.getElementById('nextBtn');
   const doneBtn = document.getElementById('doneBtn');
-  backBtn.style.visibility = currentStep === 0 ? 'hidden' : 'visible';
-  const allVisited = visitedSteps.size === TOTAL_STEPS;
-  const isLast = currentStep === TOTAL_STEPS - 1;
+  if (backBtn) backBtn.style.visibility = currentTab === 0 ? 'hidden' : 'visible';
+  const allVisited = allTabsVisited();
+  const isLast = currentTab === TAB_MODEL.length - 1;
   if (isLast && allVisited) {
-    nextBtn.style.display = 'none';
-    doneBtn.style.display = 'inline-block';
+    if (nextBtn) nextBtn.style.display = 'none';
+    if (doneBtn) doneBtn.style.display = 'inline-block';
   } else {
-    nextBtn.style.display = 'inline-block';
-    doneBtn.style.display = 'none';
-    nextBtn.textContent = (isLast && !allVisited) ? 'Next unanswered →' : 'Next →';
+    if (nextBtn) nextBtn.style.display = 'inline-block';
+    if (doneBtn) doneBtn.style.display = 'none';
+    if (nextBtn) nextBtn.textContent = (isLast && !allVisited) ? 'Next unanswered →' : 'Next →';
   }
 }
-
 function goNext() {
-  const allVisited = visitedSteps.size === TOTAL_STEPS;
-  if (currentStep === TOTAL_STEPS - 1 && !allVisited) {
-    for (let i = 0; i < TOTAL_STEPS; i++) { if (!visitedSteps.has(i)) { showStep(i); return; } }
+  const allVisited = allTabsVisited();
+  if (currentTab === TAB_MODEL.length - 1 && !allVisited) {
+    for (let i = 0; i < TAB_MODEL.length; i++) { if (!visitedTabs.has(i)) { showTab(i); return; } }
   }
-  showStep(Math.min(currentStep + 1, TOTAL_STEPS - 1));
+  showTab(Math.min(currentTab + 1, TAB_MODEL.length - 1));
 }
+function goBack() { showTab(Math.max(currentTab - 1, 0)); }
 
-function goBack() {
-  showStep(Math.max(currentStep - 1, 0));
-}
+
 
 function personalize(order) {
   const biz = (order.business_name || 'your business').trim();
@@ -613,33 +1154,51 @@ async function saveAll() {
   fd.append('business_description', document.getElementById('businessDescription').value.trim());
   fd.append('site_goal', document.getElementById('siteGoal').value.trim());
   fd.append('competitors', document.getElementById('competitors').value.trim());
-  fd.append('is_legal_entity', document.getElementById('isLegalEntity').value);
-  fd.append('legal_entity_name', document.getElementById('legalEntityName').value.trim());
-  fd.append('legal_mailing_address', document.getElementById('legalMailingAddress').value.trim());
-  fd.append('ein', document.getElementById('ein').value.trim());
-  fd.append('relationship_to_business', document.getElementById('relationshipToBusiness').value);
+  // is_legal_entity collected on intake form
+  // legal_entity_name collected on intake form
+  fd.append('legal_mailing_address', (document.getElementById('legalMailingAddress')||{}).value ? document.getElementById('legalMailingAddress').value.trim() : '');
+  fd.append('ein', (document.getElementById('ein')||{}).value ? document.getElementById('ein').value.trim() : '');
+  fd.append('relationship_to_business', (document.getElementById('relationshipToBusiness')||{}).value || '');
   fd.append('has_domain', document.getElementById('hasDomainSelect').value);
   fd.append('domain_name', document.getElementById('domainNameInput').value.trim());
   fd.append('wants_domain_help', document.getElementById('wantsDomainHelp').checked ? 'yes' : 'no');
   fd.append('page_structure', JSON.stringify(getPagesData()));
+    fd.append('builder_pages', JSON.stringify(typeof builderPages!=='undefined'?builderPages:[]));
   fd.append('terms_source', (document.querySelector('input[name=termsSource]:checked')||{}).value||'generate');
   fd.append('terms_content', document.getElementById('termsContent')?.value.trim()||'');
-  fd.append('integrations', JSON.stringify(getIntegrations()));
+  fd.append('integrations', JSON.stringify([]));
   fd.append('payment_plan_selected', getPaymentPlan ? getPaymentPlan() : 'full');
   fd.append('logo_choice', (document.querySelector('input[name=logoChoice]:checked')||{}).value||'none');
   fd.append('ga4_addon', document.getElementById('ga4Addon')?.checked ? '1' : '0');
+  fd.append('social_links', JSON.stringify(collectSocial()));
+  fd.append('blog_custom_quote', document.getElementById('blogCustomQuote')?.checked ? '1' : '0');
+  fd.append('copy_pkg_active', document.getElementById('copyPkgToggle')?.checked ? '1' : '0');
   fd.append('favicon_choice', (document.querySelector('input[name=faviconChoice]:checked')||{}).value||'logo');
 
-  fd.append('font_preference', (document.querySelector('input[name=fontPref]:checked') || {}).value || 'no-preference');
+  var _fs = document.getElementById('fontSelect'); var _fv = _fs ? _fs.value : 'no-preference';
+  if (_fv === '__other__') _fv = (document.getElementById('fontOther').value || '').trim() || 'no-preference';
+  fd.append('font_preference', _fv);
+  var _ts = document.getElementById('fontStyleSelect'); var _tv = _ts ? _ts.value : '';
+  if (_tv === '__other__') _tv = (document.getElementById('fontStyleOther').value || '').trim();
+  fd.append('font_style_pref', _tv);
   const inspirRows = document.querySelectorAll('#inspirationRows .inspiration-row');
   const insps = [];
   inspirRows.forEach(r => { const u = r.querySelector('.insp-url').value.trim(); const n = r.querySelector('.insp-note').value.trim(); if (u) insps.push({url:u, note:n}); });
   fd.append('inspiration_urls', JSON.stringify(insps));
   fd.append('avoid_text', document.getElementById('avoidText').value.trim());
   fd.append('domain_registrar', document.getElementById('domainRegistrar') ? document.getElementById('domainRegistrar').value : '');
+  fd.append('domain_site_status', (document.getElementById('domainSiteStatus')||{}).value || '');
+  fd.append('domain_is_remodel', (document.getElementById('domainIsRemodel')||{}).value || '');
+  fd.append('domain_reuse_notes', (document.getElementById('domainReuseNotes')||{}).value || '');
+  fd.append('domain_point_to_new', (document.getElementById('domainPointToNew')||{}).value || '');
   fd.append('site_name', document.getElementById('siteNameInput') ? document.getElementById('siteNameInput').value.trim() : '');
-  fd.append('terms_privacy_choice', document.getElementById('termsPrivacyChoice').value);
-  fd.append('terms_privacy_content', document.getElementById('termsPrivacyContent').value.trim());
+  if(document.getElementById('termsPrivacyChoice')) fd.append('terms_privacy_choice', document.getElementById('termsPrivacyChoice').value);
+  fd.append('terms_paste', (document.getElementById('termsPaste')||{}).value || '');
+  fd.append('terms_comment', (document.getElementById('termsComment')||{}).value || '');
+  fd.append('privacy_paste', (document.getElementById('privacyPaste')||{}).value || '');
+  fd.append('privacy_comment', (document.getElementById('privacyComment')||{}).value || '');
+  var _tf=document.getElementById('termsFileInput'); if(_tf && _tf.files && _tf.files[0]) fd.append('termsFile', _tf.files[0]);
+  var _pf=document.getElementById('privacyFileInput'); if(_pf && _pf.files && _pf.files[0]) fd.append('privacyFile', _pf.files[0]);
   fd.append('timeline_preference', document.getElementById('timelinePreference').value);
   fd.append('preferred_contact_method', document.getElementById('preferredContactMethod').value);
 
@@ -666,37 +1225,209 @@ const TIER_DEFAULTS = {
 
 function makeCopyId(n) { return 'copy_' + n; }
 
-function addPageRow(name, copyChoice, extraVal, container) {
-  const n = Date.now() + Math.random();
-  const id = makeCopyId(n);
-  const div = document.createElement('div');
-  div.className = 'page-row';
-  div.innerHTML = `
-    <div class="page-row-header">
-      <input type="text" class="page-name" placeholder="Page name" value="${name || ''}">
-      <button type="button" class="del-page" title="Remove page">&times;</button>
-    </div>
-    <div class="copy-options">
-      <label><input type="radio" name="${id}" value="own" ${copyChoice==='own'?'checked':''}> I have my own copy</label>
-      <label><input type="radio" name="${id}" value="url" ${copyChoice==='url'?'checked':''}> Copy from a URL I own</label>
-      <label><input type="radio" name="${id}" value="sb" ${copyChoice==='sb'?'checked':''}> StoneBridge writes it <span style="color:var(--grey);font-size:.78rem">(+$25/page)</span></label>
-      <label><input type="radio" name="${id}" value="notes" ${(!copyChoice||copyChoice==='notes')?'checked':''}> Notes for StoneBridge</label>
-    </div>
-    <div class="copy-extra">
-      <input type="text" class="copy-url" placeholder="URL to pull copy from" style="display:${copyChoice==='url'?'block':'none'}" value="${copyChoice==='url'?(extraVal||''):''}">  
-      <textarea class="copy-notes" placeholder="Share any notes, ideas, keywords or vibe — this guides us, it’s not a copywriting prompt" rows="2" style="display:${(copyChoice==='own'||copyChoice==='sb'||copyChoice==='notes')?'block':'none'}">${(copyChoice==='own'||copyChoice==='sb'||copyChoice==='notes')?(extraVal||''):''}</textarea>
-    </div>
-  `;
-  div.querySelector('.del-page').addEventListener('click', () => { div.remove(); debouncedSave(); });
-  div.querySelectorAll('.copy-options input[type=radio]').forEach(r => {
-    r.addEventListener('change', () => {
-      div.querySelector('.copy-url').style.display = r.value === 'url' ? 'block' : 'none';
-      div.querySelector('.copy-notes').style.display = (r.value === 'own' || r.value === 'sb' || r.value === 'notes') ? 'block' : 'none';
-      debouncedSave();
-    });
+const SECTION_FIELDS = {"hero": [{"id": "headline", "label": "Headline", "type": "input", "required": true}, {"id": "tagline", "label": "Tagline / Subheadline", "type": "input", "required": true}, {"id": "cta_text", "label": "CTA Button Text", "type": "input", "required": false}, {"id": "cta_link", "label": "CTA Button Link", "type": "input", "required": false}, {"id": "bg_pref", "label": "Background preference (describe or leave blank)", "type": "textarea", "required": false}], "services": [{"id": "section_title", "label": "Section Title", "type": "input", "required": false}, {"id": "intro", "label": "Intro text (optional)", "type": "textarea", "required": false}, {"id": "items", "label": "Services — one per line: Service Name | Description", "type": "textarea", "required": true, "placeholder": "Lawn Mowing | Weekly care from $40"}], "about": [{"id": "section_title", "label": "Section Title", "type": "input", "required": false}, {"id": "body", "label": "About text", "type": "textarea", "required": true}, {"id": "photo_note", "label": "Photo (describe or note upload separately)", "type": "input", "required": false}], "testimonials": [{"id": "section_title", "label": "Section Title", "type": "input", "required": false}, {"id": "items", "label": "Testimonials — one per line: \"Quote\" | Name | Title", "type": "textarea", "required": true, "placeholder": "\"Great service!\" | Jane D. | Homeowner"}], "contact_form": [{"id": "section_title", "label": "Section Title", "type": "input", "required": false}, {"id": "fields", "label": "Fields (e.g. Name, Email, Phone, Message)", "type": "input", "required": false}, {"id": "thanks_msg", "label": "Thank-you message", "type": "input", "required": false}], "gallery": [{"id": "section_title", "label": "Section Title", "type": "input", "required": false}, {"id": "photo_note", "label": "Photos (describe or note upload separately)", "type": "textarea", "required": false}], "team": [{"id": "section_title", "label": "Section Title", "type": "input", "required": false}, {"id": "members", "label": "Members — one per line: Name | Title | Short Bio", "type": "textarea", "required": true}], "faq": [{"id": "section_title", "label": "Section Title", "type": "input", "required": false}, {"id": "items", "label": "Q&A — one per line: Question | Answer", "type": "textarea", "required": true}], "cta_banner": [{"id": "headline", "label": "Headline", "type": "input", "required": true}, {"id": "subtext", "label": "Subtext (optional)", "type": "input", "required": false}, {"id": "btn_text", "label": "Button Text", "type": "input", "required": false}, {"id": "btn_link", "label": "Button Link", "type": "input", "required": false}], "hours_location": [{"id": "address", "label": "Full Business Address", "type": "input", "required": true}, {"id": "hours", "label": "Hours — one per line: Day | Hours", "type": "textarea", "required": true, "placeholder": "Monday | 9am - 5pm\nSunday | Closed"}, {"id": "maps_link", "label": "Google Maps link (optional)", "type": "input", "required": false}], "venue_list": [{"id": "section_title", "label": "Section Title", "type": "input", "required": false}, {"id": "items", "label": "Venues — one per line: Venue Name | Address | Description", "type": "textarea", "required": true}], "3_cards": [{"id": "section_title", "label": "Section Title", "type": "input", "required": false}, {"id": "card1", "label": "Card 1: Title | Description | Link (optional)", "type": "input", "required": true}, {"id": "card2", "label": "Card 2: Title | Description | Link (optional)", "type": "input", "required": true}, {"id": "card3", "label": "Card 3: Title | Description | Link (optional)", "type": "input", "required": true}], "accordion": [{"id": "section_title", "label": "Section Title", "type": "input", "required": false}, {"id": "items", "label": "Items — one per line: Label | Content", "type": "textarea", "required": true}], "slides": [{"id": "section_title", "label": "Section Title", "type": "input", "required": false}, {"id": "slides_note", "label": "Slides — Headline | Caption | Image note", "type": "textarea", "required": true}], "video": [{"id": "section_title", "label": "Section Title", "type": "input", "required": false}, {"id": "video_url", "label": "Video URL (YouTube or Vimeo)", "type": "input", "required": true}, {"id": "caption", "label": "Caption (optional)", "type": "input", "required": false}], "pricing_table": [{"id": "section_title", "label": "Section Title", "type": "input", "required": false}, {"id": "plans", "label": "Plans — Name | Price | Period | Features (semicolon-separated)", "type": "textarea", "required": true, "placeholder": "Basic | $29 | /month | Feature 1; Feature 2"}], "map": [{"id": "section_title", "label": "Section Title", "type": "input", "required": false}, {"id": "address", "label": "Address or Google Maps embed URL", "type": "input", "required": true}], "before_after": [{"id": "section_title", "label": "Section Title", "type": "input", "required": false}, {"id": "pairs", "label": "Pairs — Label | Before image | After image", "type": "textarea", "required": true}], "social_feed": [{"id": "section_title", "label": "Section Title", "type": "input", "required": false}, {"id": "platform", "label": "Platform (Instagram / Facebook / X / TikTok)", "type": "input", "required": true}, {"id": "handle", "label": "Profile URL or @handle", "type": "input", "required": true}], "newsletter": [{"id": "section_title", "label": "Section Title", "type": "input", "required": false}, {"id": "headline", "label": "Headline", "type": "input", "required": true}, {"id": "subtext", "label": "Subtext (optional)", "type": "input", "required": false}, {"id": "btn_text", "label": "Button Text", "type": "input", "required": false}, {"id": "provider", "label": "Email provider (Mailchimp / SendX / Other)", "type": "input", "required": false}], "custom": [{"id": "description", "label": "Describe this section in detail", "type": "textarea", "required": true}]};
+
+const SECTION_LABELS = {
+  hero:'Hero',services:'Services List',about:'About Us',testimonials:'Testimonials',
+  contact_form:'Contact Form',gallery:'Photo Gallery',team:'Team',faq:'FAQ',
+  cta_banner:'CTA Banner',hours_location:'Hours & Location',venue_list:'Venue List',
+  '3_cards':'3 Cards',accordion:'Accordion',slides:'Slides',video:'Video Player',
+  pricing_table:'Pricing Table',map:'Map',before_after:'Before & After',
+  social_feed:'Social Feed',newsletter:'Newsletter Signup',custom:'Custom Section'
+};
+
+const SECTION_ORDER = ['hero','services','about','testimonials','contact_form','gallery',
+  'team','faq','cta_banner','hours_location','venue_list','3_cards','accordion','slides',
+  'video','pricing_table','map','before_after','social_feed','newsletter','custom'];
+
+function buildSectionFieldsHTML(type, data, copyMe) {
+  const fields = SECTION_FIELDS[type] || SECTION_FIELDS['custom'];
+  let html = '<div class="section-fields">';
+  fields.forEach(f => {
+    const val = (data && data[f.id]) ? String(data[f.id]).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;') : '';
+    const req = (f.required && !copyMe) ? ' <span style="color:#f0938e">*</span>' : '';
+    const ph = (f.placeholder||'').replace(/"/g,'&quot;');
+    html += '<div class="section-field">';
+    html += '<label>' + f.label + req + '</label>';
+    if (f.type === 'textarea') {
+      html += '<textarea name="' + f.id + '" rows="3" placeholder="' + ph + '">' + val + '</textarea>';
+    } else {
+      html += '<input type="text" name="' + f.id + '" value="' + val + '" placeholder="' + ph + '">';
+    }
+    html += '</div>';
   });
-  div.querySelectorAll('input, textarea').forEach(el => el.addEventListener('input', debouncedSave));
-  container.appendChild(div);
+  if (copyMe) {
+    const notesVal = (data && data._notes) ? String(data._notes).replace(/</g,'&lt;') : '';
+    html += '<div class="section-field"><label>Notes for our writer (optional)</label><textarea name="_notes" rows="2" placeholder="Keywords, tone, key points...">' + notesVal + '</textarea></div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function buildSectionTypeSelect(current) {
+  let html = '<select class="section-type-select">';
+  SECTION_ORDER.forEach(k => {
+    html += '<option value="' + k + '"' + (k === current ? ' selected' : '') + '>' + SECTION_LABELS[k] + '</option>';
+  });
+  html += '</select>';
+  return html;
+}
+
+function updateBeCreativeBtn(pageDiv) {
+  const secContainer = pageDiv.querySelector('.sections-container');
+  if (!secContainer) return;
+  const nonHeroSecs = Array.from(secContainer.querySelectorAll('.page-section')).filter(s => !s.querySelector('.hero-locked-badge'));
+  const btn = pageDiv.querySelector('.be-creative-btn');
+  if (btn) btn.style.display = nonHeroSecs.length >= 3 ? 'none' : '';
+}
+
+function attachFieldListeners(secDiv) {
+  secDiv.querySelectorAll('.section-field-wrap input,.section-field-wrap textarea').forEach(el => {
+    el.removeEventListener('input', debouncedSave);
+    el.addEventListener('input', debouncedSave);
+  });
+}
+
+function getSectionData(secDiv) {
+  const typeSelect = secDiv.querySelector('.section-type-select');
+  const type = typeSelect ? typeSelect.value : (secDiv.querySelector('.hero-locked-badge') ? 'hero' : 'custom');
+  const copyCheck = secDiv.querySelector('.copy-me-check');
+  const copyMe = copyCheck ? copyCheck.checked : false;
+  const data = {};
+  secDiv.querySelectorAll('.section-field-wrap input,.section-field-wrap textarea').forEach(el => {
+    if (el.name) data[el.name] = el.value.trim();
+  });
+  return { type, copyMe, data };
+}
+
+function addSection(pageDiv, type, data, copyMe, locked) {
+  const secDiv = document.createElement('div');
+  secDiv.className = 'page-section';
+  const headerDiv = document.createElement('div');
+  headerDiv.className = 'page-section-header';
+  if (locked) {
+    headerDiv.innerHTML = '<strong style="font-size:.87rem;flex:1">' + (SECTION_LABELS[type]||type) + '</strong><span class="hero-locked-badge">Required</span>';
+  } else {
+    headerDiv.innerHTML = buildSectionTypeSelect(type) + '<button type="button" class="del-section" title="Remove">&#x2715;</button>';
+    headerDiv.querySelector('.del-section').addEventListener('click', () => { secDiv.remove(); updateBeCreativeBtn(pageDiv); debouncedSave(); updateReview(); });
+    headerDiv.querySelector('.section-type-select').addEventListener('change', function() {
+      const cm = secDiv.querySelector('.copy-me-check') ? secDiv.querySelector('.copy-me-check').checked : false;
+      secDiv.querySelector('.section-field-wrap').innerHTML = buildSectionFieldsHTML(this.value, null, cm);
+      attachFieldListeners(secDiv); debouncedSave(); updateReview();
+    });
+  }
+  secDiv.appendChild(headerDiv);
+  if (!locked) {
+    const copyRow = document.createElement('label');
+    copyRow.className = 'copy-check-row';
+    copyRow.innerHTML = '<input type="checkbox" class="copy-me-check"' + (copyMe?' checked':'') + '><span class="copy-label">Write this section for me (+$15)</span>';
+    copyRow.querySelector('.copy-me-check').addEventListener('change', function() {
+      const t = secDiv.querySelector('.section-type-select') ? secDiv.querySelector('.section-type-select').value : type;
+      secDiv.querySelector('.section-field-wrap').innerHTML = buildSectionFieldsHTML(t, null, this.checked);
+      attachFieldListeners(secDiv); debouncedSave(); updateReview();
+    });
+    secDiv.appendChild(copyRow);
+  }
+  const fieldWrap = document.createElement('div');
+  fieldWrap.className = 'section-field-wrap';
+  fieldWrap.innerHTML = buildSectionFieldsHTML(type, data, copyMe);
+  secDiv.appendChild(fieldWrap);
+  attachFieldListeners(secDiv);
+  return secDiv;
+}
+
+function addPageRow(name, savedData, container) {
+  if (!container) container = document.getElementById('pagesContainer');
+  const pageIdx = container.children.length;
+  const isHomePage = (pageIdx === 0);
+  const pageDiv = document.createElement('div');
+  pageDiv.className = 'page-row';
+  const beCreativeActive = savedData && savedData.beCreative;
+  const savedSections = (savedData && savedData.sections) ? savedData.sections : [];
+  const savedDesc = (savedData && savedData.desc) ? savedData.desc : '';
+  const headerDiv = document.createElement('div');
+  headerDiv.className = 'page-row-header';
+  if (isHomePage) {
+    headerDiv.innerHTML = '<span style="font-size:.87rem;font-weight:600;flex:1">Home Page</span><span class="hero-locked-badge">Homepage</span>';
+  } else {
+    const pn = (name||'').replace(/"/g,'&quot;');
+    headerDiv.innerHTML = '<input type="text" class="page-name" value="' + pn + '" placeholder="Page name (e.g. Services, About, Contact)"><button type="button" class="del-page" title="Remove page">&#x2715;</button>';
+    headerDiv.querySelector('.del-page').addEventListener('click', () => { pageDiv.remove(); debouncedSave(); updateReview(); });
+    headerDiv.querySelector('.page-name').addEventListener('input', () => { debouncedSave(); updateReview(); });
+  }
+  pageDiv.appendChild(headerDiv);
+  if (!isHomePage) {
+    const descArea = document.createElement('textarea');
+    descArea.className = 'page-desc-input';
+    descArea.placeholder = 'Briefly describe this page\'s purpose';
+    descArea.rows = 2;
+    descArea.value = savedDesc;
+    descArea.addEventListener('input', debouncedSave);
+    pageDiv.appendChild(descArea);
+  } else {
+    const hint = document.createElement('p');
+    hint.style.cssText = 'color:#8a97ab;font-size:.78rem;margin:4px 0 8px';
+    hint.textContent = 'The Home page always starts with a Hero section. Add more sections below.';
+    pageDiv.appendChild(hint);
+  }
+  const secContainer = document.createElement('div');
+  secContainer.className = 'sections-container';
+  pageDiv.appendChild(secContainer);
+  if (isHomePage) {
+    const heroData = savedSections.find(s => s.type === 'hero');
+    secContainer.appendChild(addSection(pageDiv, 'hero', heroData ? heroData.data : null, heroData ? heroData.copyMe : false, true));
+  }
+  savedSections.filter(s => !(isHomePage && s.type === 'hero')).forEach(s => {
+    secContainer.appendChild(addSection(pageDiv, s.type, s.data, s.copyMe, false));
+  });
+  const addSecBtn = document.createElement('button');
+  addSecBtn.type = 'button'; addSecBtn.className = 'add-section-btn'; addSecBtn.textContent = '+ Add Section';
+  addSecBtn.addEventListener('click', () => {
+    // Count total sections across all pages
+    const tier = window._ORDER_TIER || 'standard';
+    const caps = { simple: 15, standard: 25, premium: 35, friend_family: 15, friend_exclusive: 25 };
+    const cap = caps[tier] || 35;
+    const totalSecs = document.querySelectorAll('#pagesContainer .page-section').length;
+    // Show warning banner if at or over cap, but still allow adding (charged at $15/section)
+    if (totalSecs >= cap) {
+      // Show or update the cap warning
+      let warn = document.getElementById('sectionCapWarning');
+      if (!warn) {
+        warn = document.createElement('div');
+        warn.id = 'sectionCapWarning';
+        warn.style.cssText = 'margin:8px 0;padding:10px 14px;background:rgba(217,178,61,.12);border:1px solid rgba(217,178,61,.35);border-radius:8px;font-size:.82rem;color:#d9b23d;line-height:1.5';
+        document.getElementById('pagesContainer').parentNode.insertBefore(warn, document.getElementById('pagesContainer').nextSibling);
+      }
+      warn.innerHTML = '&#x26A0; You have reached the ' + cap + '-section cap for the <strong>' + tier.replace(/_/g,' ') + '</strong> package. Additional sections are <strong>$15 each</strong>. You now have ' + (totalSecs + 1) + ' sections.';
+    }
+    secContainer.appendChild(addSection(pageDiv, 'services', null, false, false));
+    updateBeCreativeBtn(pageDiv); debouncedSave(); updateReview();
+  });
+  pageDiv.appendChild(addSecBtn);
+  if (!isHomePage) {
+    const beDiv = document.createElement('div');
+    beDiv.style.marginTop = '8px';
+    function makeBeCreativeActive() {
+      beDiv.innerHTML = '';
+      const d = document.createElement('div');
+      d.className = 'be-creative-active';
+      d.innerHTML = '<span style="font-size:.85rem;color:#c9a8f0">&#x1F3A8; <strong>Be Creative</strong> \u2014 We\'ll design this page (+$50)</span><button type="button" class="del-section">&#x2715;</button>';
+      d.querySelector('.del-section').addEventListener('click', () => { beDiv.innerHTML=''; makeBeCreativeBtn(); debouncedSave(); updateReview(); });
+      beDiv.appendChild(d);
+    }
+    function makeBeCreativeBtn() {
+      const btn = document.createElement('button');
+      btn.type = 'button'; btn.className = 'be-creative-btn';
+      btn.textContent = '\uD83C\uDFA8 Be Creative \u2014 Let us design this page (+$50)';
+      btn.addEventListener('click', () => { makeBeCreativeActive(); debouncedSave(); updateReview(); });
+      beDiv.appendChild(btn);
+    }
+    if (beCreativeActive) { makeBeCreativeActive(); } else { makeBeCreativeBtn(); }
+    pageDiv.appendChild(beDiv);
+    updateBeCreativeBtn(pageDiv);
+  }
+  container.appendChild(pageDiv);
+  return pageDiv;
 }
 
 function initPages(savedPages) {
@@ -706,38 +1437,28 @@ function initPages(savedPages) {
   const tier = (window._ORDER_TIER || 'standard');
   const defaults = TIER_DEFAULTS[tier] || TIER_DEFAULTS['standard'];
   if (savedPages && savedPages.length) {
-    savedPages.forEach(p => addPageRow(p.name, p.copy, p.extra, container));
+    savedPages.forEach(p => addPageRow(p.name, p, container));
   } else {
-    defaults.forEach(name => addPageRow(name, 'notes', '', container));
+    defaults.forEach(name => addPageRow(name, null, container));
   }
 }
 
 function getPagesData() {
   const rows = document.querySelectorAll('#pagesContainer .page-row');
   return Array.from(rows).map(row => {
-    const name = row.querySelector('.page-name').value.trim();
-    const chosen = row.querySelector('.copy-options input:checked');
-    const copy = chosen ? chosen.value : 'notes';
-    const extra = copy === 'url' ? row.querySelector('.copy-url').value.trim() : row.querySelector('.copy-notes').value.trim();
-    return { name, copy, extra };
+    const nameEl = row.querySelector('.page-name');
+    const descEl = row.querySelector('.page-desc-input');
+    const name = nameEl ? nameEl.value.trim() : 'Home';
+    const desc = descEl ? descEl.value.trim() : '';
+    const beCreative = !!row.querySelector('.be-creative-active');
+    const sections = Array.from(row.querySelectorAll('.page-section')).map(getSectionData);
+    return { name, desc, beCreative, sections };
   });
 }
 
-function getIntegrations() {
-  const ids = ['integStripe','integEmail','integBooking','integSocial'];
-  const checked = ids.filter(id => document.getElementById(id)?.checked).map(id => id.replace('integ','').toLowerCase());
-  if (document.getElementById('integOther')?.checked) {
-    const txt = document.getElementById('integOtherText')?.value.trim();
-    if (txt) checked.push('other:' + txt);
-    else checked.push('other');
-  }
-  return checked;
-}
+addPageRow('', null, document.getElementById('pagesContainer'));
 
-document.getElementById('addPageBtn')?.addEventListener('click', () => {
-  addPageRow('', 'notes', '', document.getElementById('pagesContainer'));
   debouncedSave();
-});
 
 document.querySelectorAll('input[name=termsSource]').forEach(r => {
   r.addEventListener('change', () => {
@@ -751,7 +1472,7 @@ document.getElementById('integOther')?.addEventListener('change', function() {
   if (t) t.style.display = this.checked ? 'block' : 'none';
   debouncedSave();
 });
-['integStripe','integEmail','integBooking','integSocial','termsContent'].forEach(id => {
+['termsContent'].forEach(id => {
   document.getElementById(id)?.addEventListener('change', debouncedSave);
   document.getElementById(id)?.addEventListener('input', debouncedSave);
 });
@@ -772,33 +1493,50 @@ function calcCost() {
   } else if (tier === 'standard' || tier === 'not_sure') {
     if (pageCount === 4) extraPageCost = 100; else if (pageCount === 6) extraPageCost = 90; else if (pageCount > 6) extraPageCost = 90 + (pageCount - 6) * 80;
   } else if (tier === 'premium') { if (pageCount > 7) extraPageCost = (pageCount - 7) * 80; }
-  const sbPages = pages.filter(p => p.copy === 'sb').length; const copyExtra = sbPages * 25;
+  const sbPages = 0; // section-based calc removed; keep copy-package pricing
+  const copyPkgActive = (document.getElementById('copyPkgToggle')||{}).checked || false;
+  const copyPerPage = 25; const copyPkgPrice = 175;
+  const copyRaw = sbPages * copyPerPage;
+  const copyExtra = copyPkgActive ? copyPkgPrice : 0;
+  const copySaving = copyPkgActive ? Math.max(0, copyRaw - copyPkgPrice) : 0;
+  const beCreativeCost = 0; const beCreativePages = 0;
   const logoChoice = (document.querySelector('input[name=logoChoice]:checked')||{}).value||'none';
   const logoAddOn = logoChoice === 'create' ? 35 : 0;
   const ga4Choice = document.getElementById('ga4Addon')?.checked || false;
-  const ga4AddOn = ga4Choice ? 100 : 0;
-  const total = base + extraPageCost + copyExtra + logoAddOn + ga4AddOn;
+  const ga4AddOn = ga4Choice ? 125 : 0;
+  const total = base + extraPageCost + copyExtra + beCreativeCost + logoAddOn + ga4AddOn;
   const deposit = Math.round(total * 0.5); const remaining = total - deposit;
-  return { base, extraPageCost, sbPages, copyExtra, logoAddOn, ga4AddOn, total, deposit, remaining };
+  return { base, extraPageCost, sbPages, copyRaw, copyExtra, copyPkgActive, copySaving, beCreativeCost, beCreativePages, logoAddOn, ga4AddOn, total, deposit, remaining };
 }
 
 function buildSummary() {
   const box = document.getElementById('pricingSummary');
   if (!box) return;
-  const { base, sbPages, copyExtra, deposit, remaining } = calcCost();
+  const { base, extraPageCost, sbPages, copyRaw, copyExtra, copyPkgActive, copySaving, beCreativeCost, beCreativePages, logoAddOn, ga4AddOn, total, deposit, remaining } = calcCost();
   const pages = getPagesData();
   const row = (l, v, bold) => `<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.06);${bold?'font-weight:600;color:#e4e9f2':''}"><span>${l}</span><span>${v}</span></div>`;
-    const { extraPageCost, logoAddOn, total } = calcCost();
   let html = '<div style="font-weight:600;color:var(--gold);margin-bottom:10px">Project Summary</div>';
-  html += row('Base package (' + tier.replace(/_/g," ") + ')', '$' + base);
+  html += row('Base package (' + (window._ORDER_TIER||'standard').replace(/_/g," ") + ')', '$' + base);
   if (extraPageCost) html += row('Extra pages (' + pages.length + ' pages)', '+$' + extraPageCost);
-  if (sbPages) html += row('Copywriting (' + sbPages + ' pages x $25)', '+$' + copyExtra);
+  if (sbPages) {
+    if (copyPkgActive) {
+      html += row('Full Site Copywriting Package', '+$175');
+      if (copySaving > 0) html += row('Package discount (saving)', '-$' + copySaving);
+    } else {
+      html += row('Copywriting (' + sbPages + ' page' + (sbPages>1?'s':'') + ' x $25)', '+$' + copyRaw);
+    }
+  }
   if (logoAddOn) html += row('Logo design', '+$35');
-  if (ga4AddOn) html += row('Google Analytics 4 setup', '+$100');
+  if (ga4AddOn) html += row('Google Analytics 4 setup', '+$125');
   html += row('Total', '$' + total, true);
   html += row('Deposit due now (50%)', '$' + deposit, true);
   html += row('Remaining balance', '$' + remaining);
-  if (copyExtra > 175) { const sav = copyExtra - 175; html += '<div style="margin-top:14px;background:rgba(217,178,61,.1);border:1px solid rgba(217,178,61,.3);border-radius:8px;padding:12px;font-size:.82rem"><strong style="color:var(--gold)">Package tip:</strong> You are spending $'+copyExtra+' on individual copywriting. The Full Site Copywriting Package is $175 and covers everything - saving you $'+sav+'. Mention it in your Pages notes if interested.</div>'; }
+  if (!copyPkgActive && copyRaw > 175) {
+    const sav = copyRaw - copyPkgPrice;
+    html += '<div style="margin-top:14px;background:rgba(217,178,61,.1);border:1px solid rgba(217,178,61,.3);border-radius:10px;padding:12px">'      + '<strong style="color:var(--gold)">&#x1F4A1; Package deal available:</strong> You have ' + sbPages + ' pages of copywriting at $' + copyRaw + '. '      + 'Switch to the <strong>Full Site Copywriting Package ($175)</strong> and save $' + sav + '.'      + '<br><label style="cursor:pointer;margin-top:8px;display:inline-flex;align-items:center;gap:6px">'      + '<input type="checkbox" id="copyPkgToggle" onchange="updateReview()"' + (copyPkgActive?'checked':'') + ' style="accent-color:var(--gold)">'      + ' <span>Apply Full Site Package ($175)</span></label></div>';
+  } else if (copyPkgActive && sbPages > 0) {
+    html += '<div style="margin-top:10px;background:rgba(26,107,58,.12);border:1px solid rgba(26,107,58,.3);border-radius:8px;padding:10px 12px;font-size:.82rem;color:#7ecfa0">'      + '&#x2713; Full Site Copywriting Package applied — covers all ' + sbPages + ' pages.</div>';
+  }
   if (pages.length) {
     html += '<div style="margin-top:12px;font-weight:600;color:var(--gold)">Pages</div>';
     pages.forEach(p => {
@@ -866,7 +1604,52 @@ document.getElementById('submitBriefBtn')?.addEventListener('click', async () =>
 });
 // ---- End Review & Submit JS ----
 
+function scheduleSave(){ if (typeof debouncedSave==='function') debouncedSave(); }
+function onFontSelectChange(){ var s=document.getElementById('fontSelect'); var o=document.getElementById('fontOther'); if(o) o.style.display = (s && s.value==='__other__') ? '' : 'none'; if (typeof debouncedSave==='function') debouncedSave(); }
+function onFontStyleChange(){ var s=document.getElementById('fontStyleSelect'); var o=document.getElementById('fontStyleOther'); if(o) o.style.display = (s && s.value==='__other__') ? '' : 'none'; if (typeof debouncedSave==='function') debouncedSave(); }
+function restoreFontUI(fontVal, styleVal){
+  var s=document.getElementById('fontSelect'); if(!s) return;
+  var known = Array.prototype.map.call(s.options, function(o){return o.value;});
+  if (fontVal && known.indexOf(fontVal)>=0) { s.value = fontVal; }
+  else if (fontVal && fontVal!=='no-preference') { s.value='__other__'; var fo=document.getElementById('fontOther'); if(fo){ fo.value=fontVal; fo.style.display=''; } }
+  else { s.value='no-preference'; }
+  var ss=document.getElementById('fontStyleSelect'); if(ss){ var sk=Array.prototype.map.call(ss.options,function(o){return o.value;});
+    if (styleVal && sk.indexOf(styleVal)>=0){ ss.value=styleVal; }
+    else if (styleVal){ ss.value='__other__'; var so=document.getElementById('fontStyleOther'); if(so){ so.value=styleVal; so.style.display=''; } }
+    else { ss.value=''; } }
+}
+function addSocialRow(platform, link){
+  var wrap=document.getElementById('socialRows'); if(!wrap) return;
+  var row=document.createElement('div'); row.className='social-row'; row.style.cssText='display:flex;gap:8px;margin-top:8px;align-items:center';
+  var pf=document.createElement('input'); pf.type='text'; pf.className='social-platform'; pf.placeholder='Platform (Instagram, Facebook, X...)'; pf.style.cssText='flex:1;padding:10px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);color:#fff'; if(platform) pf.value=platform;
+  var ln=document.createElement('input'); ln.type='text'; ln.className='social-link'; ln.placeholder='Link or @handle (optional)'; ln.style.cssText='flex:1.4;padding:10px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);color:#fff'; if(link) ln.value=link;
+  var rm=document.createElement('button'); rm.type='button'; rm.textContent='\u00d7'; rm.title='Remove'; rm.style.cssText='background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:#fff;border-radius:8px;width:38px;height:38px;cursor:pointer;font-size:18px';
+  rm.onclick=function(){ row.remove(); if(typeof debouncedSave==="function") debouncedSave(); };
+  pf.addEventListener('input', function(){ if(typeof debouncedSave==="function") debouncedSave(); });
+  ln.addEventListener('input', function(){ if(typeof debouncedSave==="function") debouncedSave(); });
+  row.appendChild(pf); row.appendChild(ln); row.appendChild(rm); wrap.appendChild(row);
+  if(typeof debouncedSave==="function") debouncedSave();
+}
+function collectSocial(){
+  var out=[]; document.querySelectorAll('#socialRows .social-row').forEach(function(r){
+    var p=(r.querySelector('.social-platform').value||'').trim(); var l=(r.querySelector('.social-link').value||'').trim();
+    if(p||l) out.push({platform:p, link:l});
+  }); return out;
+}
+function restoreSocial(val){
+  var wrap=document.getElementById('socialRows'); if(!wrap) return; wrap.innerHTML='';
+  var arr=[]; try{ arr=typeof val==='string'?JSON.parse(val):(val||[]); }catch(e){ arr=[]; }
+  if(!arr || !arr.length){ addSocialRow(); return; }
+  arr.forEach(function(s){ addSocialRow(s.platform||'', s.link||''); });
+}
+function revealInspRow(){
+  var rows = document.querySelectorAll('#inspirationRows .inspiration-row');
+  for (var i=0;i<rows.length;i++){ if (rows[i].style.display==='none'){ rows[i].style.display=''; break; } }
+  var anyHidden = Array.prototype.some.call(document.querySelectorAll('#inspirationRows .inspiration-row'), function(r){ return r.style.display==='none'; });
+  var btn = document.getElementById('inspAddBtn'); if (btn && !anyHidden) btn.style.display='none';
+}
 function debouncedSave() {
+  if (!window._SB_READY) return;
   clearTimeout(saveTimer);
   saveTimer = setTimeout(saveAll, 900);
 }
@@ -887,22 +1670,32 @@ document.getElementById('colorPrimary').addEventListener('input', (e) => { docum
 document.getElementById('colorSecondary').addEventListener('input', (e) => { document.getElementById('hexSecondary').textContent = e.target.value; debouncedSave(); });
 document.getElementById('colorAccent').addEventListener('input', (e) => { document.getElementById('hexAccent').textContent = e.target.value; debouncedSave(); });
 ['toneOther','audienceOther','featureOther'].forEach(id => document.getElementById(id).addEventListener('input', debouncedSave));
-['businessDescription','siteGoal','competitors','legalEntityName','legalMailingAddress','ein','relationshipToBusiness','isLegalEntity','hasDomainSelect','domainNameInput','termsPrivacyChoice','termsPrivacyContent','timelinePreference','preferredContactMethod'].forEach(id => { const el = document.getElementById(id); el.addEventListener(el.tagName === 'SELECT' ? 'change' : 'input', debouncedSave); });
+['businessDescription','siteGoal','competitors','hasDomainSelect','domainNameInput','timelinePreference','preferredContactMethod'].forEach(id => { const el = document.getElementById(id); el.addEventListener(el.tagName === 'SELECT' ? 'change' : 'input', debouncedSave); });
 document.getElementById('wantsDomainHelp').addEventListener('change', debouncedSave);
+function onDomainSiteStatusChange(){ var s=document.getElementById('domainSiteStatus'); var sub=document.getElementById('domainUpRunningSub'); if(sub) sub.style.display=(s&&s.value==='up_running')?'block':'none'; if(typeof debouncedSave==='function') debouncedSave(); }
+['domainSiteStatus','domainIsRemodel','domainPointToNew'].forEach(function(id){ var e=document.getElementById(id); if(e) e.addEventListener('change', id==='domainSiteStatus'? onDomainSiteStatusChange : debouncedSave); });
+var _drn=document.getElementById('domainReuseNotes'); if(_drn) _drn.addEventListener('input', debouncedSave);
+['termsPaste','termsComment','privacyPaste','privacyComment'].forEach(function(id){ var e=document.getElementById(id); if(e) e.addEventListener('input', debouncedSave); });
+['termsFileInput','privacyFileInput'].forEach(function(id){ var e=document.getElementById(id); if(e) e.addEventListener('change', debouncedSave); });
+var _bcq=document.getElementById('blogCustomQuote'); if(_bcq) _bcq.addEventListener('change', debouncedSave);
+var _ga4=document.getElementById('ga4Addon'); if(_ga4) _ga4.addEventListener('change', debouncedSave);
+
+
 ['avoidText','siteNameInput'].forEach(id => {
   const el = document.getElementById(id);
   if (el) el.addEventListener(el.tagName === 'SELECT' ? 'change' : 'input', debouncedSave);
 });
-document.querySelectorAll('input[name=fontPref]').forEach(r => r.addEventListener('change', debouncedSave));
+['fontSelect','fontStyleSelect'].forEach(function(id){ var e=document.getElementById(id); if(e) e.addEventListener('change', debouncedSave); });
 document.querySelectorAll('#inspirationRows .insp-url, #inspirationRows .insp-note').forEach(el => el.addEventListener('input', debouncedSave));
 document.getElementById('domainRegistrar')?.addEventListener('change', debouncedSave);
-document.getElementById('isLegalEntity').addEventListener('change', function() {
-  document.getElementById('legalEntityDetails').style.display = (this.value === 'yes' || this.value === 'in_progress') ? 'block' : 'none';
+var _leEl = document.getElementById('isLegalEntity'); if (_leEl) _leEl.addEventListener('change', function() {
+  var _led = document.getElementById('legalEntityDetails'); if (_led) _led.style.display = (this.value === 'yes' || this.value === 'in_progress') ? 'block' : 'none';
   debouncedSave();
 });
 document.querySelectorAll('input[name=logoChoice]').forEach(function(r){r.addEventListener('change',function(){document.getElementById('logoUploadBox').style.display=this.value==='upload'?'block':'none';debouncedSave();});});
 document.querySelectorAll('input[name=faviconChoice]').forEach(function(r){r.addEventListener('change',function(){document.getElementById('faviconUploadBox').style.display=this.value==='upload'?'block':'none';debouncedSave();});});
 document.getElementById('hasDomainSelect').addEventListener('change', function() {
+  var _fu = document.getElementById('domainYesFollowups'); if (_fu) _fu.style.display = (this.value==='yes') ? 'block' : 'none';
   const reg = document.getElementById('registrarRow');
   reg.style.display = this.value === 'yes' ? 'block' : 'none';
   if (this.value !== 'yes') document.getElementById('domainRegistrar').value = '';
@@ -953,26 +1746,70 @@ document.getElementById('logoInput').addEventListener('change', uploadLogo);
 document.getElementById('photosInput').addEventListener('change', uploadPhotos);
 
 async function finishBrief() {
-  if (!confirm('This starts your 48-hour build clock. Ready to go?')) return;
+  if (!confirm('This is your final step. You will confirm your selections with a quick signature, and that starts your 48-hour build clock. Ready to go?')) return;
   const btn = document.getElementById('doneBtn');
   btn.disabled = true;
-  btn.textContent = 'Starting your build...';
+  btn.textContent = 'One moment...';
   try {
-    const res = await fetch(`${API}/builder/complete`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token })
-    });
-    const data = await res.json();
-    if (!data.ok) throw new Error(data.error || 'Something went wrong.');
-    document.getElementById('form-area').style.display = 'none';
-    document.getElementById('doneBar').style.display = 'none';
-    document.getElementById('doneState').style.display = 'block';
+    const st = await fetch(`${API}/builder/addendum-status?token=${encodeURIComponent(token)}`);
+    const stData = await st.json();
+    if (!stData.ok) throw new Error(stData.error || 'Could not check your confirmation status.');
+    if (!stData.signed) {
+      btn.textContent = 'Opening your confirmation...';
+      const sres = await fetch(`${API}/builder/addendum-start`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token })
+      });
+      const sdata = await sres.json();
+      if (!sdata.ok) throw new Error(sdata.error || 'Could not open the confirmation to sign.');
+      if (sdata.already_signed) { await doBuilderComplete(btn); return; }
+      if (!sdata.signing_url) throw new Error('Could not open the confirmation to sign.');
+      window.location.href = sdata.signing_url;
+      return;
+    }
+    await doBuilderComplete(btn);
   } catch (err) {
     alert(err.message);
     btn.disabled = false;
     btn.textContent = "I'm Done — Start My Build";
   }
+}
+
+async function doBuilderComplete(btn) {
+  if (btn) btn.textContent = 'Starting your build...';
+  const res = await fetch(`${API}/builder/complete`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token })
+  });
+  const data = await res.json();
+  if (!data.ok) throw new Error(data.error || 'Something went wrong.');
+  document.getElementById('form-area').style.display = 'none';
+  document.getElementById('doneBar').style.display = 'none';
+  document.getElementById('doneState').style.display = 'block';
+}
+
+async function resumeAfterAddendum() {
+  const params = new URLSearchParams(location.search);
+  if (params.get('addendum_signed') !== '1') return;
+  try {
+    let signed = false;
+    for (let i = 0; i < 6 && !signed; i++) {
+      const st = await fetch(`${API}/builder/addendum-status?token=${encodeURIComponent(token)}`);
+      const d = await st.json();
+      if (d.ok && d.signed) { signed = true; break; }
+      await new Promise(r => setTimeout(r, 1500));
+    }
+    const btn = document.getElementById('doneBtn');
+    if (signed) {
+      if (btn) btn.disabled = true;
+      await doBuilderComplete(btn);
+    } else {
+      if (btn) { btn.disabled = false; btn.textContent = "Finish — Start My Build"; }
+      alert('Thanks for signing! Give it a few seconds, then click Finish to kick off your build.');
+    }
+  } catch (e) {}
 }
 
 async function checkDomainAvailability() {
@@ -1066,6 +1903,7 @@ function showPasswordLogin() {
 }
 // ---- END PASSWORD GATE ----
 async function init() {
+  window._SB_READY = false; setTimeout(function(){ window._SB_READY = true; }, 0);
   if (!token) {
     document.getElementById('error').style.display = 'block';
     document.getElementById('error').textContent = 'This link is missing information. Please use the link we emailed you, or contact us directly.';
@@ -1093,7 +1931,7 @@ async function init() {
       return;
     }
     if (!data.ok) throw new Error(data.error || 'Link not recognized.');
-    const order = data.order;
+    const order = data.order; window.__sbOrder = order;
     document.getElementById('heading').textContent = `${order.business_name}, tell us about your style`;
     document.getElementById('subLine').textContent = 'Fill this out whenever you have a few minutes — everything saves as you go.';
 
@@ -1130,13 +1968,28 @@ async function init() {
     if (order.business_description) document.getElementById('businessDescription').value = order.business_description;
     if (order.site_goal) document.getElementById('siteGoal').value = order.site_goal;
     if (order.competitors) document.getElementById('competitors').value = order.competitors;
-    if (order.is_legal_entity) document.getElementById('isLegalEntity').value = order.is_legal_entity;
-    if (order.legal_entity_name) document.getElementById('legalEntityName').value = order.legal_entity_name;
+    // Legal entity shown read-only from intake data
+    if (document.getElementById('legalEntityDisplay')) {
+      const le = order.is_legal_entity;
+      const len = order.legal_entity_name || '';
+      const leType = order.legal_entity_type || '';
+      const isPromo = order.is_individual_promo;
+      let html = le === 'yes' ? 'Registered entity' : le === 'in_progress' ? 'Entity in formation' : le === 'no' ? 'No registered entity' : 'Not specified';
+      if (len) html += ' &mdash; ' + len;
+      if (leType) html += ' (' + leType + ')';
+      if (isPromo) html += '<br><span style="color:#d9b23d">&#x2605; Individual/personal promotion site</span>';
+      document.getElementById('legalEntityDisplay').innerHTML = html;
+    }
     if (order.legal_mailing_address) document.getElementById('legalMailingAddress').value = order.legal_mailing_address;
     if (order.ein) document.getElementById('ein').value = order.ein;
     if (order.relationship_to_business) document.getElementById('relationshipToBusiness').value = order.relationship_to_business;
-    if (order.has_domain) document.getElementById('hasDomainSelect').value = order.has_domain;
+    if (order.has_domain !== null && order.has_domain !== undefined) { var _hv = (order.has_domain===true||order.has_domain==='yes'||order.has_domain==='true') ? 'yes' : ((order.has_domain===false||order.has_domain==='no'||order.has_domain==='false') ? 'no' : order.has_domain); document.getElementById('hasDomainSelect').value = _hv; }
     if (order.domain_name) document.getElementById('domainNameInput').value = order.domain_name;
+    if (order.has_domain===true || order.has_domain==='yes') { var _fu=document.getElementById('domainYesFollowups'); if(_fu) _fu.style.display='block'; }
+    if (order.domain_site_status && document.getElementById('domainSiteStatus')) { document.getElementById('domainSiteStatus').value=order.domain_site_status; if(order.domain_site_status==='up_running'){ var _s=document.getElementById('domainUpRunningSub'); if(_s) _s.style.display='block'; } }
+    if (order.domain_is_remodel && document.getElementById('domainIsRemodel')) document.getElementById('domainIsRemodel').value=order.domain_is_remodel;
+    if (order.domain_reuse_notes && document.getElementById('domainReuseNotes')) document.getElementById('domainReuseNotes').value=order.domain_reuse_notes;
+    if (order.domain_point_to_new && document.getElementById('domainPointToNew')) document.getElementById('domainPointToNew').value=order.domain_point_to_new;
     if (order.wants_domain_help === 'yes') document.getElementById('wantsDomainHelp').checked = true;
     window._ORDER_TIER = order.tier || 'standard';
     const savedPages = order.page_structure ? (()=>{ try{return JSON.parse(order.page_structure);}catch(e){return null;} })() : null;
@@ -1144,13 +1997,12 @@ async function init() {
     if (order.terms_source) { const r = document.querySelector('input[name=termsSource][value="'+order.terms_source+'"]'); if(r){r.checked=true; const tc=document.getElementById('termsContent'); if(tc) tc.style.display=order.terms_source==='provide'?'block':'none'; } }
     if (order.terms_content && document.getElementById('termsContent')) document.getElementById('termsContent').value = order.terms_content;
     if (order.integrations) { try { const ints=JSON.parse(order.integrations); ['stripe','email','booking','social'].forEach(k=>{ if(ints.includes(k)) { const el=document.getElementById('integ'+k[0].toUpperCase()+k.slice(1)); if(el) el.checked=true; } }); const oth=ints.find(x=>x.startsWith('other')); if(oth){const el=document.getElementById('integOther');if(el)el.checked=true;const t=document.getElementById('integOtherText');if(t&&oth.includes(':'))t.value=oth.split(':')[1];const td=document.getElementById('integOtherText');if(td)td.style.display='block';} } catch(e){} }
-    if (order.font_preference) {
-      const r = document.querySelector(`input[name=fontPref][value="${order.font_preference}"]`);
-      if (r) r.checked = true;
+    if (order.font_preference || order.font_style_pref) { restoreFontUI(order.font_preference, order.font_style_pref);
     }
     if (order.inspiration_urls) {
       try {
         const insps = JSON.parse(order.inspiration_urls);
+        document.querySelectorAll('#inspirationRows .inspiration-row').forEach(function(rw,ix){ if (ix>=3 && insps[ix] && (insps[ix].url||insps[ix].note)) rw.style.display=''; });
         insps.forEach((item, i) => {
           const row = document.querySelectorAll('#inspirationRows .inspiration-row')[i];
           if (row) {
@@ -1163,7 +2015,7 @@ async function init() {
     if (order.avoid_text) document.getElementById('avoidText').value = order.avoid_text;
     if (order.domain_registrar && document.getElementById('domainRegistrar')) {
       document.getElementById('domainRegistrar').value = order.domain_registrar;
-      if (order.has_domain === 'yes') document.getElementById('registrarRow').style.display = 'block';
+      if (order.has_domain===true || order.has_domain==='yes') document.getElementById('registrarRow').style.display = 'block';
     }
     if (order.site_name && document.getElementById('siteNameInput')) document.getElementById('siteNameInput').value = order.site_name;
     if (order.is_legal_entity && document.getElementById('isLegalEntity')) {
@@ -1178,8 +2030,15 @@ async function init() {
       const fr = document.querySelector('input[name=faviconChoice][value="'+order.favicon_choice+'"]');
       if (fr) { fr.checked=true; document.getElementById('faviconUploadBox').style.display=order.favicon_choice==='upload'?'block':'none'; }
     }
-    if (order.terms_privacy_choice) document.getElementById('termsPrivacyChoice').value = order.terms_privacy_choice;
-    if (order.terms_privacy_content) document.getElementById('termsPrivacyContent').value = order.terms_privacy_content;
+    if (order.terms_privacy_choice && document.getElementById('termsPrivacyChoice')) document.getElementById('termsPrivacyChoice').value = order.terms_privacy_choice;
+    if (order.terms_paste && document.getElementById('termsPaste')) document.getElementById('termsPaste').value = order.terms_paste;
+    if (order.terms_comment && document.getElementById('termsComment')) document.getElementById('termsComment').value = order.terms_comment;
+    if (order.privacy_paste && document.getElementById('privacyPaste')) document.getElementById('privacyPaste').value = order.privacy_paste;
+    if (order.privacy_comment && document.getElementById('privacyComment')) document.getElementById('privacyComment').value = order.privacy_comment;
+    restoreSocial(order.social_links);
+    if (document.getElementById('blogCustomQuote')) document.getElementById('blogCustomQuote').checked = (order.blog_custom_quote === '1' || order.blog_custom_quote === 1 || order.blog_custom_quote === true);
+    if (order.terms_upload_url && document.getElementById('termsFileCurrent')) { var _e=document.getElementById('termsFileCurrent'); _e.style.display='block'; _e.textContent='Current file uploaded \u2713'; }
+    if (order.privacy_upload_url && document.getElementById('privacyFileCurrent')) { var _e=document.getElementById('privacyFileCurrent'); _e.style.display='block'; _e.textContent='Current file uploaded \u2713'; }
     if (order.timeline_preference) document.getElementById('timelinePreference').value = order.timeline_preference;
     if (order.preferred_contact_method) document.getElementById('preferredContactMethod').value = order.preferred_contact_method;
 
@@ -1191,8 +2050,11 @@ async function init() {
     document.getElementById('form-area').style.display = 'block';
     document.getElementById('doneBar').style.display = 'block';
     buildNav();
-    personalize(order);
+    /* restore builder_pages */ try { window.__orderTier = order.tier || 'standard'; } catch(e){} try { if (order.builder_pages && Array.isArray(order.builder_pages) && order.builder_pages.length) { builderPages = order.builder_pages.map(function(p){return {id:p.id,name:p.name||'',menuTitle:p.menuTitle||'',description:p.description||'',isHome:!!p.isHome, beCreative:!!p.beCreative, pageType:(p.pageType||'standard'), integration:(p.integration||{}), passwordProtect:!!p.passwordProtect, pagePassword:(p.pagePassword||''), sections:(Array.isArray(p.sections)?p.sections:[])};}); if(!builderPages.some(function(p){return p.isHome;})) builderPages[0].isHome=true; rebuildTabModel(); buildNav(); } } catch(e){ console.error('restore builder_pages', e); }
+      personalize(order);
     showStep(0);
+    try { restoreSocial(order.social_links); if(document.getElementById('blogCustomQuote')) document.getElementById('blogCustomQuote').checked=(order.blog_custom_quote==='1'||order.blog_custom_quote===1||order.blog_custom_quote===true); if(document.getElementById('ga4Addon') && (order.ga4_addon===true)) document.getElementById('ga4Addon').checked=true; } catch(e){ console.log('social restore err', e.message); }
+    if (typeof resumeAfterAddendum==="function") resumeAfterAddendum();
   } catch (err) {
     document.getElementById('error').style.display = 'block';
     document.getElementById('error').textContent = err.message;
