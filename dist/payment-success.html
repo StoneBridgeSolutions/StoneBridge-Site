@@ -101,7 +101,7 @@
       const data = await res.json();
       if (data.ok && data.paid && data.builder_token){
         if (typeof gtag==='function' && data.amount) { gtag('event','purchase',{ transaction_id: data.order_id || sessionId, value: data.amount, currency: data.currency || 'USD', tier: data.tier }); }
-        const url = `/builder.html?token=${encodeURIComponent(data.builder_token)}`;
+        const url = `/builder.html?token=${encodeURIComponent(data.builder_token)}` + (data.stage2 ? '&addendum_signed=1' : '');
         const heading = document.getElementById('successHeading');
         if (data.business_name) heading.textContent = `${data.business_name}, you're all set!`;
         const link = document.getElementById('builderLink');

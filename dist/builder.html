@@ -1872,6 +1872,13 @@ async function resumeAfterAddendum() {
     const btn = document.getElementById('doneBtn');
     if (signed) {
       if (btn) btn.disabled = true;
+      // Signed -> Stage-2 payment (final balance + add-ons + care plan / financing).
+      // A redirect_url means payment is still due; a 409 means already paid -> finalize.
+      try {
+        const cr = await fetch(`${API}/builder/stage2-checkout`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: token }) });
+        const cd = await cr.json().catch(() => ({}));
+        if (cr.ok && cd.ok && cd.redirect_url) { window.location.href = cd.redirect_url; return; }
+      } catch (e) {}
       await doBuilderComplete(btn);
     } else {
       if (btn) { btn.disabled = false; btn.textContent = "Finish — Start My Build"; }
