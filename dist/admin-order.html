@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin — New Order / DocuSign Builder · StoneBridge</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#0d1526;--navy-2:#111b30;--navy-3:#16233d;--gold:#d9b23d;--gold-soft:#e5c766;--white:#f7f7f5;--grey:#c6cbd6;--line:#26324a;--ok:#3fae6b;--err:#e06767}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--navy);color:var(--white);font-family:'Poppins',sans-serif;font-weight:300;line-height:1.6;min-height:100vh}
+  .wrap{max-width:860px;margin:0 auto;padding:32px 20px 120px}
+  h1{font-family:'Playfair Display',serif;font-weight:700;font-size:1.9rem;letter-spacing:.3px}
+  h1 .sb{color:var(--gold)}
+  .sub{color:var(--grey);font-size:.9rem;margin-top:2px}
+  .card{background:var(--navy-2);border:1px solid var(--line);border-radius:14px;padding:22px 22px;margin-top:20px}
+  .card h2{font-size:1.05rem;font-weight:600;color:var(--gold-soft);letter-spacing:.4px;text-transform:uppercase;font-size:.82rem;margin-bottom:4px}
+  .card .note{color:var(--grey);font-size:.82rem;margin-bottom:14px}
+  label{display:block;font-size:.82rem;color:var(--grey);margin:12px 0 5px;font-weight:400}
+  input[type=text],input[type=email],input[type=tel],input[type=number],select,textarea{
+    width:100%;background:var(--navy-3);border:1px solid var(--line);border-radius:9px;color:var(--white);
+    font-family:inherit;font-size:.95rem;padding:11px 12px}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold)}
+  textarea{resize:vertical;min-height:70px}
+  .row{display:flex;gap:14px;flex-wrap:wrap}
+  .row>div{flex:1;min-width:180px}
+  .seg{display:inline-flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+  .seg label{display:inline-flex;align-items:center;gap:7px;margin:0;padding:8px 13px;background:var(--navy-3);
+    border:1px solid var(--line);border-radius:9px;color:var(--white);font-size:.88rem;cursor:pointer}
+  .seg input{accent-color:var(--gold)}
+  .addon{border:1px solid var(--line);border-radius:11px;padding:13px 14px;margin-top:11px;background:var(--navy-3)}
+  .addon-head{display:flex;align-items:center;gap:10px;justify-content:space-between}
+  .addon-head .lbl{display:flex;align-items:center;gap:10px;font-size:.95rem;font-weight:500}
+  .addon-head input[type=checkbox]{width:18px;height:18px;accent-color:var(--gold)}
+  .addon-body{margin-top:11px;padding-top:11px;border-top:1px solid var(--line);display:none}
+  .addon.on .addon-body{display:block}
+  .price-opts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .price-opts label{margin:0;padding:7px 11px;background:var(--navy-2);border:1px solid var(--line);border-radius:8px;color:var(--white);font-size:.85rem;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+  .price-opts input[type=radio]{accent-color:var(--gold)}
+  .custom-amt{width:120px !important;display:inline-block}
+  .qty{width:90px !important;display:inline-block}
+  .hint{color:var(--grey);font-size:.76rem;margin-top:6px}
+  .flag{color:var(--gold-soft);font-size:.82rem;background:rgba(217,178,61,.09);border:1px solid rgba(217,178,61,.3);border-radius:9px;padding:10px 12px;margin-top:12px}
+  .summary{position:sticky;bottom:0;background:var(--navy-2);border:1px solid var(--gold);border-radius:14px;padding:18px 20px;margin-top:24px;box-shadow:0 -6px 24px rgba(0,0,0,.4)}
+  .summary h2{color:var(--gold);text-transform:uppercase;font-size:.82rem;letter-spacing:.4px}
+  .line{display:flex;justify-content:space-between;font-size:.9rem;padding:3px 0;color:var(--white)}
+  .line.total{font-weight:600;font-size:1.05rem;border-top:1px solid var(--line);margin-top:6px;padding-top:9px;color:var(--gold-soft)}
+  .line .l{color:var(--grey)}
+  .btn{display:inline-block;background:var(--gold);color:var(--navy);font-weight:600;font-family:inherit;font-size:1rem;
+    border:none;border-radius:10px;padding:13px 24px;cursor:pointer;margin-top:14px;width:100%}
+  .btn:hover{background:var(--gold-soft)}
+  .btn.secondary{background:transparent;color:var(--gold);border:1px solid var(--gold)}
+  #result{margin-top:14px;font-size:.9rem;padding:12px 14px;border-radius:9px;display:none}
+  #result.ok{display:block;background:rgba(63,174,107,.12);border:1px solid var(--ok);color:#bfe9cf}
+  #result.err{display:block;background:rgba(224,103,103,.12);border:1px solid var(--err);color:#f2c6c6}
+  /* gate */
+  #gate{position:fixed;inset:0;background:var(--navy);display:flex;align-items:center;justify-content:center;z-index:50;flex-direction:column;gap:16px;padding:20px}
+  #gate .box{background:var(--navy-2);border:1px solid var(--line);border-radius:14px;padding:30px;max-width:360px;width:100%;text-align:center}
+  #gate h1{font-size:1.4rem;margin-bottom:6px}
+  #gate p{color:var(--grey);font-size:.85rem;margin-bottom:16px}
+  #main{display:none}
+  .req{color:var(--gold)}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="box">
+    <h1><span class="sb">StoneBridge</span> Admin</h1>
+    <p>Enter the admin password to continue.</p>
+    <input type="password" id="gatePw" placeholder="Admin password" autocomplete="off">
+    <button class="btn" onclick="unlock()">Unlock</button>
+    <div id="gateErr" style="color:var(--err);font-size:.82rem;margin-top:10px;display:none">Incorrect password.</div>
+  </div>
+</div>
+
+<div id="main"><div class="wrap">
+  <h1><span class="sb">StoneBridge</span> — New Order &amp; DocuSign Builder</h1>
+  <div class="sub">Fill in the client's details and services, then send the Service Agreement + Addendum in one envelope. Custom prices affect the document only — you invoice separately in Stripe.</div>
+
+  <!-- 1. CLIENT -->
+  <div class="card">
+    <h2>1 · Client &amp; Legal Info</h2>
+    <div class="note">This determines the party block, signature block, and whether a Personal Guaranty applies.</div>
+    <label>Client type <span class="req">*</span></label>
+    <div class="seg">
+      <label><input type="radio" name="entity" value="individual" checked onchange="toggleEntity()"> Individual</label>
+      <label><input type="radio" name="entity" value="business" onchange="toggleEntity()"> Business entity (LLC, corp, etc.)</label>
+    </div>
+
+    <div id="entityFields" style="display:none">
+      <div class="row">
+        <div><label>Legal entity name <span class="req">*</span></label><input type="text" id="legal_entity_name" placeholder="Paws Next Door LLC"></div>
+        <div><label>Entity type</label>
+          <select id="legal_entity_type">
+            <option value="LLC">LLC</option><option value="Corporation">Corporation</option>
+            <option value="S-Corporation">S-Corporation</option><option value="Partnership">Partnership</option>
+            <option value="Sole Proprietorship">Sole Proprietorship</option><option value="Nonprofit">Nonprofit</option><option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div><label>State of formation</label><input type="text" id="entity_state" placeholder="North Carolina"></div>
+        <div><label>Formation date</label><input type="text" id="entity_formation" placeholder="MM/YYYY"></div>
+        <div><label>EIN (for your records)</label><input type="text" id="ein" placeholder="XX-XXXXXXX"></div>
+      </div>
+      <div class="flag">Reminder: the signer also signs a <b>Personal Guaranty</b> — they personally guarantee payment even if the business can't. Confirm they have authority and are okay with it.</div>
+    </div>
+
+    <div class="row">
+      <div><label>Signer's full name <span class="req">*</span></label><input type="text" id="contact_name" placeholder="Jane Doe"></div>
+      <div id="titleWrap" style="display:none"><label>Signer's title</label><input type="text" id="contact_title" placeholder="Owner / President / Managing Member"></div>
+    </div>
+    <label>Business name (day-to-day)</label><input type="text" id="business_name" placeholder="Paws Next Door">
+    <div class="row">
+      <div><label>Email <span class="req">*</span> <span class="hint">DocuSign is sent here</span></label><input type="email" id="email" placeholder="jane@example.com"></div>
+      <div><label>Phone</label><input type="tel" id="phone" placeholder="(336) 555-0100"></div>
+    </div>
+    <label>Mailing address</label><input type="text" id="address" placeholder="123 Main St, Clemmons, NC 27012">
+  </div>
+
+  <!-- 2. PACKAGE -->
+  <div class="card">
+    <h2>2 · Website Package</h2>
+    <label>Package <span class="req">*</span></label>
+    <select id="tier" onchange="toggleTier();recalc()">
+      <option value="">— None (add-ons / services only) —</option>
+      <option value="simple">Simple Package — 3-Page Static Site</option>
+      <option value="standard" selected>Standard Package — 5-Page Static Site</option>
+      <option value="premium">Premium Package — 7-Page Static Site</option>
+      <option value="custom">Custom Package — name it yourself</option>
+    </select>
+    <div id="customPkgWrap" style="display:none">
+      <label>Custom package name <span class="req">*</span></label>
+      <input type="text" id="custom_pkg_name" placeholder="e.g. E-Commerce Starter — 10 pages" oninput="recalc()">
+    </div>
+    <label>Package price</label>
+    <div class="price-opts" id="tierPrice">
+      <label class="std-px"><input type="radio" name="tierpx" value="current" checked onchange="recalc()"> Current <span id="tpCur"></span></label>
+      <label class="std-px"><input type="radio" name="tierpx" value="regular" onchange="recalc()"> Regular <span id="tpReg"></span></label>
+      <label><input type="radio" name="tierpx" value="custom" onchange="recalc()"> Custom $<input type="number" class="custom-amt" id="tierCustom" min="0" oninput="setCustom('tierpx');recalc()"></label>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <div><label>Deposit due at signing <span class="hint">defaults to half</span></label><input type="number" id="deposit" min="0" oninput="depositTouched=true;recalc()"></div>
+      <div><label>Final balance <span class="hint">auto: total − deposit</span></label><input type="number" id="balance" min="0" readonly style="opacity:.7"></div>
+    </div>
+  </div>
+
+  <!-- 3. ADD-ONS -->
+  <div class="card">
+    <h2>3 · Add-Ons &amp; Services</h2>
+    <div class="note">Check what applies, then pick regular / early-commit / custom pricing per item.</div>
+    <div id="addons"></div>
+    <div style="border-top:1px solid var(--line);margin-top:18px;padding-top:15px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+        <div style="font-size:.92rem;font-weight:500">Additional products <span class="hint" style="font-weight:300">— anything not listed above</span></div>
+        <button type="button" class="btn secondary" style="width:auto;margin:0;padding:8px 15px;font-size:.85rem" onclick="addProduct()">+ Add product</button>
+      </div>
+      <div id="customProducts"></div>
+    </div>
+  </div>
+
+  <!-- 4. CARE PLAN -->
+  <div class="card">
+    <h2>4 · Care Plan</h2>
+    <div class="addon" id="care">
+      <div class="addon-head"><div class="lbl"><input type="checkbox" id="care_on" onchange="toggleCard('care');recalc()"> Include Care Plan (monthly)</div></div>
+      <div class="addon-body">
+        <div class="price-opts">
+          <label><input type="radio" name="carepx" value="early" checked onchange="recalc()"> Early-commit $35/mo</label>
+          <label><input type="radio" name="carepx" value="standard" onchange="recalc()"> Standard $50/mo</label>
+          <label><input type="radio" name="carepx" value="custom" onchange="recalc()"> Custom $<input type="number" class="custom-amt" id="careCustom" min="0" oninput="setCustom('carepx');recalc()">/mo</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. FINANCING -->
+  <div class="card">
+    <h2>5 · Payment Plan (optional)</h2>
+    <div class="note">If selected, a Financing Agreement is added to the same envelope (signed as "Borrower").</div>
+    <label>Plan</label>
+    <select id="financing">
+      <option value="">Pay in full (no financing)</option>
+      <option value="2">2 months</option><option value="3">3 months</option>
+      <option value="6">6 months</option><option value="12">12 months</option>
+    </select>
+  </div>
+
+  <!-- 6. NOTES -->
+  <div class="card">
+    <h2>6 · Notes / Special Scope (optional)</h2>
+    <textarea id="notes" placeholder="Anything extra to note in the addendum scope…"></textarea>
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="summary">
+    <h2>Summary</h2>
+    <div id="lines"></div>
+    <div class="line total"><span>Total (document)</span><span id="sumTotal">$0</span></div>
+    <div class="line"><span class="l">Deposit at signing</span><span id="sumDep">$0</span></div>
+    <div class="line"><span class="l">Final balance</span><span id="sumBal">$0</span></div>
+    <button class="btn" onclick="submitOrder()">Create &amp; Send DocuSign Envelope</button>
+    <div id="result"></div>
+  </div>
+</div></div>
+
+<script>
+const API = 'https://api.stonebridgesolutions.io';
+let ADMIN_PW = '';
+let depositTouched = false;
+
+const TIERS = {
+  simple:{label:'Simple — 3-Page', current:350, regular:500},
+  standard:{label:'Standard — 5-Page', current:500, regular:650},
+  premium:{label:'Premium — 7-Page', current:650, regular:800},
+};
+// copywriting price is by tier; others have early/regular; pages/events are per-unit
+const ADDONS = [
+  {key:'logo', label:'Logo Design', regular:35, early:35},
+  {key:'ga4', label:'Google Analytics 4 Setup', regular:125, early:85},
+  {key:'clarity', label:'Microsoft Clarity Setup', regular:125, early:85},
+  {key:'bundle', label:'Analytics Bundle (GA4 + Clarity)', regular:225, early:160, hint:'Use instead of GA4 + Clarity separately.'},
+  {key:'copywriting', label:'Full Site Copywriting Package', byTier:{simple:95,standard:125,premium:150}, hint:'Priced by package tier.'},
+  {key:'extra_pages', label:'Additional Pages', each:100, qty:true},
+  {key:'custom_events', label:'Custom Event Tracking', each:50, qty:true},
+  {key:'email_marketing', label:'Email Marketing Service Integration', regular:200},
+  {key:'crm', label:'CRM Integration', regular:350},
+  {key:'seo_schema', label:'SEO Schema', regular:350},
+  {key:'ab_testing', label:'A/B Testing', regular:500, early:200, earlyLabel:'Discounted', qty:true, hint:'Per test cycle. $500 standard / $200 discounted.'},
+  {key:'analytics_meeting', label:'Analytics Meeting', recurring:true, freq:[{v:'monthly',label:'$100 / month',amount:100},{v:'quarterly',label:'$250 / 3 months',amount:250}], hint:'Recurring — billed monthly or quarterly.'},
+];
+
+function unlock(){
+  const pw = document.getElementById('gatePw').value.trim();
+  if(!pw){document.getElementById('gateErr').style.display='block';return;}
+  ADMIN_PW = pw;
+  document.getElementById('gate').style.display='none';
+  document.getElementById('main').style.display='block';
+}
+document.getElementById('gatePw').addEventListener('keydown',e=>{if(e.key==='Enter')unlock();});
+
+function toggleEntity(){
+  const biz = document.querySelector('input[name=entity]:checked').value==='business';
+  document.getElementById('entityFields').style.display = biz?'block':'none';
+  document.getElementById('titleWrap').style.display = biz?'block':'none';
+}
+function toggleCard(id){document.getElementById(id).classList.toggle('on', document.getElementById(id+'_on').checked);}
+function toggleTier(){
+  const custom = document.getElementById('tier').value==='custom';
+  document.getElementById('customPkgWrap').style.display = custom?'block':'none';
+  document.querySelectorAll('.std-px').forEach(el=>{el.style.display = custom?'none':'inline-flex';});
+  if(custom){document.querySelector('input[name=tierpx][value=custom]').checked=true;}
+  depositTouched=false;
+}
+function setCustom(name){document.querySelector('input[name='+name+'][value=custom]').checked=true;}
+
+// build add-on cards
+function buildAddons(){
+  const box = document.getElementById('addons');
+  box.innerHTML = ADDONS.map(a=>{
+    let opts='';
+    if(a.recurring){
+      opts = '<div class="price-opts">'
+           + a.freq.map((o,i)=>'<label><input type="radio" name="px_'+a.key+'" value="'+o.v+'"'+(i===0?' checked':'')+' onchange="recalc()"> '+o.label+'</label>').join('')
+           + '<label><input type="radio" name="px_'+a.key+'" value="custom" onchange="recalc()"> Custom $<input type="number" class="custom-amt" id="cu_'+a.key+'" min="0" oninput="setCustom(\'px_'+a.key+'\');recalc()">/period</label></div>';
+    } else if(a.byTier){
+      opts = '<div class="price-opts"><label><input type="radio" name="px_'+a.key+'" value="regular" checked onchange="recalc()"> By tier</label>'
+           + '<label><input type="radio" name="px_'+a.key+'" value="custom" onchange="recalc()"> Custom $<input type="number" class="custom-amt" id="cu_'+a.key+'" min="0" oninput="setCustom(\'px_'+a.key+'\');recalc()"></label></div>';
+    } else if(a.each){
+      opts = '<div class="price-opts">Qty <input type="number" class="qty" id="qty_'+a.key+'" min="1" value="1" oninput="recalc()"> &times; '
+           + '<label><input type="radio" name="px_'+a.key+'" value="regular" checked onchange="recalc()"> $'+a.each+' each</label>'
+           + '<label><input type="radio" name="px_'+a.key+'" value="custom" onchange="recalc()"> Custom $<input type="number" class="custom-amt" id="cu_'+a.key+'" min="0" oninput="setCustom(\'px_'+a.key+'\');recalc()"> each</label></div>';
+    } else {
+      const qtyHtml = a.qty ? 'Qty <input type="number" class="qty" id="qty_'+a.key+'" min="1" value="1" oninput="recalc()"> &times; ' : '';
+      opts = '<div class="price-opts">'+qtyHtml+'<label><input type="radio" name="px_'+a.key+'" value="regular" checked onchange="recalc()"> Regular $'+a.regular+'</label>'
+           + ((a.early!=null && a.early!==a.regular)?'<label><input type="radio" name="px_'+a.key+'" value="early" onchange="recalc()"> '+(a.earlyLabel||'Early')+' $'+a.early+'</label>':'')
+           + '<label><input type="radio" name="px_'+a.key+'" value="custom" onchange="recalc()"> Custom $<input type="number" class="custom-amt" id="cu_'+a.key+'" min="0" oninput="setCustom(\'px_'+a.key+'\');recalc()"></label></div>';
+    }
+    return '<div class="addon" id="ad_'+a.key+'">'
+      +'<div class="addon-head"><div class="lbl"><input type="checkbox" id="on_'+a.key+'" onchange="document.getElementById(\'ad_'+a.key+'\').classList.toggle(\'on\',this.checked);recalc()"> '+a.label+'</div></div>'
+      +'<div class="addon-body">'+opts+(a.hint?'<div class="hint">'+a.hint+'</div>':'')+'</div></div>';
+  }).join('');
+}
+
+function addProduct(){
+  const div=document.createElement('div');
+  div.className='addon on';
+  div.style.marginTop='11px';
+  div.innerHTML =
+    '<div class="row" style="align-items:flex-end">'
+    +'<div style="flex:2;min-width:200px"><label>Product / service name</label><input type="text" class="cp-name" placeholder="e.g. Email marketing setup" oninput="recalc()"></div>'
+    +'<div style="flex:0 0 130px"><label>Price $</label><input type="number" class="cp-price" min="0" value="0" oninput="recalc()"></div>'
+    +'<div style="flex:0 0 auto"><button type="button" class="btn secondary" style="width:auto;margin:0;padding:10px 13px" onclick="this.closest(\'.addon\').remove();recalc()">\u2715</button></div>'
+    +'</div>'
+    +'<label>Description (optional \u2014 shows on the document)</label><textarea class="cp-desc" placeholder="Short description of what this includes\u2026" oninput="recalc()"></textarea>';
+  document.getElementById('customProducts').appendChild(div);
+}
+
+function addonQty(a){ return a.qty ? (Number((document.getElementById('qty_'+a.key)||{}).value)||1) : 1; }
+function addonPrice(a){
+  const mode = (document.querySelector('input[name=px_'+a.key+']:checked')||{}).value || 'regular';
+  if(a.recurring){
+    if(mode==='custom')return Number(document.getElementById('cu_'+a.key).value)||0;
+    const o=a.freq.find(f=>f.v===mode)||a.freq[0]; return o.amount;
+  }
+  let unit;
+  if(mode==='custom'){ unit = Number(document.getElementById('cu_'+a.key).value)||0; }
+  else if(a.byTier){ const t=document.getElementById('tier').value; unit = a.byTier[t]||a.byTier.standard; }
+  else if(a.each){ unit = a.each; }
+  else { unit = mode==='early'?a.early:a.regular; }
+  return unit*addonQty(a);
+}
+
+function recalc(){
+  const t = document.getElementById('tier').value;
+  const lines=[];
+  let total=0;
+  // package
+  if(t){
+    let label, px;
+    if(t==='custom'){
+      label = document.getElementById('custom_pkg_name').value.trim()||'Custom Package';
+      px = Number(document.getElementById('tierCustom').value)||0;
+    } else {
+      const ti=TIERS[t];
+      document.getElementById('tpCur').textContent='$'+ti.current;
+      document.getElementById('tpReg').textContent='$'+ti.regular;
+      const mode=(document.querySelector('input[name=tierpx]:checked')||{}).value||'current';
+      px = mode==='current'?ti.current : mode==='regular'?ti.regular : (Number(document.getElementById('tierCustom').value)||0);
+      label = ti.label;
+    }
+    total+=px; lines.push([label, px]);
+    if(!depositTouched){document.getElementById('deposit').value=Math.round(px/2);}
+  }
+  const recurring=[];
+  // add-ons
+  ADDONS.forEach(a=>{
+    if(document.getElementById('on_'+a.key) && document.getElementById('on_'+a.key).checked){
+      const p=addonPrice(a);
+      if(a.recurring){
+        const m=(document.querySelector('input[name=px_'+a.key+']:checked')||{}).value;
+        const per = m==='monthly'?'/mo' : m==='quarterly'?'/3mo' : '/period';
+        recurring.push([a.label, p, per]);
+      } else {
+        total+=p;
+        let lbl=a.label; if(a.qty){lbl+=' \u00D7 '+addonQty(a);}
+        lines.push([lbl,p]);
+      }
+    }
+  });
+  // custom products
+  document.querySelectorAll('#customProducts > .addon').forEach(row=>{
+    const name=(row.querySelector('.cp-name').value||'').trim();
+    const price=Number(row.querySelector('.cp-price').value)||0;
+    if(name||price){ total+=price; lines.push([name||'Custom product', price]); }
+  });
+  // care plan (recurring)
+  if(document.getElementById('care_on').checked){
+    const m=(document.querySelector('input[name=carepx]:checked')||{}).value;
+    const care = m==='standard'?50 : m==='custom'?(Number(document.getElementById('careCustom').value)||0):35;
+    recurring.push(['Care Plan', care, '/mo']);
+  }
+  // render lines
+  document.getElementById('lines').innerHTML =
+    lines.map(l=>'<div class="line"><span class="l">'+l[0]+'</span><span>$'+l[1]+'</span></div>').join('')
+    + recurring.map(l=>'<div class="line"><span class="l">'+l[0]+' (recurring)</span><span>$'+l[1]+l[2]+'</span></div>').join('');
+  const dep=Number(document.getElementById('deposit').value)||0;
+  const bal=Math.max(0,total-dep);
+  document.getElementById('balance').value=bal;
+  document.getElementById('sumTotal').textContent='$'+total;
+  document.getElementById('sumDep').textContent='$'+dep;
+  document.getElementById('sumBal').textContent='$'+bal;
+}
+
+function collect(){
+  const biz=document.querySelector('input[name=entity]:checked').value==='business';
+  const t=document.getElementById('tier').value;
+  const val=id=>document.getElementById(id)?document.getElementById(id).value.trim():'';
+  const addons={};
+  ADDONS.forEach(a=>{
+    const on=document.getElementById('on_'+a.key);
+    if(on&&on.checked){
+      const o={include:true, price:addonPrice(a), mode:(document.querySelector('input[name=px_'+a.key+']:checked')||{}).value};
+      if(a.qty)o.qty=addonQty(a);
+      if(a.recurring)o.recurring=true;
+      addons[a.key]=o;
+    }
+  });
+  const custom_items=[];
+  document.querySelectorAll('#customProducts > .addon').forEach(row=>{
+    const name=(row.querySelector('.cp-name').value||'').trim();
+    const price=Number(row.querySelector('.cp-price').value)||0;
+    const desc=(row.querySelector('.cp-desc').value||'').trim();
+    if(name||price)custom_items.push({name,price,desc});
+  });
+  const tmode=(document.querySelector('input[name=tierpx]:checked')||{}).value;
+  return {
+    admin_password:ADMIN_PW,
+    is_legal_entity:biz,
+    legal_entity_name:biz?val('legal_entity_name'):'',
+    legal_entity_type:biz?val('legal_entity_type'):'',
+    entity_state:val('entity_state'), entity_formation:val('entity_formation'), ein:val('ein'),
+    contact_name:val('contact_name'), contact_title:biz?val('contact_title'):'',
+    business_name:val('business_name'), email:val('email'), phone:val('phone'), address:val('address'),
+    tier:t, tier_price_mode:tmode, custom_pkg_name: t==='custom'?val('custom_pkg_name'):'',
+    total:Number(document.getElementById('sumTotal').textContent.replace(/[^0-9.]/g,''))||0,
+    deposit:Number(document.getElementById('deposit').value)||0,
+    balance:Number(document.getElementById('balance').value)||0,
+    addons,
+    custom_items,
+    care_plan: document.getElementById('care_on').checked ? {include:true, mode:(document.querySelector('input[name=carepx]:checked')||{}).value} : {include:false},
+    financing_months: document.getElementById('financing').value?Number(document.getElementById('financing').value):null,
+    notes:val('notes'),
+  };
+}
+
+async function submitOrder(){
+  const r=document.getElementById('result');
+  const data=collect();
+  if(!data.contact_name||!data.email){r.className='err';r.textContent='Signer name and email are required.';return;}
+  if(!data.tier && Object.keys(data.addons).length===0){r.className='err';r.textContent='Select a package or at least one add-on.';return;}
+  r.className='';r.style.display='block';r.textContent='Sending…';
+  try{
+    const res=await fetch(API+'/admin/create-envelope',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    const j=await res.json().catch(()=>({}));
+    if(res.ok&&j.ok){r.className='ok';r.textContent='✓ Envelope created and sent to '+data.email+(j.envelope_id?' (envelope '+j.envelope_id+').':'.');}
+    else{r.className='err';r.textContent='Error: '+(j.error||('HTTP '+res.status));}
+  }catch(e){r.className='err';r.textContent='Network error: '+e.message;}
+}
+
+buildAddons();
+toggleEntity();
+toggleTier();
+recalc();
+</script>
+</body>
+</html>
