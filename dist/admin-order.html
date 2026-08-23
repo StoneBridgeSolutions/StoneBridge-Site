@@ -403,7 +403,10 @@ function collect(){
     const desc=(row.querySelector('.cp-desc').value||'').trim();
     if(name||price)custom_items.push({name,price,desc});
   });
-  const tmode=(document.querySelector('input[name=tierpx]:checked')||{}).value;
+  const addendum_items=[];
+    ADDONS.forEach(a=>{ const o=addons[a.key]; if(o&&o.include&&!o.recurring){ let lbl=a.label; if(o.qty&&o.qty>1) lbl+=' \u00D7 '+o.qty; addendum_items.push({label:lbl, price:o.price}); } });
+    custom_items.forEach(ci=>{ addendum_items.push({label:ci.name||'Custom product', price:ci.price, desc:ci.desc}); });
+    const tmode=(document.querySelector('input[name=tierpx]:checked')||{}).value;
   return {
     admin_password:ADMIN_PW,
     is_legal_entity:biz,
@@ -417,7 +420,7 @@ function collect(){
     deposit:Number(document.getElementById('deposit').value)||0,
     balance:Number(document.getElementById('balance').value)||0,
     addons,
-    custom_items,
+    custom_items, addendum_items,
     care_plan: document.getElementById('care_on').checked ? {include:true, mode:(document.querySelector('input[name=carepx]:checked')||{}).value} : {include:false},
     financing_months: document.getElementById('financing').value?Number(document.getElementById('financing').value):null,
     confidentiality_level: Number(val('confidentiality_level'))||1,
