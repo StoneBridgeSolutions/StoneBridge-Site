@@ -117,7 +117,7 @@
       <div><label>Email <span class="req">*</span> <span class="hint">DocuSign is sent here</span></label><input type="email" id="email" placeholder="jane@example.com"></div>
       <div><label>Phone</label><input type="tel" id="phone" placeholder="(336) 555-0100"></div>
     </div>
-    <label>Mailing address</label><input type="text" id="address" placeholder="123 Main St, Clemmons, NC 27012">
+    <label>Mailing address</label><input type="text" id="address" placeholder="Street address (e.g. 123 Main St)"><input type="text" id="address_line2" placeholder="Suite / Unit / Floor (optional)" style="margin-top:8px"><div class="row" style="margin-top:8px"><div><input type="text" id="city" placeholder="City"></div><div style="flex:0 0 110px;min-width:0"><input type="text" id="state" placeholder="State"></div><div style="flex:0 0 120px;min-width:0"><input type="text" id="zip" placeholder="ZIP"></div></div>
   </div>
 
   <!-- 2. PACKAGE -->
@@ -403,7 +403,7 @@ function collect(){
     legal_entity_type:biz?val('legal_entity_type'):'',
     entity_state:val('entity_state'), entity_formation:val('entity_formation'), ein:val('ein'),
     contact_name:val('contact_name'), contact_title:biz?val('contact_title'):'',
-    business_name:val('business_name'), email:val('email'), phone:val('phone'), address:val('address'),
+    business_name:val('business_name'), email:val('email'), phone:val('phone'), address:val('address'), address_line2:val('address_line2'), city:val('city'), state:val('state'), zip:val('zip'),
     tier:t, tier_price_mode:tmode, custom_pkg_name: t==='custom'?val('custom_pkg_name'):'',
     total:Number(document.getElementById('sumTotal').textContent.replace(/[^0-9.]/g,''))||0,
     deposit:Number(document.getElementById('deposit').value)||0,
