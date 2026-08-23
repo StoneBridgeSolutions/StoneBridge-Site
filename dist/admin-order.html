@@ -178,7 +178,14 @@
 
   <!-- 5. FINANCING -->
   <div class="card">
-    <h2>5 · Payment Plan (optional)</h2>
+          <h2>5 · Confidentiality</h2>
+      <label>Confidentiality level <span class="req">*</span></label>
+      <select id="confidentiality_level" onchange="recalc()">
+        <option value="1" selected>Standard - StoneBridge footer credit + source attribution</option>
+        <option value="2">Private Project - footer credit + source attribution</option>
+        <option value="3">Strict - no StoneBridge attribution (+$500)</option>
+      </select>
+      <h2>6 · Payment Plan (optional)</h2>
     <div class="note">If selected, a Financing Agreement is added to the same envelope (signed as "Borrower").</div>
     <label>Plan</label>
     <select id="financing">
@@ -190,7 +197,7 @@
 
   <!-- 6. NOTES -->
   <div class="card">
-    <h2>6 · Notes / Special Scope (optional)</h2>
+    <h2>7 · Notes / Special Scope (optional)</h2>
     <textarea id="notes" placeholder="Anything extra to note in the addendum scope…"></textarea>
   </div>
 
@@ -412,6 +419,7 @@ function collect(){
     custom_items,
     care_plan: document.getElementById('care_on').checked ? {include:true, mode:(document.querySelector('input[name=carepx]:checked')||{}).value} : {include:false},
     financing_months: document.getElementById('financing').value?Number(document.getElementById('financing').value):null,
+    confidentiality_level: Number(val('confidentiality_level'))||1,
     notes:val('notes'),
   };
 }
