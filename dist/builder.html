@@ -474,7 +474,14 @@ input[type=text]{margin-bottom:12px}
               </label>
             </div>
 </div>
-<label class="subgroup-label" style="font-weight:600;margin-top:4px">Social media icons + links <span class="hint" style="font-weight:400">(free)</span></label>
+<label class="subgroup-label" style="font-weight:600;margin-top:18px">Confidentiality</label>
+      <p class="hint" style="margin-top:2px">How much StoneBridge branding appears on your finished website.</p>
+      <select id="confidentiality_level" style="width:100%;padding:10px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);color:#fff;margin-top:6px">
+        <option value="1" selected>Standard - StoneBridge footer credit + source attribution</option>
+        <option value="2">Private Project - footer credit + source attribution</option>
+        <option value="3">Strict - no StoneBridge attribution (+$500)</option>
+      </select>
+      <label class="subgroup-label" style="font-weight:600;margin-top:4px">Social media icons + links <span class="hint" style="font-weight:400">(free)</span></label>
     <p class="hint" style="margin-top:2px">Add each platform and its link. If you don&rsquo;t have the link handy, leave it blank and we&rsquo;ll use a placeholder icon for now.</p>
     <div id="socialRows"></div>
     <button type="button" id="socialAddBtn" onclick="addSocialRow()" style="margin-top:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:var(--gold);border-radius:10px;padding:9px 15px;cursor:pointer;font-weight:600">+ Add a platform</button>
@@ -1196,6 +1203,7 @@ async function saveAll() {
   fd.append('logo_choice', (document.querySelector('input[name=logoChoice]:checked')||{}).value||'none');
   fd.append('ga4_addon', document.getElementById('ga4Addon')?.checked ? '1' : '0');
     fd.append('clarity_selected', document.getElementById('clarityAddon')?.checked ? '1' : '0');
+      fd.append('confidentiality_level', (document.getElementById('confidentiality_level')||{}).value || '1');
   fd.append('social_links', JSON.stringify(collectSocial()));
   fd.append('blog_custom_quote', document.getElementById('blogCustomQuote')?.checked ? '1' : '0');
   fd.append('copy_pkg_active', document.getElementById('copyPkgToggle')?.checked ? '1' : '0');
@@ -1708,6 +1716,7 @@ var _drn=document.getElementById('domainReuseNotes'); if(_drn) _drn.addEventList
 var _bcq=document.getElementById('blogCustomQuote'); if(_bcq) _bcq.addEventListener('change', debouncedSave);
 var _ga4=document.getElementById('ga4Addon'); if(_ga4) _ga4.addEventListener('change', debouncedSave);
   var _clarity=document.getElementById('clarityAddon'); if(_clarity) _clarity.addEventListener('change', debouncedSave);
+  var _conf=document.getElementById('confidentiality_level'); if(_conf) _conf.addEventListener('change', debouncedSave);
 
 
 ['avoidText','siteNameInput'].forEach(id => {
