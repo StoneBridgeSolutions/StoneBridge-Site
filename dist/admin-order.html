@@ -369,7 +369,8 @@ function recalc(){
     const care = m==='standard'?50 : m==='custom'?(Number(document.getElementById('careCustom').value)||0):35;
     recurring.push(['Care Plan', care, '/mo']);
   }
-  // render lines
+  if((document.getElementById('confidentiality_level')||{}).value==='3'){ total+=500; lines.push(['Strict Confidentiality', 500]); }
+// render lines
   document.getElementById('lines').innerHTML =
     lines.map(l=>'<div class="line"><span class="l">'+l[0]+'</span><span>$'+l[1]+'</span></div>').join('')
     + recurring.map(l=>'<div class="line"><span class="l">'+l[0]+' (recurring)</span><span>$'+l[1]+l[2]+'</span></div>').join('');
