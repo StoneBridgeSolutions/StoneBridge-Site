@@ -230,6 +230,8 @@ const ADDONS = [
   {key:'clarity', label:'Microsoft Clarity Setup', regular:125, early:85},
   {key:'bundle', label:'Analytics Bundle (GA4 + Clarity)', regular:225, early:160, hint:'Use instead of GA4 + Clarity separately.'},
   {key:'copywriting', label:'Full Site Copywriting Package', byTier:{simple:95,standard:125,premium:150}, hint:'Priced by package tier.'},
+    {key:'page_copywriting', label:'Per-Page Copywriting', each:75, qty:true, hint:'$75 per page — copy for individual pages.', desc:'Professional website copy written for the selected number of individual pages.'},
+    {key:'initial_copy', label:'Initial Full-Site Copy Draft', regular:200, hint:'$200 — editable starter draft for the whole site.', desc:'A starter draft of copy for the entire site, provided for the Client to review, edit, and use as their own guidance. An editable starting point, not final professional copy.'},
   {key:'extra_pages', label:'Additional Pages', each:100, qty:true},
   {key:'custom_events', label:'Custom Event Tracking', each:50, qty:true},
   {key:'email_marketing', label:'Email Marketing Service Integration', regular:200},
@@ -404,7 +406,7 @@ function collect(){
     if(name||price)custom_items.push({name,price,desc});
   });
   const addendum_items=[];
-    ADDONS.forEach(a=>{ const o=addons[a.key]; if(o&&o.include&&!o.recurring){ let lbl=a.label; if(o.qty&&o.qty>1) lbl+=' \u00D7 '+o.qty; addendum_items.push({label:lbl, price:o.price}); } });
+    ADDONS.forEach(a=>{ const o=addons[a.key]; if(o&&o.include&&!o.recurring){ let lbl=a.label; if(o.qty&&o.qty>1) lbl+=' \u00D7 '+o.qty; addendum_items.push({label:lbl, price:o.price, desc:a.desc||''}); } });
     custom_items.forEach(ci=>{ addendum_items.push({label:ci.name||'Custom product', price:ci.price, desc:ci.desc}); });
     const tmode=(document.querySelector('input[name=tierpx]:checked')||{}).value;
   return {
