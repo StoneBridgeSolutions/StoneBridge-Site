@@ -26,7 +26,9 @@ export default function Footer() {
             <h4 className="font-sans font-semibold text-white mb-4 text-sm uppercase tracking-wider">Company</h4>
             <div className="flex flex-col gap-2">
               <Link to="/signup" className="text-white/85 hover:text-gold font-sans text-sm transition-colors">Get Started</Link>
-              <a href="mailto:support@stonebridgesolutions.io" className="text-white/85 hover:text-gold font-sans text-sm transition-colors">support@stonebridgesolutions.io</a>
+              <Link to="/about" className="text-white/85 hover:text-gold font-sans text-sm transition-colors">Our Story</Link>
+              <Link to="/contact" className="text-white/85 hover:text-gold font-sans text-sm transition-colors">Contact Us</Link>
+              <a href="mailto:contact@stonebridgesolutions.io" className="text-white/85 hover:text-gold font-sans text-sm transition-colors">contact@stonebridgesolutions.io</a>
               <Link to="/privacy-policy" className="text-white/85 hover:text-gold font-sans text-sm transition-colors">Privacy Policy</Link>
               <a href="#" className="text-white/85 hover:text-gold font-sans text-sm transition-colors">Terms of Service</a>
             </div>

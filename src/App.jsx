@@ -18,6 +18,7 @@ import Purchase from './pages/Purchase'
 import Onboarding from './pages/Onboarding'
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import About from './pages/About';
+import Contact from './pages/Contact';
 import Login from './pages/Login';
 import WebDevelopment from './pages/WebDevelopment';
 
@@ -44,6 +45,7 @@ export default function App() {
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
     <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
         <Route path="/web-development" element={<WebDevelopment />} />
         <Route path="/login" element={<Login />} />
   </Routes>

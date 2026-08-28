@@ -21,6 +21,7 @@ export default function Navbar() {
     { to: '/web-development', label: 'Website Dev' },
     { to: '/pricing', label: 'Pricing' },
     { to: '/about', label: 'Our Story' },
+    { to: '/contact', label: 'Contact' },
   ];
 
   return (
