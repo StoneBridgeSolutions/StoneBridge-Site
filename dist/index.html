@@ -547,6 +547,23 @@ if(contact){new IntersectionObserver((es,obs)=>{es.forEach(e=>{if(e.isIntersecti
 function showToast(msg){if(!toastEl){toastEl=document.createElement('div');toastEl.className='copy-toast';document.body.appendChild(toastEl)}
 toastEl.textContent=msg;toastEl.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toastEl.classList.remove('show'),3000)}
 document.querySelectorAll('a[href^="mailto:"]').forEach(a=>{a.addEventListener('click',function(){const email=this.href.replace('mailto:','').split('?')[0];if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(email).then(()=>showToast('Copied '+email+' — paste it into any email app')).catch(()=>{})}})})})();
+// ── ON MOBILE, "START MY WEBSITE" JUMPS STRAIGHT TO THE NAME FIELD ──
+(function(){const nameInput=document.getElementById('f-name');if(!nameInput)return;
+const isMobile=()=>window.matchMedia('(max-width:900px)').matches;
+document.querySelectorAll('a[href="#contact"]').forEach(a=>{
+  if(!a.textContent.includes('Start My Website'))return;
+  a.addEventListener('click',function(e){
+    if(!isMobile())return;
+    e.preventDefault();
+    const navLinks=document.getElementById('navLinks');
+    if(navLinks&&navLinks.classList.contains('open')){navLinks.classList.remove('open');document.querySelector('.burger')?.setAttribute('aria-expanded','false')}
+    const header=document.querySelector('header');
+    const headerH=header?header.getBoundingClientRect().height:0;
+    const top=nameInput.getBoundingClientRect().top+window.scrollY-headerH-16;
+    window.scrollTo({top,behavior:'smooth'});
+  });
+});
+})();
 // ── AUTO-RETRACT NAV WHILE FORM IS IN VIEW ──
 (function(){const formSection=document.getElementById('contact');const header=document.querySelector('header');const actionBar=document.getElementById('actionBar');if(!formSection||!header)return;
 new IntersectionObserver(es=>es.forEach(e=>{header.classList.toggle('nav-retract',e.isIntersecting);if(actionBar)actionBar.classList.toggle('nav-retract',e.isIntersecting)}),{threshold:.05}).observe(formSection)})();
